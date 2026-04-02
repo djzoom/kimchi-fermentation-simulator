@@ -11,14 +11,11 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <!-- Compact header -->
   <header class="header">
     <div class="header-inner">
       <div class="header-title">
         <div class="logo-mark"><span class="logo-icon">&#127798;</span></div>
-        <div>
-          <h1 data-i18n="app.title">Kimchi Fermentation Simulator</h1>
-        </div>
+        <h1 data-i18n="app.title">Kimchi Fermentation Simulator</h1>
       </div>
       <div class="header-controls">
         <div class="lang-switch" id="lang-switch">
@@ -35,28 +32,32 @@
   </header>
 
   <main class="main-layout">
+
     <!-- ====== HERO: Flavor Score Chart ====== -->
     <div class="hero-chart">
       <div class="hero-chart-header">
-        <h2 class="hero-chart-title" data-i18n="chart.flavor.title">Flavor Score</h2>
+        <h2 class="hero-chart-title">
+          <span class="hero-title-icon">&#11088;</span>
+          <span data-i18n="chart.flavor.title">Flavor Score</span>
+        </h2>
         <div class="hero-stats">
-          <div class="hero-stat">
+          <div class="hero-stat" data-tip="tip.optimalTime">
             <span class="hero-stat-label" data-i18n="stat.optimalTime">Optimal</span>
             <span class="hero-stat-value" id="stat-optimal-time">--</span>
           </div>
-          <div class="hero-stat">
+          <div class="hero-stat" data-tip="tip.ph">
             <span class="hero-stat-label">pH</span>
             <span class="hero-stat-value" id="stat-ph">--</span>
           </div>
-          <div class="hero-stat">
+          <div class="hero-stat" data-tip="tip.acid">
             <span class="hero-stat-label" data-i18n="stat.acid">Acid</span>
             <span class="hero-stat-value" id="stat-acid">--</span>
           </div>
-          <div class="hero-stat">
+          <div class="hero-stat" data-tip="tip.lab">
             <span class="hero-stat-label" data-i18n="stat.bacteria">LAB</span>
             <span class="hero-stat-value" id="stat-bacteria">--</span>
           </div>
-          <div class="hero-stat hero-stat-accent">
+          <div class="hero-stat hero-stat-accent" data-tip="tip.flavor">
             <span class="hero-stat-label" data-i18n="stat.flavor">Score</span>
             <span class="hero-stat-value" id="stat-flavor">--</span>
           </div>
@@ -65,12 +66,11 @@
       <div class="hero-chart-canvas"><canvas id="flavor-chart"></canvas></div>
     </div>
 
-    <!-- ====== MIXER BOARD: Controls ====== -->
+    <!-- ====== MIXER BOARD ====== -->
     <div class="mixer">
-      <!-- Fader channels -->
       <div class="mixer-channels">
         <!-- Salt fader -->
-        <div class="channel">
+        <div class="channel" data-tip="tip.salt">
           <div class="channel-value" id="val-salt">2.5%</div>
           <div class="channel-fader">
             <input type="range" id="slider-salt" min="1" max="5" step="0.1" value="2.5" orient="vertical" class="fader">
@@ -80,7 +80,7 @@
         </div>
 
         <!-- Starter fader -->
-        <div class="channel">
+        <div class="channel" data-tip="tip.starter">
           <div class="channel-value" id="val-starter">0%</div>
           <div class="channel-fader">
             <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" orient="vertical" class="fader">
@@ -89,7 +89,7 @@
           <div class="channel-icon">&#129388;</div>
         </div>
 
-        <!-- Hidden single-temp (used when no stages) -->
+        <!-- Hidden single-temp -->
         <div id="temp-single-wrap" style="display:none">
           <div class="channel">
             <div class="channel-value" id="val-temp">10°C</div>
@@ -101,11 +101,10 @@
           </div>
         </div>
 
-        <!-- Divider -->
         <div class="mixer-divider"></div>
 
-        <!-- Stage editor (compact) -->
-        <div class="stages-panel" id="stages-container">
+        <!-- Stage editor -->
+        <div class="stages-panel" id="stages-container" data-tip="tip.stages">
           <div class="stages-panel-title">
             <span>&#127777;&#65039;</span>
             <span data-i18n="controls.stages">Stages</span>
@@ -115,7 +114,7 @@
         </div>
       </div>
 
-      <!-- Realtime readout strip -->
+      <!-- Readout strip -->
       <div class="mixer-readout">
         <div class="readout-item">
           <span class="readout-label" data-i18n="stat.optimalTime">Optimal</span>
@@ -137,7 +136,7 @@
     </div>
 
     <!-- Phase bar -->
-    <div class="phase-indicator">
+    <div class="phase-indicator" data-tip="tip.phase">
       <div class="phase-bar">
         <div class="phase-segment phase-1" id="phase-seg-1">
           <span class="phase-name" data-i18n="phase.initial">Initial</span>
@@ -167,9 +166,70 @@
       </div>
     </div>
 
-    <!-- Recipe Calculator -->
-    <div class="chart-card-sm">
-      <h3 class="chart-title-sm" data-i18n="calc.title">Recipe Calculator</h3>
+    <!-- ====== PROCESS FLOWCHART ====== -->
+    <div class="process-flow" id="process-flow">
+      <h3 class="section-title">
+        <span class="section-icon">&#128203;</span>
+        <span data-i18n="process.title">Making Process</span>
+      </h3>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-icon">&#129388;</div>
+          <div class="step-num">1</div>
+          <div class="step-name" data-i18n="process.s1">Select</div>
+          <div class="step-detail" data-i18n="process.s1d">Fresh napa cabbage</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step">
+          <div class="step-icon">&#129474;</div>
+          <div class="step-num">2</div>
+          <div class="step-name" data-i18n="process.s2">Salt</div>
+          <div class="step-detail" data-i18n="process.s2d">6-8h in 8% salt</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step">
+          <div class="step-icon">&#127798;</div>
+          <div class="step-num">3</div>
+          <div class="step-name" data-i18n="process.s3">Season</div>
+          <div class="step-detail" data-i18n="process.s3d">Mix paste into leaves</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step">
+          <div class="step-icon">&#129387;</div>
+          <div class="step-num">4</div>
+          <div class="step-name" data-i18n="process.s4">Pack</div>
+          <div class="step-detail" data-i18n="process.s4d">Press tight, no air</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step step-warm">
+          <div class="step-icon">&#9728;&#65039;</div>
+          <div class="step-num">5</div>
+          <div class="step-name" data-i18n="process.s5">Ferment</div>
+          <div class="step-detail" data-i18n="process.s5d">Room temp 1-2 days</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step step-cold">
+          <div class="step-icon">&#10052;&#65039;</div>
+          <div class="step-num">6</div>
+          <div class="step-name" data-i18n="process.s6">Chill</div>
+          <div class="step-detail" data-i18n="process.s6d">Fridge 4°C, slow ripen</div>
+        </div>
+        <div class="flow-arrow">&#10140;</div>
+        <div class="flow-step step-done">
+          <div class="step-icon">&#127860;</div>
+          <div class="step-num">7</div>
+          <div class="step-name" data-i18n="process.s7">Enjoy!</div>
+          <div class="step-detail" data-i18n="process.s7d">Best at peak flavor</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== RECIPE CALCULATOR ====== -->
+    <div class="calc-card" id="calc-card">
+      <h3 class="section-title">
+        <span class="section-icon">&#129518;</span>
+        <span data-i18n="calc.title">Recipe Calculator</span>
+      </h3>
       <div class="calc-input-row">
         <label data-i18n="calc.input">Cabbage Weight</label>
         <div class="calc-input-wrap">
@@ -178,9 +238,13 @@
         </div>
       </div>
       <div class="calc-results" id="calc-results"></div>
+      <div class="calc-meta">
+        <span class="calc-source" data-i18n="calc.source">Source: Korean RDA (농촌진흥청)</span>
+        <span class="calc-link" data-i18n="calc.codex">Codex CXS 223-2001</span>
+      </div>
     </div>
 
-    <!-- Recipe section -->
+    <!-- Recipe details (collapsible) -->
     <section class="recipe-section" id="recipe-section">
       <button class="recipe-toggle" id="recipe-toggle">
         <span data-i18n="recipe.title">Standard Recipe & Process</span>
@@ -200,6 +264,9 @@
       </p>
     </div>
   </footer>
+
+  <!-- Tooltip container (populated by JS) -->
+  <div class="tooltip-box" id="tooltip-box"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>

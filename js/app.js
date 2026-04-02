@@ -117,9 +117,42 @@ window.KimchiSim = window.KimchiSim || {};
     updateCalcResults();
   }
 
+  function initTooltips() {
+    var box = document.getElementById('tooltip-box');
+    if (!box) return;
+    var timer = null;
+
+    document.addEventListener('mouseenter', function(e) {
+      var el = e.target.closest('[data-tip]');
+      if (!el) return;
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        var text = el.getAttribute('data-tip-text');
+        if (!text) {
+          var key = el.getAttribute('data-tip');
+          text = sim.i18n.t(key);
+        }
+        if (!text || text === el.getAttribute('data-tip')) return;
+        box.textContent = text;
+        var rect = el.getBoundingClientRect();
+        box.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
+        box.style.top = (rect.bottom + 8) + 'px';
+        box.classList.add('visible');
+      }, 500); // 500ms delay
+    }, true);
+
+    document.addEventListener('mouseleave', function(e) {
+      var el = e.target.closest('[data-tip]');
+      if (!el) return;
+      clearTimeout(timer);
+      box.classList.remove('visible');
+    }, true);
+  }
+
   function init() {
     initTheme();
     initLang();
+    initTooltips();
     sim.charts.init();
 
     sim.ui.initSliders(function (params, stages) {
