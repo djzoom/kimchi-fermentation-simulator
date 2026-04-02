@@ -64,20 +64,20 @@
         </div>
       </div>
       <div class="hero-chart-canvas"><canvas id="flavor-chart"></canvas></div>
+      <!-- Nitrite warning strip -->
+      <div class="nitrite-bar" id="nitrite-bar" data-tip="tip.nitrite">
+        <span class="nitrite-icon">&#9888;&#65039;</span>
+        <span class="nitrite-label" data-i18n="nitrite.label">Nitrite Risk</span>
+        <span class="nitrite-level" id="nitrite-level">--</span>
+        <span class="nitrite-status" id="nitrite-status">--</span>
+      </div>
     </div>
 
     <!-- ====== MIXER BOARD ====== -->
     <div class="mixer">
       <div class="mixer-channels">
-        <!-- Salt fader -->
-        <div class="channel" data-tip="tip.salt">
-          <div class="channel-value" id="val-salt">2.5%</div>
-          <div class="channel-fader">
-            <input type="range" id="slider-salt" min="1" max="5" step="0.1" value="2.5" orient="vertical" class="fader">
-          </div>
-          <div class="channel-label" data-i18n="mixer.salt">Salt</div>
-          <div class="channel-icon">&#129474;</div>
-        </div>
+        <!-- Salt is fixed at 2.5% per Korean RDA standard (hidden input for JS) -->
+        <input type="hidden" id="slider-salt" value="2.5">
 
         <!-- Starter fader -->
         <div class="channel" data-tip="tip.starter">
@@ -270,12 +270,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=3"></script>
-  <script src="js/models.js?v=3"></script>
-  <script src="js/simulation.js?v=3"></script>
-  <script src="js/charts.js?v=3"></script>
-  <script src="js/ui.js?v=3"></script>
-  <script src="js/recipe.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/i18n.js?v=5"></script>
+  <script src="js/models.js?v=5"></script>
+  <script src="js/simulation.js?v=5"></script>
+  <script src="js/charts.js?v=5"></script>
+  <script src="js/ui.js?v=5"></script>
+  <script src="js/recipe.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>

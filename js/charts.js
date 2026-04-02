@@ -139,7 +139,19 @@ window.KimchiSim.charts = (function () {
                 label: { display: true, content: 'Excellent', position: { x: 'end', y: 'center' },
                   color: c.green, font: { size: 10 } } },
               optLine: { type: 'line', scaleID: 'x', value: 0,
-                borderColor: c.green + 'BB', borderWidth: 2, borderDash: [6, 4] }
+                borderColor: c.green + 'BB', borderWidth: 2, borderDash: [6, 4] },
+              phaseInitial: { type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
+                backgroundColor: c.blue + '18', borderWidth: 0,
+                label: { display: true, content: t('phase.initial'), position: { x: 'center', y: 'center' },
+                  color: c.blue, font: { size: 9, weight: 'bold' } } },
+              phaseOptimal: { type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
+                backgroundColor: c.green + '18', borderWidth: 0,
+                label: { display: true, content: t('phase.optimal'), position: { x: 'center', y: 'center' },
+                  color: c.green, font: { size: 9, weight: 'bold' } } },
+              phaseOver: { type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
+                backgroundColor: '#D4A01718', borderWidth: 0,
+                label: { display: true, content: t('phase.over'), position: { x: 'center', y: 'center' },
+                  color: '#9A7B00', font: { size: 9, weight: 'bold' } } }
             }
           }
         },
@@ -194,8 +206,43 @@ window.KimchiSim.charts = (function () {
 
     // Flavor chart
     flavorChart.data.datasets[0].data = toXY(data.timePoints, data.flavorScore);
+    // Nitrite curve on flavor chart (secondary dataset)
+    if (flavorChart.data.datasets.length < 2) {
+      var c = colors();
+      flavorChart.data.datasets.push({
+        label: t('chart.nitrite') || 'NO2 (mg/kg)',
+        data: [], borderColor: '#E07B39', borderWidth: 1.5,
+        pointRadius: 0, tension: 0.3, borderDash: [4, 3],
+        fill: false, yAxisID: 'y2'
+      });
+      // Add right Y axis for nitrite
+      flavorChart.options.scales.y2 = {
+        position: 'right', min: 0, max: 20,
+        grid: { drawOnChartArea: false },
+        ticks: { color: '#E07B39', font: { size: 10 } },
+        title: { display: true, text: 'NO2 mg/kg', color: '#E07B39', font: { size: 10 } }
+      };
+      flavorChart.options.plugins.legend = {
+        display: true,
+        labels: { color: c.text, usePointStyle: true, pointStyle: 'line', font: { size: 9 } }
+      };
+    }
+    flavorChart.data.datasets[1].data = toXY(data.timePoints, data.nitrite);
+
     flavorChart.options.scales.x.max = data.tMax;
     flavorChart.options.plugins.annotation.annotations.optLine.value = data.optimalTime;
+
+    // Update phase zone annotations on flavor chart
+    var ann = flavorChart.options.plugins.annotation.annotations;
+    var p1 = data.phases.phase1End;
+    var p2 = data.phases.phase2End;
+    ann.phaseInitial.xMin = 0;
+    ann.phaseInitial.xMax = p1;
+    ann.phaseOptimal.xMin = p1;
+    ann.phaseOptimal.xMax = p2;
+    ann.phaseOver.xMin = p2;
+    ann.phaseOver.xMax = data.tMax;
+
     flavorChart.update('none');
   }
 

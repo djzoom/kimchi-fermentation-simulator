@@ -178,6 +178,33 @@ a:hover { text-decoration: underline; }
 .hero-chart-canvas { position: relative; height: 280px; padding: 8px 16px 12px; }
 .hero-chart-canvas canvas { width: 100% !important; height: 100% !important; }
 
+/* === NITRITE WARNING === */
+.nitrite-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px; margin: 0;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.72rem; cursor: help;
+  transition: background var(--transition);
+}
+.nitrite-bar.safe { background: rgba(45, 106, 79, 0.06); }
+.nitrite-bar.warning { background: rgba(212, 160, 23, 0.10); }
+.nitrite-bar.danger { background: rgba(205, 46, 58, 0.10); }
+.nitrite-icon { font-size: 0.85rem; }
+.nitrite-label { font-weight: 600; color: var(--text-secondary); }
+.nitrite-level {
+  font-family: var(--mono); font-weight: 700; font-size: 0.75rem;
+}
+.nitrite-bar.safe .nitrite-level { color: var(--green); }
+.nitrite-bar.warning .nitrite-level { color: var(--yellow); }
+.nitrite-bar.danger .nitrite-level { color: var(--red); }
+.nitrite-status {
+  font-weight: 700; font-size: 0.65rem; text-transform: uppercase;
+  padding: 1px 6px; border-radius: 4px;
+}
+.nitrite-bar.safe .nitrite-status { background: rgba(45,106,79,0.12); color: var(--green); }
+.nitrite-bar.warning .nitrite-status { background: rgba(212,160,23,0.15); color: #9A7B00; }
+.nitrite-bar.danger .nitrite-status { background: rgba(205,46,58,0.12); color: var(--red); }
+
 /* === MIXER BOARD === */
 .mixer {
   background: var(--bg-mixer);

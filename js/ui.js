@@ -235,6 +235,26 @@ window.KimchiSim.ui = (function () {
     setVal('info-ph', data.atOptimal.pH.toFixed(2));
     setVal('info-acid', data.atOptimal.acid.toFixed(2) + '%');
     setVal('info-flavor', Math.round(data.atOptimal.flavor) + '/100');
+
+    // Nitrite warning
+    var nitrite = data.atOptimal.nitrite || 0;
+    var nitriteBar = document.getElementById('nitrite-bar');
+    var nitriteSafe = 3; // mg/kg WHO threshold
+    if (nitriteBar) {
+      setVal('nitrite-level', nitrite.toFixed(1) + ' mg/kg');
+      nitriteBar.classList.remove('safe', 'warning', 'danger');
+      var statusEl = document.getElementById('nitrite-status');
+      if (nitrite < nitriteSafe) {
+        nitriteBar.classList.add('safe');
+        if (statusEl) statusEl.textContent = t('nitrite.safe');
+      } else if (nitrite < 8) {
+        nitriteBar.classList.add('warning');
+        if (statusEl) statusEl.textContent = t('nitrite.caution');
+      } else {
+        nitriteBar.classList.add('danger');
+        if (statusEl) statusEl.textContent = t('nitrite.danger');
+      }
+    }
   }
 
   function formatTimeDisplay(days) {

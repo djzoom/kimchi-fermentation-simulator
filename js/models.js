@@ -62,6 +62,12 @@ window.KimchiSim.models = (function () {
     flavor_pH_sigma: 0.3,
     flavor_acid_center: 0.6,
     flavor_acid_sigma: 0.2,
+
+    // Nitrite model — peaks early then drops as LAB consume it
+    // Based on: Korean studies show nitrite peaks at pH ~5.0-4.8, drops to safe (<3 mg/kg) by pH 4.2
+    // Model: bell curve peaking around pH 5.0, near zero below pH 4.2
+    nitrite_peak: 15,         // Peak nitrite (mg/kg) — typical 10-20 range
+    nitrite_safe: 3,          // Safe threshold (mg/kg) — Korean/WHO standard
   };
 
   function safeExp(x) {
@@ -215,6 +221,20 @@ window.KimchiSim.models = (function () {
     return Math.max(0.2, t);
   }
 
+  /**
+   * Nitrite level (mg/kg) based on pH
+   * Nitrite rises as bacteria convert nitrate, peaks around pH 5.0,
+   * then drops as LAB (especially Lactobacillus) degrade it.
+   * Safe threshold: <3 mg/kg (WHO/Korean standard)
+   */
+  function nitriteLevel(currentPH) {
+    // Bell curve: peaks at pH 5.0, sigma 0.4
+    var peak = PARAMS.nitrite_peak * gaussian(currentPH, 5.0, 0.4);
+    // Near zero at very high pH (not started) and very low pH (fully fermented)
+    if (currentPH > 5.6) peak *= Math.max(0, (5.8 - currentPH) / 0.2);
+    return Math.max(0, peak);
+  }
+
   return {
     PARAMS: PARAMS,
     safeExp: safeExp,
@@ -231,6 +251,7 @@ window.KimchiSim.models = (function () {
     labGrowth: labGrowth,
     microbialComposition: microbialComposition,
     flavorScore: flavorScore,
+    nitriteLevel: nitriteLevel,
     optimalTime: optimalTime
   };
 })();

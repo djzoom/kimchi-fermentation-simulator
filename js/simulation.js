@@ -57,7 +57,7 @@ window.KimchiSim.simulation = (function () {
     // Result arrays
     var timePoints = [], labCounts = [], phValues = [], acidValues = [];
     var sakei = [], mesenteroides = [], plantarum = [];
-    var flavorScores = [], tempProfile = [];
+    var flavorScores = [], tempProfile = [], nitriteValues = [];
 
     // Initial state
     var currentPH = m.effectiveInitialPH(starter);
@@ -112,6 +112,9 @@ window.KimchiSim.simulation = (function () {
       // Microbial composition
       var comp = m.microbialComposition(currentPH, starter);
 
+      // Nitrite level
+      var nitrite = m.nitriteLevel(currentPH);
+
       // Flavor score
       var score = m.flavorScore(currentPH, currentAcid, comp.mesenteroides);
 
@@ -124,6 +127,7 @@ window.KimchiSim.simulation = (function () {
       mesenteroides.push(comp.mesenteroides * 100);
       plantarum.push(comp.plantarum * 100);
       flavorScores.push(score);
+      nitriteValues.push(nitrite);
 
       // Track peaks and phases
       if (score > peakFlavor) {
@@ -153,6 +157,7 @@ window.KimchiSim.simulation = (function () {
     mesenteroides = mesenteroides.slice(0, trimIdx);
     plantarum = plantarum.slice(0, trimIdx);
     flavorScores = flavorScores.slice(0, trimIdx);
+    nitriteValues = nitriteValues.slice(0, trimIdx);
     tempProfile = tempProfile.slice(0, trimIdx);
     tMaxDays = displayMax;
 
@@ -178,6 +183,7 @@ window.KimchiSim.simulation = (function () {
       lacticAcid: acidValues,
       microbial: { sakei: sakei, mesenteroides: mesenteroides, plantarum: plantarum },
       flavorScore: flavorScores,
+      nitrite: nitriteValues,
       tempProfile: tempProfile,
       stageMarkers: stageMarkers,
       optimalTime: peakFlavorTime,
@@ -188,7 +194,8 @@ window.KimchiSim.simulation = (function () {
         acid: acidValues[optIdx] || 0,
         lab: labCounts[optIdx] || 5,
         flavor: flavorScores[optIdx] || 0,
-        dominant: dominant
+        dominant: dominant,
+        nitrite: nitriteValues[optIdx] || 0
       },
       peakFlavor: peakFlavor,
       peakFlavorTime: peakFlavorTime
