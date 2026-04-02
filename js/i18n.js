@@ -852,7 +852,76 @@ window.KimchiSim.i18n = (function () {
     'explain.safety.clear': { en: 'Nitrite below safe line', ko: '아질산염 안전선 이하', zh: '亚硝酸盐低于安全线' },
     'explain.safety.clear.effect': { en: 'No safety concern', ko: '안전 우려 없음', zh: '没有安全隐患' },
     'explain.safety.risk': { en: 'Nitrite still above threshold', ko: '아질산염이 기준치 이상', zh: '亚硝酸盐仍超标' },
-    'explain.safety.risk.effect': { en: 'Wait for LAB to clear it', ko: '유산균이 제거할 때까지 기다리세요', zh: '等乳酸菌将其清除' }
+    'explain.safety.risk.effect': { en: 'Wait for LAB to clear it', ko: '유산균이 제거할 때까지 기다리세요', zh: '等乳酸菌将其清除' },
+
+    // Scoring breakdown (L2)
+    'score.title': {
+      en: 'How the score is calculated',
+      ko: '점수 산출 기준',
+      zh: '评分是怎么算的'
+    },
+    'score.ph.label': {
+      en: 'pH proximity to 4.35',
+      ko: 'pH 4.35 근접도',
+      zh: 'pH 接近 4.35 的程度'
+    },
+    'score.acid.label': {
+      en: 'Lactic acid near 0.6%',
+      ko: '젖산 0.6% 근접도',
+      zh: '乳酸接近 0.6% 的程度'
+    },
+    'score.microbe.label': {
+      en: 'Leuconostoc proportion',
+      ko: 'Leuconostoc 비율',
+      zh: '明串珠菌占比'
+    },
+    'score.weight': {
+      en: 'weight',
+      ko: '가중치',
+      zh: '权重'
+    },
+
+    // Extend flavor advice (L2)
+    'extend.title': {
+      en: 'How to extend peak flavor',
+      ko: '최적 풍미를 오래 유지하는 법',
+      zh: '如何延长最佳风味'
+    },
+    'extend.chill': {
+      en: 'Move to fridge (2-4\u00B0C) right at peak to slow fermentation',
+      ko: '풍미 최적기에 냉장고(2-4\u00B0C)로 옮겨 발효를 늦추세요',
+      zh: '在风味顶峰时移入冰箱（2-4\u00B0C）以减缓发酵'
+    },
+    'extend.salt': {
+      en: 'Slightly higher salt (2.5-3.5%) stretches the optimal window',
+      ko: '소금 농도를 약간 높이면(2.5-3.5%) 최적 구간이 늘어납니다',
+      zh: '适当提高盐浓度（2.5-3.5%）可以拉长最佳窗口'
+    },
+    'extend.starter': {
+      en: 'Less starter = slower start = longer window before over-souring',
+      ko: '종균을 줄이면 = 시작이 느려져 = 과숙까지 시간이 길어집니다',
+      zh: '少用母水 = 起步更慢 = 到过酸之前的窗口更长'
+    },
+    'extend.stage': {
+      en: 'Use 2-stage: warm start (6-10h) then fridge for deep, slow development',
+      ko: '2단계 활용: 따뜻한 시작(6-10시간) → 냉장으로 깊고 느린 발달',
+      zh: '用两段式：先室温启动（6-10小时）再冷藏慢熟'
+    },
+    'extend.already.cold': {
+      en: 'Already using cold fermentation \u2014 your peak window is naturally longer',
+      ko: '이미 저온 발효 중 \u2014 최적 구간이 자연히 깁니다',
+      zh: '已在低温发酵 \u2014 最佳窗口本身就较长'
+    },
+    'extend.reduce.starter': {
+      en: 'Try reducing starter to {n}% for a wider peak window',
+      ko: '종균을 {n}%로 줄이면 최적 구간이 넓어집니다',
+      zh: '试试把母水减到 {n}% 以拓宽最佳窗口'
+    },
+    'extend.add.cold.stage': {
+      en: 'Add a cold stage (4\u00B0C) after the warm start to stretch flavor development',
+      ko: '따뜻한 시작 후 저온 단계(4\u00B0C)를 추가하면 풍미 발달이 길어집니다',
+      zh: '在温暖启动后加一段冷藏（4\u00B0C）以延展风味'
+    }
   };
 
   var langOrder = ['en', 'ko', 'zh'];
