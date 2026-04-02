@@ -1096,6 +1096,54 @@ a:hover { text-decoration: underline; }
   margin-top: 18px;
 }
 
+/* === BATCH TRACKER === */
+.batch-tracker {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.batch-tracker-header {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.batch-tracker-icon { font-size: 1.1rem; }
+.batch-tracker-header label {
+  font-size: 0.8rem; font-weight: 600; color: var(--text);
+}
+.batch-date-input {
+  padding: 4px 8px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-family: var(--mono);
+  font-size: 0.8rem; background: var(--bg-surface); color: var(--text);
+}
+.batch-elapsed {
+  font-family: var(--mono); font-size: 0.85rem;
+  font-weight: 700; color: var(--accent);
+}
+.batch-status {
+  margin-top: 8px; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+}
+.batch-stat {
+  background: var(--bg-surface-hover);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px; text-align: center;
+}
+.batch-stat-label {
+  font-size: 0.65rem; color: var(--text-muted);
+  display: block; margin-bottom: 2px;
+}
+.batch-stat-value {
+  font-family: var(--mono); font-size: 0.85rem;
+  font-weight: 700; color: var(--text);
+}
+.batch-stat-value.safe { color: var(--green); }
+.batch-stat-value.warning { color: var(--orange); }
+.batch-stat-value.danger { color: var(--red); }
+.batch-now-marker {
+  font-size: 0.7rem; font-weight: 700; color: var(--accent);
+}
+
 /* === CALCULATOR CARD === */
 .calc-card {
   background: linear-gradient(180deg, rgba(255, 250, 244, 0.9), var(--bg-surface));

@@ -7,13 +7,16 @@ window.KimchiSim = window.KimchiSim || {};
   'use strict';
 
   var sim = window.KimchiSim;
+  var lastSimData = null;
 
   function runAndUpdate(params, stages) {
     var data = sim.simulation.run(params, stages);
+    lastSimData = data;
     sim.charts.update(data);
     sim.ui.updatePhaseIndicator(data);
     sim.ui.updateStats(data);
     sim.ui.updateEducation(data);
+    updateBatchTracker();
   }
 
   function initTheme() {
@@ -209,6 +212,125 @@ window.KimchiSim = window.KimchiSim || {};
     }, true);
   }
 
+  // --- Batch Tracker ---
+  function initBatchTracker() {
+    var dateInput = document.getElementById('batch-start-date');
+    if (!dateInput) return;
+
+    // Default: today
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var dd = String(today.getDate()).padStart(2, '0');
+    var todayStr = yyyy + '-' + mm + '-' + dd;
+
+    // Restore saved date or use today
+    var saved = null;
+    try { saved = localStorage.getItem('kimchi-batch-date'); } catch (e) {}
+    dateInput.value = saved || todayStr;
+
+    dateInput.addEventListener('change', function () {
+      try { localStorage.setItem('kimchi-batch-date', dateInput.value); } catch (e) {}
+      updateBatchTracker();
+    });
+  }
+
+  function updateBatchTracker() {
+    var dateInput = document.getElementById('batch-start-date');
+    var elapsedEl = document.getElementById('batch-elapsed');
+    var statusEl = document.getElementById('batch-status');
+    if (!dateInput || !elapsedEl || !statusEl || !lastSimData) return;
+
+    var t = sim.i18n.t;
+    var startDate = new Date(dateInput.value);
+    var now = new Date();
+
+    if (isNaN(startDate.getTime())) {
+      elapsedEl.textContent = '--';
+      statusEl.innerHTML = '<span class="batch-stat-label">' + t('batch.notStarted') + '</span>';
+      sim.charts.setNowMarker(null);
+      return;
+    }
+
+    var elapsedMs = now.getTime() - startDate.getTime();
+    var elapsedDays = elapsedMs / (1000 * 60 * 60 * 24);
+    if (elapsedDays < 0) elapsedDays = 0;
+
+    // Show elapsed time
+    var elapsedText = t('batch.elapsed').replace('{d}', elapsedDays.toFixed(1));
+    elapsedEl.textContent = elapsedText;
+
+    // Find current values in simulation data
+    var data = lastSimData;
+    var tp = data.timePoints;
+    var idx = 0;
+    for (var i = 0; i < tp.length; i++) {
+      if (tp[i] >= elapsedDays) { idx = i; break; }
+      idx = i;
+    }
+    if (idx >= tp.length) idx = tp.length - 1;
+
+    var curPH = data.pH[idx];
+    var curAcid = data.lacticAcid[idx];
+    var curFlavor = data.flavorScore[idx];
+    var curNitrite = data.nitrite[idx];
+    var comp = sim.models.microbialComposition(curPH, sim.ui.getParams().starter);
+    var dominant = 'Leuc. mesenteroides';
+    var dominantKey = 'mesenteroides';
+    if (comp.sakei > comp.mesenteroides && comp.sakei > comp.plantarum) {
+      dominant = 'L. sakei'; dominantKey = 'sakei';
+    } else if (comp.plantarum > comp.mesenteroides) {
+      dominant = 'L. plantarum'; dominantKey = 'plantarum';
+    }
+
+    // Determine phase and suggestion
+    var phase, suggestion;
+    if (curPH >= 5.0) {
+      phase = t('phase.initial');
+      suggestion = t('batch.suggestion.early');
+    } else if (curPH >= 4.0) {
+      phase = t('phase.optimal');
+      suggestion = t('batch.suggestion.optimal');
+    } else {
+      phase = t('phase.over');
+      suggestion = t('batch.suggestion.over');
+    }
+
+    // Nitrite class
+    var nitriteClass = 'safe';
+    if (curNitrite >= 8) nitriteClass = 'danger';
+    else if (curNitrite >= 3) nitriteClass = 'warning';
+
+    statusEl.innerHTML =
+      '<div class="batch-stat">' +
+        '<span class="batch-stat-label">' + t('batch.phase') + '</span>' +
+        '<span class="batch-stat-value">' + phase + '</span>' +
+      '</div>' +
+      '<div class="batch-stat">' +
+        '<span class="batch-stat-label">pH</span>' +
+        '<span class="batch-stat-value">' + curPH.toFixed(2) + '</span>' +
+      '</div>' +
+      '<div class="batch-stat">' +
+        '<span class="batch-stat-label">' + t('stat.flavor') + '</span>' +
+        '<span class="batch-stat-value">' + Math.round(curFlavor) + '/100</span>' +
+      '</div>' +
+      '<div class="batch-stat">' +
+        '<span class="batch-stat-label">' + t('batch.dominant') + '</span>' +
+        '<span class="batch-stat-value">' + t('microbe.' + dominantKey + '.name') + '</span>' +
+      '</div>' +
+      '<div class="batch-stat">' +
+        '<span class="batch-stat-label">NO\u2082</span>' +
+        '<span class="batch-stat-value ' + nitriteClass + '">' + curNitrite.toFixed(1) + ' mg/kg</span>' +
+      '</div>' +
+      '<div class="batch-stat" style="grid-column: 1 / -1;">' +
+        '<span class="batch-stat-label">' + t('batch.suggestion') + '</span>' +
+        '<span class="batch-stat-value" style="font-size:0.75rem;font-weight:500;">' + suggestion + '</span>' +
+      '</div>';
+
+    // Set NOW marker on chart
+    sim.charts.setNowMarker(elapsedDays);
+  }
+
   function init() {
     initTheme();
     initLang();
@@ -221,6 +343,7 @@ window.KimchiSim = window.KimchiSim || {};
     sim.ui.initControlsToggle();
     sim.recipe.init();
     initCalc();
+    initBatchTracker();
 
     // Restore saved inputs (sliders, stages, calc weight)
     sim.ui.restoreSavedInputs();
