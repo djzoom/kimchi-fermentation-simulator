@@ -110,7 +110,10 @@ window.KimchiSim = window.KimchiSim || {};
   function initCalc() {
     var input = document.getElementById('calc-weight');
     if (!input) return;
-    input.addEventListener('input', updateCalcResults);
+    input.addEventListener('input', function() {
+      updateCalcResults();
+      sim.ui.saveState();
+    });
     updateCalcResults();
   }
 
@@ -126,9 +129,14 @@ window.KimchiSim = window.KimchiSim || {};
     sim.recipe.init();
     initCalc();
 
-    // Initial run with default multi-stage
+    // Restore saved inputs (sliders, stages, calc weight)
+    sim.ui.restoreSavedInputs();
+    updateCalcResults();
+
+    // Initial run with current stages
     var params = sim.ui.getParams();
-    runAndUpdate(params, [
+    var stg = sim.ui.getStages();
+    runAndUpdate(params, stg || [
       { temperature: 25, duration: 6 },
       { temperature: 4, duration: 504 }
     ]);
