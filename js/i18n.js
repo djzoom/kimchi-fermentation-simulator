@@ -274,6 +274,13 @@ window.KimchiSim.i18n = (function () {
     'calc.source': { en: 'Korean RDA Standard', ko: '농촌진흥청 기준', zh: '韩国农村振兴厅标准' },
     'calc.codex': { en: 'Codex CXS 223-2001', ko: 'Codex CXS 223-2001', zh: 'Codex CXS 223-2001' },
 
+    // Nitrite warning
+    'nitrite.label': { en: 'Nitrite at optimal', ko: '최적시점 아질산염', zh: '最佳时点亚硝酸盐' },
+    'chart.nitrite': { en: 'Nitrite NO2 (mg/kg)', ko: '아질산염 NO2 (mg/kg)', zh: '亚硝酸盐 NO2 (mg/kg)' },
+    'nitrite.safe': { en: 'Safe', ko: '안전', zh: '安全' },
+    'nitrite.caution': { en: 'Caution', ko: '주의', zh: '注意' },
+    'nitrite.danger': { en: 'High Risk', ko: '위험', zh: '高风险' },
+
     // Educational tooltips (delayed hover popups)
     'tip.ph': {
       en: 'pH measures acidity. Fresh cabbage starts ~5.8. As bacteria produce lactic acid, pH drops. Best flavor is around pH 4.2-4.6 — tangy but not too sour.',
@@ -314,6 +321,11 @@ window.KimchiSim.i18n = (function () {
       en: 'Real kimchi-making uses stages:\n\n1. Room temp (20-25°C): Kick-start bacteria for a few hours\n2. Fridge (4°C): Slow, deep flavor development over days\n\nThis is why Korean grandmas leave kimchi out overnight before refrigerating!',
       ko: '실제 김치는 단계별로 만듭니다:\n\n1. 실온 (20-25°C): 몇 시간 유산균 활성화\n2. 냉장 (4°C): 며칠에 걸쳐 깊은 풍미 발달\n\n할머니들이 김치를 하룻밤 실온에 두었다 냉장하는 이유!',
       zh: '实际做泡菜分阶段：\n\n1. 室温(20-25°C)：几小时激活细菌\n2. 冷藏(4°C)：数天缓慢发展深层风味\n\n这就是韩国奶奶做好泡菜后先放室温一晚再放冰箱的原因！'
+    },
+    'tip.nitrite': {
+      en: 'Nitrite (NO2) forms naturally during early fermentation as bacteria convert vegetable nitrates.\n\nDANGER ZONE: Days 2-5, nitrite peaks!\nNever eat kimchi that\'s only 1-3 days old.\n\nOnce fully fermented (pH < 4.2), LAB break down nitrite to safe levels (<3 mg/kg).\n\nThis is why proper fermentation time matters for safety!',
+      ko: '아질산염(NO2)은 발효 초기에 세균이 야채의 질산염을 전환하면서 자연 발생합니다.\n\n위험 구간: 2-5일, 아질산염 최고치!\n1-3일된 김치는 먹지 마세요.\n\n충분히 발효되면 (pH < 4.2), 유산균이 아질산염을 안전 수준으로 분해합니다 (<3 mg/kg).\n\n적절한 발효 시간이 안전에 중요한 이유입니다!',
+      zh: '亚硝酸盐(NO2)在发酵初期自然产生，细菌将蔬菜中的硝酸盐转化而来。\n\n危险期：第2-5天，亚硝酸盐达到峰值！\n千万不要吃只腌了1-3天的泡菜！\n\n充分发酵后(pH<4.2)，乳酸菌会将亚硝酸盐分解到安全水平(<3mg/kg)。\n\n这就是为什么充分发酵对食品安全至关重要！'
     },
     'tip.phase': {
       en: 'Fermentation has 3 phases:\n\n Blue = Initial: L. sakei grows first, mild taste\n Green = Optimal: Leuconostoc makes bubbles and great flavor\n Yellow = Over-ripened: L. plantarum takes over, very sour\n\nThe marker shows where your kimchi is now!',
