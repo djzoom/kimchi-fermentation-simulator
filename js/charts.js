@@ -59,7 +59,7 @@ window.KimchiSim.charts = (function () {
         scales: {
           x: { type: 'linear', min: 0, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 }, maxTicksLimit: 12,
-              callback: function(v) { return v.toFixed(0); } },
+              callback: function(v) { if (v !== Math.floor(v)) return ''; return v.toFixed(0); } },
             title: { display: true, text: t('chart.xaxis'), color: c.text, font: { size: 12 } } },
           y1: { position: 'left', min: 3.5, max: 6.5, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 } },
@@ -96,7 +96,7 @@ window.KimchiSim.charts = (function () {
         scales: {
           x: { type: 'linear', min: 0, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 }, maxTicksLimit: 12,
-              callback: function(v) { return v.toFixed(0); } },
+              callback: function(v) { if (v !== Math.floor(v)) return ''; return v.toFixed(0); } },
             title: { display: true, text: t('chart.xaxis'), color: c.text, font: { size: 11 } } },
           y: { stacked: true, min: 0, max: 100, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 } },
@@ -146,7 +146,7 @@ window.KimchiSim.charts = (function () {
         scales: {
           x: { type: 'linear', min: 0, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 }, maxTicksLimit: 12,
-              callback: function(v) { return v.toFixed(0); } },
+              callback: function(v) { if (v !== Math.floor(v)) return ''; return v.toFixed(0); } },
             title: { display: true, text: t('chart.xaxis'), color: c.text, font: { size: 11 } } },
           y: { min: 0, max: 100, grid: { color: gridColor },
             ticks: { color: c.muted, font: { size: 11 } },
