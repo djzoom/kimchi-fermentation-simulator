@@ -763,7 +763,96 @@ window.KimchiSim.i18n = (function () {
     'unit.days': { en: 'days', ko: '일', zh: '天' },
     'unit.day': { en: 'day', ko: '일', zh: '天' },
     'unit.hours': { en: 'hours', ko: '시간', zh: '小时' },
-    'unit.h': { en: 'h', ko: '시간', zh: '时' }
+    'unit.h': { en: 'h', ko: '시간', zh: '时' },
+
+    // Navigator (L1)
+    'nav.days': { en: 'days', ko: '일', zh: '天' },
+    'nav.best': { en: 'Best at', ko: '최적 시점', zh: '最佳时间' },
+    'nav.safety': { en: 'Safety', ko: '안전', zh: '安全' },
+    'nav.expert': { en: 'Expert', ko: '전문가', zh: '专家' },
+    'nav.why': { en: 'Why this result?', ko: '왜 이런 결과일까?', zh: '为什么是这个结果？' },
+    'nav.calculating': { en: 'Calculating\u2026', ko: '계산 중\u2026', zh: '计算中\u2026' },
+
+    // Judgment words (dashboard status)
+    'judge.excellent': { en: 'Excellent', ko: '매우 좋음', zh: '非常好' },
+    'judge.good': { en: 'Good flavor', ko: '좋은 풍미', zh: '风味良好' },
+    'judge.improving': { en: 'Improving', ko: '발전 중', zh: '逐渐变好' },
+    'judge.developing': { en: 'Developing', ko: '발효 진행 중', zh: '发酵进行中' },
+    'judge.overSour': { en: 'Over-sour', ko: '과숙', zh: '过酸' },
+    'judge.safe': { en: 'Safe', ko: '안전', zh: '安全' },
+    'judge.caution': { en: 'Caution', ko: '주의', zh: '注意' },
+    'judge.danger': { en: 'High risk', ko: '위험', zh: '高风险' },
+
+    // Status sentences (L1 panel)
+    'judge.flavor.excellent': {
+      en: 'Peak flavor \u2014 best time to eat',
+      ko: '최적 풍미 \u2014 먹기 가장 좋은 시점',
+      zh: '风味巅峰 \u2014 最佳食用时机'
+    },
+    'judge.flavor.good': {
+      en: 'Good flavor, approaching peak',
+      ko: '좋은 풍미, 최적기에 가까움',
+      zh: '风味不错，即将到达顶峰'
+    },
+    'judge.flavor.rising': {
+      en: 'Flavor is rising \u2014 peak coming soon',
+      ko: '풍미가 상승 중 \u2014 곧 최적기',
+      zh: '风味正在上升 \u2014 顶峰即将到来'
+    },
+    'judge.flavor.developing': {
+      en: 'Flavor still developing, be patient',
+      ko: '풍미가 아직 발달 중, 기다려 주세요',
+      zh: '风味还在发展中，请耐心等待'
+    },
+    'judge.acid.mild': {
+      en: 'Acidity: very mild \u2014 not sour yet',
+      ko: '산도: 매우 순함 \u2014 아직 시지 않음',
+      zh: '酸度：很温和 \u2014 还没变酸'
+    },
+    'judge.acid.balanced': {
+      en: 'Acidity: balanced \u2014 perfect tang',
+      ko: '산도: 균형 잡힘 \u2014 완벽한 산미',
+      zh: '酸度：恰到好处 \u2014 完美的酸爽'
+    },
+    'judge.acid.sour': {
+      en: 'Acidity: getting sour \u2014 good for cooking',
+      ko: '산도: 시어지는 중 \u2014 요리용으로 좋음',
+      zh: '酸度：偏酸 \u2014 适合做菜'
+    },
+    'judge.acid.verySour': {
+      en: 'Acidity: very sour \u2014 best for stews & fried rice',
+      ko: '산도: 매우 시큼 \u2014 찌개 & 볶음밥에 최적',
+      zh: '酸度：很酸 \u2014 适合做汤和炒饭'
+    },
+    'judge.safety.clear': {
+      en: 'Nitrite has cleared \u2014 safe to eat',
+      ko: '아질산염 안전 수준 \u2014 먹어도 됩니다',
+      zh: '亚硝酸盐已清除 \u2014 可以安全食用'
+    },
+    'judge.safety.caution': {
+      en: 'Nitrite still elevated \u2014 wait a bit longer',
+      ko: '아질산염이 아직 높음 \u2014 조금 더 기다리세요',
+      zh: '亚硝酸盐仍偏高 \u2014 再等等'
+    },
+    'judge.safety.risk': {
+      en: 'Nitrite high \u2014 do not eat yet',
+      ko: '아질산염 높음 \u2014 아직 먹지 마세요',
+      zh: '亚硝酸盐偏高 \u2014 暂勿食用'
+    },
+
+    // Explain panel (L2)
+    'explain.status': { en: 'Fermentation Status', ko: '발효 상태', zh: '发酵状态' },
+    'explain.dominant': { en: 'dominant', ko: '우세', zh: '占优' },
+    'explain.acid.high': { en: 'pH still high (mild)', ko: 'pH가 아직 높음 (순함)', zh: 'pH仍较高（温和）' },
+    'explain.acid.high.effect': { en: 'Not sour yet, fermentation just starting', ko: '아직 시지 않음, 발효 시작 단계', zh: '还没变酸，发酵刚刚开始' },
+    'explain.acid.balanced': { en: 'pH in sweet spot', ko: 'pH가 적정 범위', zh: 'pH在最佳区间' },
+    'explain.acid.balanced.effect': { en: 'Perfect acidity for eating', ko: '먹기 좋은 완벽한 산도', zh: '酸度恰好适合食用' },
+    'explain.acid.low': { en: 'pH very low (sour)', ko: 'pH가 매우 낮음 (시큼)', zh: 'pH很低（偏酸）' },
+    'explain.acid.low.effect': { en: 'Too sour for most \u2014 use in cooking', ko: '대부분에게 너무 시큼 \u2014 요리에 사용', zh: '对多数人来说太酸 \u2014 适合做菜' },
+    'explain.safety.clear': { en: 'Nitrite below safe line', ko: '아질산염 안전선 이하', zh: '亚硝酸盐低于安全线' },
+    'explain.safety.clear.effect': { en: 'No safety concern', ko: '안전 우려 없음', zh: '没有安全隐患' },
+    'explain.safety.risk': { en: 'Nitrite still above threshold', ko: '아질산염이 기준치 이상', zh: '亚硝酸盐仍超标' },
+    'explain.safety.risk.effect': { en: 'Wait for LAB to clear it', ko: '유산균이 제거할 때까지 기다리세요', zh: '等乳酸菌将其清除' }
   };
 
   var langOrder = ['en', 'ko', 'zh'];
