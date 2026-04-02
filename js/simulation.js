@@ -41,10 +41,13 @@ window.KimchiSim.simulation = (function () {
       });
     }
 
-    // Total time in days
+    // Total stage time in days (used for stage boundaries, not X-axis limit)
     var totalHours = 0;
     for (var i = 0; i < stageList.length; i++) totalHours += stageList[i].duration;
-    var tMaxDays = Math.max(2, Math.min(90, totalHours / 24));
+    var totalStageDays = totalHours / 24;
+
+    // Simulate up to 90 days max — we'll trim after finding the over-sour point
+    var tMaxDays = Math.min(90, Math.max(totalStageDays, 60));
 
     // Fine resolution: 0.02 days = ~29 minutes
     var dt = 0.02;
@@ -133,6 +136,25 @@ window.KimchiSim.simulation = (function () {
 
     if (phase1End < 0) phase1End = tMaxDays;
     if (phase2End < 0) phase2End = tMaxDays;
+
+    // X-axis = 7 days after over-sour point (pH < 4.0), experience-based
+    var displayMax = Math.ceil(phase2End + 7);
+    displayMax = Math.max(displayMax, 3); // at least 3 days
+    // Trim arrays to displayMax
+    var trimIdx = timePoints.length;
+    for (var i = 0; i < timePoints.length; i++) {
+      if (timePoints[i] > displayMax) { trimIdx = i; break; }
+    }
+    timePoints = timePoints.slice(0, trimIdx);
+    labCounts = labCounts.slice(0, trimIdx);
+    phValues = phValues.slice(0, trimIdx);
+    acidValues = acidValues.slice(0, trimIdx);
+    sakei = sakei.slice(0, trimIdx);
+    mesenteroides = mesenteroides.slice(0, trimIdx);
+    plantarum = plantarum.slice(0, trimIdx);
+    flavorScores = flavorScores.slice(0, trimIdx);
+    tempProfile = tempProfile.slice(0, trimIdx);
+    tMaxDays = displayMax;
 
     // Values at peak flavor time
     var optIdx = 0;

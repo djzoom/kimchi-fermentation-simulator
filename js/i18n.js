@@ -249,6 +249,10 @@ window.KimchiSim.i18n = (function () {
     'calc.scallion': { en: 'Green Onion', ko: '쪽파', zh: '小葱' },
     'calc.note': { en: 'Fish:Shrimp ratio = 3:2 for optimal umami', ko: '액젓:새우젓 = 3:2 최적 감칠맛', zh: '鱼露:虾酱 = 3:2 为最佳鲜味比例' },
 
+    // Mixer labels
+    'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐' },
+    'mixer.starter': { en: 'Starter', ko: '종국', zh: '引子' },
+
     // Units
     'unit.days': { en: 'days', ko: '일', zh: '天' },
     'unit.day': { en: 'day', ko: '일', zh: '天' },
