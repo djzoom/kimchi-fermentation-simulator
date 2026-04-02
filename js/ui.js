@@ -9,11 +9,50 @@ window.KimchiSim.ui = (function () {
 
   var debounceTimer = null;
   var onChangeCallback = null;
-  var stages = [
-    { temperature: 25, duration: 6 },   // 25°C for 6 hours
-    { temperature: 4, duration: 504 }    // 4°C for 3 weeks
+  var STORAGE_KEY = 'kimchi-sim-state';
+
+  // Load saved state or use defaults
+  var savedState = loadState();
+  var stages = savedState.stages || [
+    { temperature: 25, duration: 6 },
+    { temperature: 4, duration: 504 }
   ];
   var useMultiStage = true;
+
+  function loadState() {
+    try {
+      var s = localStorage.getItem(STORAGE_KEY);
+      return s ? JSON.parse(s) : {};
+    } catch (e) { return {}; }
+  }
+
+  function saveState() {
+    try {
+      var state = {
+        salt: parseFloat(document.getElementById('slider-salt').value),
+        starter: parseFloat(document.getElementById('slider-starter').value),
+        stages: stages,
+        calcWeight: parseFloat(document.getElementById('calc-weight')?.value || 2.5)
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function restoreSavedInputs() {
+    var s = loadState();
+    if (s.salt != null) {
+      document.getElementById('slider-salt').value = s.salt;
+      updateSliderDisplay('salt');
+    }
+    if (s.starter != null) {
+      document.getElementById('slider-starter').value = s.starter;
+      updateSliderDisplay('starter');
+    }
+    if (s.calcWeight != null) {
+      var w = document.getElementById('calc-weight');
+      if (w) w.value = s.calcWeight;
+    }
+  }
 
   function getParams() {
     return {
@@ -161,6 +200,7 @@ window.KimchiSim.ui = (function () {
         var stg = useMultiStage ? stages : null;
         onChangeCallback(params, stg);
       }
+      saveState();
     }, 30);
   }
 
@@ -229,6 +269,8 @@ window.KimchiSim.ui = (function () {
     updateStats: updateStats,
     initControlsToggle: initControlsToggle,
     renderStages: renderStages,
+    restoreSavedInputs: restoreSavedInputs,
+    saveState: saveState,
     stages: stages
   };
 })();
