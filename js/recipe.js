@@ -60,8 +60,8 @@ window.KimchiSim.recipe = (function () {
     '<li><strong>Pack & Ferment:</strong> Pack tightly into fermentation vessel, minimizing air gaps. Ferment at 2-5°C for 2-3 weeks (slow) or 15-20°C for 2-3 days (fast).</li>' +
     '</ol>' +
 
-    '<h4>Starter Culture (引子/종국) — Old Kimchi Brine</h4>' +
-    '<p>Traditional method: add 5-10% (by weight) of brine from a previous batch of well-fermented kimchi (묵은지국물). This acts as a natural starter culture, similar to sourdough starter or yogurt mother.</p>' +
+    '<h4>Starter Culture (종균/母水) — Old Kimchi Brine</h4>' +
+    '<p>Traditional method (backslopping): add 5-10% (by weight) of brine from a previous batch of well-fermented kimchi (묵은지국물). This acts as a natural starter culture, similar to sourdough starter or yogurt mother.</p>' +
     '<table class="recipe-table">' +
     '<tr><th>Effect</th><th>Mechanism</th></tr>' +
     '<tr><td>Faster fermentation</td><td>Pre-adapted LAB bypass lag phase (10⁶-10⁸ CFU/mL)</td></tr>' +
@@ -130,7 +130,7 @@ window.KimchiSim.recipe = (function () {
     '<li><strong>담기 및 발효:</strong> 발효 용기에 꼭꼭 눌러 담아 공기 접촉을 최소화한다. 2-5°C에서 2-3주(저온) 또는 15-20°C에서 2-3일(고온) 발효.</li>' +
     '</ol>' +
 
-    '<h4>종국 (引子) — 묵은지국물</h4>' +
+    '<h4>종균 (母水) — 묵은지국물</h4>' +
     '<p>전통 방법: 이전에 잘 발효된 김치의 국물(묵은지국물)을 배추 무게의 5-10% 첨가한다. 이는 요거트 종균이나 사워도우 스타터와 같은 천연 종균 역할을 한다.</p>' +
     '<table class="recipe-table">' +
     '<tr><th>효과</th><th>메커니즘</th></tr>' +
@@ -230,8 +230,8 @@ window.KimchiSim.recipe = (function () {
     '<li><strong>装坛发酵：</strong>紧密装入发酵容器，尽量排除空气。2-5°C低温发酵2-3周，或15-20°C常温发酵2-3天。</li>' +
     '</ol>' +
 
-    '<h4>引子（종국）— 老坛泡菜汤</h4>' +
-    '<p>传统方法：取前一缸充分发酵的泡菜汤（묵은지국물），按白菜重量的5-10%添加。这相当于天然种曲，类似酸面团的"老面"或酸奶的"引子"。</p>' +
+    '<h4>母水（종균）— 老泡菜发酵液</h4>' +
+    '<p>传统方法（回浆法/backslopping）：取前一坛充分发酵的泡菜液（묵은지국물），按白菜重量的5-10%添加。这相当于天然发酵剂，类似酸面团的"老面"或酸奶的"引种"。</p>' +
     '<table class="recipe-table">' +
     '<tr><th>效果</th><th>机制</th></tr>' +
     '<tr><td>加速发酵</td><td>预适应的乳酸菌跳过迟滞期（含10⁶-10⁸ CFU/mL活菌）</td></tr>' +
@@ -239,7 +239,7 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>风味更稳定</td><td>引入经验证的Leuconostoc优势菌群</td></tr>' +
     '<tr><td>降低腐败风险</td><td>对有害微生物的竞争性排斥</td></tr>' +
     '</table>' +
-    '<p><strong>推荐用量：</strong>家庭制作5-10%；工业生产可使用纯乳酸菌种曲标准化。</p>' +
+    '<p><strong>推荐用量：</strong>家庭制作5-10%；工业生产可使用纯乳酸菌种（종균）标准化。</p>' +
 
     '<h4>品质指标</h4>' +
     '<table class="recipe-table">' +

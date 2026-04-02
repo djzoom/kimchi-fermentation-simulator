@@ -10,6 +10,19 @@ window.KimchiSim.ui = (function () {
   var debounceTimer = null;
   var onChangeCallback = null;
   var STORAGE_KEY = 'kimchi-sim-state';
+  var PRESETS = {
+    classic: [
+      { temperature: 22, duration: 10 },
+      { temperature: 4, duration: 216 }
+    ],
+    weekend: [
+      { temperature: 25, duration: 8 },
+      { temperature: 8, duration: 72 }
+    ],
+    slow: [
+      { temperature: 6, duration: 336 }
+    ]
+  };
 
   // Load saved state or use defaults
   var savedState = loadState();
@@ -54,11 +67,17 @@ window.KimchiSim.ui = (function () {
     }
   }
 
+  function readNumberValue(el, fallback) {
+    if (!el) return fallback;
+    var v = parseFloat(el.value);
+    return isNaN(v) ? fallback : v;
+  }
+
   function getParams() {
     return {
-      temperature: parseFloat(document.getElementById('slider-temp').value),
-      salt: parseFloat(document.getElementById('slider-salt').value),
-      starter: parseFloat(document.getElementById('slider-starter').value)
+      temperature: readNumberValue(document.getElementById('slider-temp'), 10),
+      salt: readNumberValue(document.getElementById('slider-salt'), 2.5),
+      starter: readNumberValue(document.getElementById('slider-starter'), 0)
     };
   }
 
@@ -72,8 +91,8 @@ window.KimchiSim.ui = (function () {
       var durInput = row.querySelector('.stage-dur');
       if (tempInput && durInput) {
         result.push({
-          temperature: parseFloat(tempInput.value) || 10,
-          duration: parseFloat(durInput.value) || 24
+          temperature: readNumberValue(tempInput, 10),
+          duration: readNumberValue(durInput, 24)
         });
       }
     });
@@ -91,16 +110,19 @@ window.KimchiSim.ui = (function () {
     if (!container) return;
     var t = window.KimchiSim.i18n.t;
 
+    var freezePoint = window.KimchiSim.models ? window.KimchiSim.models.freezingPoint(2.5) : -1.5;
     var html = '';
     for (var i = 0; i < stages.length; i++) {
-      html += '<div class="stage-row">' +
+      var frozen = stages[i].temperature < freezePoint;
+      html += '<div class="stage-row' + (frozen ? ' stage-frozen' : '') + '">' +
         '<div class="stage-num">' + (i + 1) + '</div>' +
         '<input type="number" class="stage-input stage-temp" value="' + stages[i].temperature + '" min="-5" max="40" step="0.5">' +
         '<span class="stage-unit">°C</span>' +
+        (frozen ? '<span class="stage-freeze-warn" title="' + t('warn.frozen') + '">\u2744\uFE0F</span>' : '') +
         '<input type="number" class="stage-input stage-dur" value="' + stages[i].duration + '" min="1" max="2400" step="1">' +
         '<span class="stage-unit" data-i18n="unit.h">' + t('unit.h') + '</span>' +
         (stages.length > 1 ?
-          '<button class="btn-remove-stage" data-idx="' + i + '" title="Remove">&times;</button>' :
+          '<button class="btn-remove-stage" data-idx="' + i + '" title="' + t('controls.removeStage') + '">&times;</button>' :
           '<div style="width:28px"></div>') +
         '</div>';
     }
@@ -121,6 +143,8 @@ window.KimchiSim.ui = (function () {
         debouncedChange();
       });
     });
+
+    syncPresetButtons();
   }
 
   function readStagesFromDOM() {
@@ -131,10 +155,48 @@ window.KimchiSim.ui = (function () {
       var durInput = row.querySelector('.stage-dur');
       if (tempInput && durInput) {
         stages.push({
-          temperature: parseFloat(tempInput.value) || 10,
-          duration: parseFloat(durInput.value) || 24
+          temperature: readNumberValue(tempInput, 10),
+          duration: readNumberValue(durInput, 24)
         });
       }
+    });
+  }
+
+  function cloneStages(list) {
+    return list.map(function(stage) {
+      return { temperature: stage.temperature, duration: stage.duration };
+    });
+  }
+
+  function sameStages(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (Math.abs(a[i].temperature - b[i].temperature) > 0.01) return false;
+      if (Math.abs(a[i].duration - b[i].duration) > 0.01) return false;
+    }
+    return true;
+  }
+
+  function syncPresetButtons() {
+    var buttons = document.querySelectorAll('.preset-btn');
+    buttons.forEach(function(btn) {
+      var preset = btn.getAttribute('data-preset');
+      var match = PRESETS[preset] && sameStages(stages, PRESETS[preset]);
+      btn.classList.toggle('active', !!match);
+    });
+  }
+
+  function initPresets() {
+    var buttons = document.querySelectorAll('.preset-btn');
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var preset = btn.getAttribute('data-preset');
+        if (!PRESETS[preset]) return;
+        stages = cloneStages(PRESETS[preset]);
+        useMultiStage = true;
+        renderStages();
+        debouncedChange();
+      });
     });
   }
 
@@ -180,6 +242,7 @@ window.KimchiSim.ui = (function () {
       });
     }
 
+    initPresets();
     renderStages();
   }
 
@@ -221,33 +284,45 @@ window.KimchiSim.ui = (function () {
     else document.getElementById('phase-seg-3').style.opacity = '1';
   }
 
+  function trendArrow(rate, threshold) {
+    threshold = threshold || 0.5;
+    if (rate > threshold) return ' \u2197'; // ↗
+    if (rate < -threshold) return ' \u2198'; // ↘
+    return ' \u2192'; // →
+  }
+
   function updateStats(data) {
     var t = window.KimchiSim.i18n.t;
+    var tr = data.atOptimal.trends || {};
+    var dominantKey = data.atOptimal.dominantKey || 'mesenteroides';
+    var dominantLabel = t('microbe.' + dominantKey + '.name');
+    var nitriteMeta = data.nitriteMeta || {};
+    var nitriteThreshold = nitriteMeta.safeThreshold || 3;
+    var cautionThreshold = nitriteMeta.cautionThreshold || 8;
 
     setVal('stat-optimal-time', formatTimeDisplay(data.optimalTime));
-    setVal('stat-ph', data.atOptimal.pH.toFixed(2));
-    setVal('stat-acid', data.atOptimal.acid.toFixed(2) + '%');
-    setVal('stat-bacteria', data.atOptimal.dominant);
-    setVal('stat-flavor', Math.round(data.atOptimal.flavor));
+    setVal('stat-ph', data.atOptimal.pH.toFixed(2) + trendArrow(tr.pH, 0.05));
+    setVal('stat-acid', data.atOptimal.acid.toFixed(2) + '%' + trendArrow(tr.acid, 0.02));
+    setVal('stat-bacteria', dominantLabel);
+    setVal('stat-flavor', Math.round(data.atOptimal.flavor) + trendArrow(tr.flavor, 0.5));
 
     // Realtime info in sidebar
     setVal('info-opt-time', formatTimeDisplay(data.optimalTime));
-    setVal('info-ph', data.atOptimal.pH.toFixed(2));
-    setVal('info-acid', data.atOptimal.acid.toFixed(2) + '%');
-    setVal('info-flavor', Math.round(data.atOptimal.flavor) + '/100');
+    setVal('info-ph', data.atOptimal.pH.toFixed(2) + trendArrow(tr.pH, 0.05));
+    setVal('info-acid', data.atOptimal.acid.toFixed(2) + '%' + trendArrow(tr.acid, 0.02));
+    setVal('info-flavor', Math.round(data.atOptimal.flavor) + '/100' + trendArrow(tr.flavor, 0.5));
 
     // Nitrite warning
     var nitrite = data.atOptimal.nitrite || 0;
     var nitriteBar = document.getElementById('nitrite-bar');
-    var nitriteSafe = 3; // mg/kg WHO threshold
     if (nitriteBar) {
-      setVal('nitrite-level', nitrite.toFixed(1) + ' mg/kg');
+      setVal('nitrite-level', nitrite.toFixed(1) + ' mg/kg' + trendArrow(tr.nitrite, 0.3));
       nitriteBar.classList.remove('safe', 'warning', 'danger');
       var statusEl = document.getElementById('nitrite-status');
-      if (nitrite < nitriteSafe) {
+      if (nitrite < nitriteThreshold) {
         nitriteBar.classList.add('safe');
         if (statusEl) statusEl.textContent = t('nitrite.safe');
-      } else if (nitrite < 8) {
+      } else if (nitrite < cautionThreshold) {
         nitriteBar.classList.add('warning');
         if (statusEl) statusEl.textContent = t('nitrite.caution');
       } else {
@@ -255,6 +330,77 @@ window.KimchiSim.ui = (function () {
         if (statusEl) statusEl.textContent = t('nitrite.danger');
       }
     }
+
+    updateNitriteModel(data);
+  }
+
+  function formatCompactTime(days) {
+    if (days < 1) return Math.round(days * 24) + 'h';
+    return days < 10 ? days.toFixed(1) + 'd' : Math.round(days) + 'd';
+  }
+
+  function formatNitriteWindow(meta) {
+    var t = window.KimchiSim.i18n.t;
+    if (!meta || !meta.riskWindow || meta.riskWindow.start == null || meta.riskWindow.end == null) {
+      return t('nitrite.window.none');
+    }
+    return formatCompactTime(meta.riskWindow.start) + ' - ' + formatCompactTime(meta.riskWindow.end);
+  }
+
+  function updateNitriteModel(data) {
+    var t = window.KimchiSim.i18n.t;
+    var meta = data.nitriteMeta || {};
+    var peak = meta.peak || {};
+    var sodium = meta.sodium || {};
+    var atOptimal = meta.atOptimal || {};
+
+    if (meta.initialNitrate != null) {
+      setVal('nitrite-nitrate', meta.initialNitrate.toFixed(1) + ' -> ' + (atOptimal.nitrate || 0).toFixed(1) + ' mg/kg');
+    }
+    if (sodium.mgKg != null && sodium.molar != null) {
+      setVal('nitrite-sodium', (sodium.mgKg / 1000).toFixed(1) + ' g/kg · ' + Math.round(sodium.molar * 1000) + ' mmol/L');
+    }
+    if (peak.value != null && peak.time != null) {
+      setVal('nitrite-peak', peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time));
+    }
+    setVal('nitrite-window', formatNitriteWindow(meta));
+    if (atOptimal.formationRate != null && atOptimal.clearanceRate != null) {
+      setVal(
+        'nitrite-flux',
+        t('nitrite.form') + ' ' + atOptimal.formationRate.toFixed(2) + ' mg/kg/d · ' +
+        t('nitrite.clear') + ' ' + atOptimal.clearanceRate.toFixed(2) + ' mg/kg/d'
+      );
+    }
+  }
+
+  function updateDominanceStrip(data) {
+    var p1 = Math.max(0, Math.min(data.phases.phase1End, data.tMax));
+    var p2 = Math.max(p1, Math.min(data.phases.phase2End, data.tMax));
+    var values = [p1, p2 - p1, data.tMax - p2];
+    ['dominance-seg-1', 'dominance-seg-2', 'dominance-seg-3'].forEach(function(id, idx) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.style.flex = Math.max(values[idx], 0.15) + ' 1 0%';
+    });
+    setVal('dominance-time-1', '0 - ' + formatCompactTime(p1));
+    setVal('dominance-time-2', formatCompactTime(p1) + ' - ' + formatCompactTime(p2));
+    setVal('dominance-time-3', formatCompactTime(p2) + ' - ' + formatCompactTime(data.tMax));
+  }
+
+  function updateMicrobeCards(data) {
+    var comp = data.atOptimal.composition || {};
+    var keys = ['sakei', 'mesenteroides', 'plantarum'];
+    keys.forEach(function(key) {
+      var val = comp[key];
+      var card = document.getElementById('microbe-card-' + key);
+      if (card) card.classList.toggle('active', key === data.atOptimal.dominantKey);
+      setVal('microbe-val-' + key, val == null ? '--%' : Math.round(val * 100) + '%');
+    });
+  }
+
+  function updateEducation(data) {
+    updateDominanceStrip(data);
+    updateMicrobeCards(data);
   }
 
   function formatTimeDisplay(days) {
@@ -287,6 +433,7 @@ window.KimchiSim.ui = (function () {
     initSliders: initSliders,
     updatePhaseIndicator: updatePhaseIndicator,
     updateStats: updateStats,
+    updateEducation: updateEducation,
     initControlsToggle: initControlsToggle,
     renderStages: renderStages,
     restoreSavedInputs: restoreSavedInputs,

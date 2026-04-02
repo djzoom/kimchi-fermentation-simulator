@@ -18,10 +18,65 @@ window.KimchiSim.i18n = (function () {
       ko: '수정 Gompertz 및 Arrhenius 동역학 모델 기반 과학적 시뮬레이션',
       zh: '基于修正 Gompertz 与 Arrhenius 动力学模型的交互式科学模拟'
     },
+    'app.subtitleShort': {
+      en: 'A kitchen-friendly guide to flavor, safety, and fermentation science.',
+      ko: '풍미, 안전, 발효 과학을 쉽게 읽는 주방형 가이드.',
+      zh: '一份面向厨房场景的风味、安全与发酵科学指南。'
+    },
     'lang.toggle': {
       en: '中文',
       ko: 'English',
       zh: '한국어'
+    },
+    'info.more': {
+      en: 'More info',
+      ko: '자세히 보기',
+      zh: '更多说明'
+    },
+    'hero.kicker': {
+      en: 'Kimchi, explained for real kitchens',
+      ko: '실제 부엌을 위한 김치 설명서',
+      zh: '写给真实厨房场景的 Kimchi 说明书'
+    },
+    'hero.title': {
+      en: 'See how salt, time, and temperature turn cabbage into lively, balanced kimchi.',
+      ko: '소금, 시간, 온도가 배추를 생기 있고 균형 잡힌 김치로 바꾸는 과정을 보세요.',
+      zh: '看看盐、时间和温度如何把白菜变成鲜活而平衡的 Kimchi。'
+    },
+    'hero.body': {
+      en: 'Move the controls like a recipe, watch the chart respond instantly, and use the notes below to learn what makes kimchi crisp, tangy, safe, and deeply aromatic.',
+      ko: '레시피를 조정하듯 컨트롤을 움직이고, 차트가 즉시 반응하는 모습을 보세요. 아래 설명을 통해 김치를 아삭하고, 새콤하고, 안전하고, 향기롭게 만드는 요소를 이해할 수 있습니다.',
+      zh: '像调整配方一样移动控件，观察图表即时变化，并通过下方说明理解什么让 Kimchi 爽脆、酸香、安全且富有层次。'
+    },
+    'intro.fact1.title': {
+      en: 'Start with the red score line',
+      ko: '먼저 빨간 점수 곡선을 보세요',
+      zh: '先看红色评分曲线'
+    },
+    'intro.fact1.body': {
+      en: 'It summarizes taste, aroma, and texture so first-time visitors know where to look.',
+      ko: '맛, 향, 식감을 하나로 요약해 처음 보는 사람도 어디를 봐야 할지 바로 알 수 있습니다.',
+      zh: '它把味道、香气和口感合成一个结果，让第一次看的用户也知道先看哪里。'
+    },
+    'intro.fact2.title': {
+      en: 'Use the colored bands as a story',
+      ko: '색 띠를 발효 이야기로 읽어보세요',
+      zh: '把彩色阶段带当作发酵故事来读'
+    },
+    'intro.fact2.body': {
+      en: 'Each phase shows which friendly bacteria are leading the fermentation and what that means for flavor.',
+      ko: '각 단계는 어떤 유익균이 발효를 주도하는지, 그리고 그것이 풍미에 어떤 의미인지 보여줍니다.',
+      zh: '每个阶段都会告诉你是哪类有益菌在主导发酵，以及这会怎样改变风味。'
+    },
+    'intro.fact3.title': {
+      en: 'Watch the nitrite warning carefully',
+      ko: '아질산염 경고도 꼭 함께 보세요',
+      zh: '别忽略亚硝酸盐提示'
+    },
+    'intro.fact3.body': {
+      en: 'Kimchi is not only about taste. This model also estimates how nitrate reserve, brine strength, and acidification shape the safer eating window.',
+      ko: '김치는 맛만의 문제가 아닙니다. 이 모델은 질산염 저장량, 염도, 산성화 속도가 더 안전한 섭취 구간을 어떻게 만드는지도 함께 추정합니다.',
+      zh: 'Kimchi 不只关乎味道。这个模型也会估算硝酸根储量、盐水强度和酸化速度如何共同决定更安全的食用窗口。'
     },
 
     // Stages
@@ -57,6 +112,46 @@ window.KimchiSim.i18n = (function () {
       ko: '발효 매개변수',
       zh: '发酵参数'
     },
+    'controls.subtitle': {
+      en: 'Keep the household presets if you are learning, or edit each stage as if you were planning a real batch.',
+      ko: '처음이라면 가정용 프리셋을 그대로 사용하고, 익숙하다면 실제 배치를 설계하듯 단계를 직접 수정해 보세요.',
+      zh: '如果你正在入门，可以先用家用预设；熟悉以后，也可以像规划真实一坛泡菜那样逐段修改。'
+    },
+    'controls.stageHelp': {
+      en: 'Warm stages wake the microbes up. Cold stages stretch flavor development and keep texture crisp.',
+      ko: '따뜻한 단계는 미생물을 깨우고, 차가운 단계는 풍미 발달을 길게 끌어가며 식감을 더 아삭하게 유지합니다.',
+      zh: '温暖阶段负责唤醒菌群，低温阶段负责拉长风味发展并帮助保持爽脆口感。'
+    },
+    'controls.addStage': {
+      en: 'Add stage',
+      ko: '단계 추가',
+      zh: '添加阶段'
+    },
+    'controls.removeStage': {
+      en: 'Remove stage',
+      ko: '단계 삭제',
+      zh: '删除阶段'
+    },
+    'presets.label': {
+      en: 'Quick presets',
+      ko: '빠른 프리셋',
+      zh: '快速预设'
+    },
+    'preset.classic': {
+      en: 'Classic Home',
+      ko: '가정 기본',
+      zh: '家常经典'
+    },
+    'preset.weekend': {
+      en: 'Weekend Fast',
+      ko: '주말 빠르게',
+      zh: '周末快成'
+    },
+    'preset.slow': {
+      en: 'Cold Slow',
+      ko: '저온 천천히',
+      zh: '冷藏慢熟'
+    },
 
     // Sliders
     'slider.temp': {
@@ -70,12 +165,12 @@ window.KimchiSim.i18n = (function () {
       zh: '盐浓度'
     },
     'slider.starter': {
-      en: 'Starter Culture (종국)',
-      ko: '종국 (묵은지국물)',
-      zh: '引子（老坛泡菜汤）'
+      en: 'Starter Culture (종균)',
+      ko: '종균 (묵은지국물)',
+      zh: '母水（老泡菜发酵液）'
     },
     'slider.starter.hint': {
-      en: 'Old kimchi brine — natural LAB inoculant',
+      en: 'Old kimchi brine — natural LAB inoculant (backslopping)',
       ko: '묵은지국물 — 천연 유산균 종균',
       zh: '旧泡菜发酵液 — 天然乳酸菌种子液'
     },
@@ -110,6 +205,16 @@ window.KimchiSim.i18n = (function () {
       en: 'L. plantarum dominant',
       ko: 'L. plantarum 우세',
       zh: 'L. plantarum 主导'
+    },
+    'phase.title': {
+      en: 'Fermentation story at a glance',
+      ko: '한눈에 보는 발효 이야기',
+      zh: '一眼看懂发酵进程'
+    },
+    'phase.body': {
+      en: 'The marker shows where your current settings reach their best flavor moment.',
+      ko: '마커는 현재 설정에서 풍미가 가장 좋아지는 시점을 보여줍니다.',
+      zh: '标记会告诉你当前设置下风味达到最佳的时刻。'
     },
 
     // Stats
@@ -205,6 +310,186 @@ window.KimchiSim.i18n = (function () {
       ko: '최적',
       zh: '最佳'
     },
+    'chart.flavor.subtitle': {
+      en: 'Start simple with the score, then turn on pH, acid, LAB, or microbe lines when you want more detail.',
+      ko: '먼저 점수 곡선으로 전체를 보고, 필요할 때 pH, 산도, 유산균, 균종 곡선을 켜서 더 깊게 읽어보세요.',
+      zh: '先用评分曲线把整体读懂，再按需打开 pH、酸度、乳酸菌或菌群曲线查看细节。'
+    },
+    'chart.toolbar': {
+      en: 'Show on chart',
+      ko: '차트에 표시',
+      zh: '主图显示'
+    },
+    'chart.toggle.score': {
+      en: 'Score',
+      ko: '점수',
+      zh: '评分'
+    },
+    'chart.toggle.nitrite': {
+      en: 'Nitrite',
+      ko: '아질산염',
+      zh: '亚硝酸盐'
+    },
+    'chart.toggle.ph': {
+      en: 'pH',
+      ko: 'pH',
+      zh: 'pH'
+    },
+    'chart.toggle.acid': {
+      en: 'Acid',
+      ko: '산도',
+      zh: '酸度'
+    },
+    'chart.toggle.lab': {
+      en: 'LAB',
+      ko: '유산균',
+      zh: '乳酸菌'
+    },
+    'chart.toggle.microbes': {
+      en: 'Microbes',
+      ko: '균종',
+      zh: '优势菌'
+    },
+    'chart.excellent': {
+      en: 'Excellent',
+      ko: '매우 좋음',
+      zh: '优秀'
+    },
+    'chart.axis.no2': {
+      en: 'Nitrite (mg/kg)',
+      ko: '아질산염 (mg/kg)',
+      zh: '亚硝酸盐 (mg/kg)'
+    },
+    'chart.axis.ph': {
+      en: 'pH / Lactic Acid',
+      ko: 'pH / 젖산',
+      zh: 'pH / 乳酸'
+    },
+    'chart.nitrite.safeLine': {
+      en: 'Safe line 3 mg/kg',
+      ko: '안전선 3 mg/kg',
+      zh: '安全线 3 mg/kg'
+    },
+    'dominance.title': {
+      en: 'Dominant microbes across the whole story',
+      ko: '발효 전 과정의 우세 미생물',
+      zh: '整段发酵过程中的优势菌群'
+    },
+    'dominance.initial.note': {
+      en: 'Builds a clean, fresh start.',
+      ko: '깔끔하고 신선한 출발을 만듭니다.',
+      zh: '让发酵从干净、新鲜的状态起步。'
+    },
+    'dominance.optimal.note': {
+      en: 'Brings sparkle, aroma, and balance.',
+      ko: '탄산감, 향, 균형감을 더합니다.',
+      zh: '带来轻盈气泡感、香气与平衡。'
+    },
+    'dominance.over.note': {
+      en: 'Pushes the batch into deeper sourness.',
+      ko: '배치를 더 깊고 강한 신맛으로 이끕니다.',
+      zh: '把这一坛推向更深、更强的酸味。'
+    },
+    'guide.title': {
+      en: 'How to read this simulator',
+      ko: '이 시뮬레이터 읽는 법',
+      zh: '如何读懂这个模拟器'
+    },
+    'guide.body': {
+      en: 'You do not need a lab background. Read the chart in three simple passes.',
+      ko: '실험실 배경지식이 없어도 됩니다. 세 단계로 차트를 읽어보세요.',
+      zh: '你不需要实验室背景。按三步读图就够了。'
+    },
+    'guide.step1.title': {
+      en: 'Find the best eating window',
+      ko: '가장 맛있는 먹는 시점을 찾기',
+      zh: '先找到最佳食用窗口'
+    },
+    'guide.step1.body': {
+      en: 'Read the red score line and the green dashed marker first. That is your fastest route to “when should I eat this batch?”.',
+      ko: '빨간 점수 곡선과 초록 점선을 먼저 보세요. “이 배치는 언제 먹으면 좋은가?”에 가장 빠르게 답해줍니다.',
+      zh: '先看红色评分曲线和绿色虚线，它们最快告诉你“这一坛什么时候最好吃”。'
+    },
+    'guide.step2.title': {
+      en: 'Check safety before enthusiasm',
+      ko: '맛보다 먼저 안전을 확인하기',
+      zh: '在兴奋之前先看安全'
+    },
+    'guide.step2.body': {
+      en: 'The nitrite line is recalculated from nitrate reserve, sodium strength, temperature stages, and LAB cleanup. Read flavor and safety together before tasting early.',
+      ko: '아질산염 곡선은 질산염 저장량, Na+ 강도, 온도 단계, 유산균 정리 속도를 함께 반영해 다시 계산됩니다. 초기에 맛보기 전에는 풍미와 안전을 같이 읽어야 합니다.',
+      zh: '亚硝酸盐曲线会根据硝酸根储量、Na+ 强度、温度阶段和乳酸菌清除速度重新计算。想早尝时，风味和安全要一起看。'
+    },
+    'guide.step3.title': {
+      en: 'Use the microbe story to understand taste',
+      ko: '균종의 이야기를 통해 맛을 이해하기',
+      zh: '通过菌群变化理解味道'
+    },
+    'guide.step3.body': {
+      en: 'The phase bands and microbe cards explain why kimchi tastes fresh, sparkly, or deep and sour at different points.',
+      ko: '단계 띠와 균종 카드는 김치가 어떤 시점에는 신선하고, 어떤 시점에는 톡 쏘고, 또 어떤 시점에는 깊고 시게 느껴지는 이유를 설명합니다.',
+      zh: '阶段带和菌群卡会解释为什么 Kimchi 在不同时间点会呈现清新、活泼或深沉偏酸的味道。'
+    },
+    'microbe.board.title': {
+      en: 'Who is leading the batch?',
+      ko: '지금 이 배치를 누가 이끌고 있을까?',
+      zh: '这一坛现在是谁在主导？'
+    },
+    'microbe.board.body': {
+      en: 'These are the main friendly bacteria behind kimchi flavor. The highlighted card and percentages update with your parameters in real time.',
+      ko: '이들은 김치 풍미를 만드는 주요 유익균입니다. 강조된 카드와 비율은 현재 파라미터에 따라 실시간으로 바뀝니다.',
+      zh: '这些是塑造 Kimchi 风味的主要有益菌。高亮卡片和占比会随着参数实时变化。'
+    },
+    'microbe.atPeak': {
+      en: 'At peak flavor',
+      ko: '최적 풍미 시점',
+      zh: '最佳风味时'
+    },
+    'microbe.sakei.name': {
+      en: 'L. sakei',
+      ko: 'L. sakei',
+      zh: 'L. sakei'
+    },
+    'microbe.sakei.role': {
+      en: 'Early stabilizer',
+      ko: '초기 안정화 담당',
+      zh: '早期稳定者'
+    },
+    'microbe.sakei.body': {
+      en: 'Helps the batch settle in, keeps the taste fresh, and prepares the way for deeper fermentation.',
+      ko: '배치가 안정적으로 시작되도록 돕고, 맛을 신선하게 유지하며, 다음 단계 발효의 바탕을 만듭니다.',
+      zh: '帮助这一坛顺利进入状态，保持清新口感，并为后续更深的发酵打底。'
+    },
+    'microbe.mesenteroides.name': {
+      en: 'Leuc. mesenteroides',
+      ko: 'Leuc. mesenteroides',
+      zh: 'Leuc. mesenteroides'
+    },
+    'microbe.mesenteroides.role': {
+      en: 'Peak flavor maker',
+      ko: '최적 풍미 메이커',
+      zh: '最佳风味制造者'
+    },
+    'microbe.mesenteroides.body': {
+      en: 'Creates lively aroma, gentle tang, and the fresh sparkle people often love in ripe kimchi.',
+      ko: '생기 있는 향, 부드러운 산미, 잘 익은 김치 특유의 산뜻한 톡 쏘는 느낌을 만듭니다.',
+      zh: '带来活泼香气、柔和酸感，以及很多人喜欢的成熟 Kimchi 清爽气息。'
+    },
+    'microbe.plantarum.name': {
+      en: 'L. plantarum',
+      ko: 'L. plantarum',
+      zh: 'L. plantarum'
+    },
+    'microbe.plantarum.role': {
+      en: 'Deep sour finisher',
+      ko: '깊은 신맛의 마무리 담당',
+      zh: '深酸收尾者'
+    },
+    'microbe.plantarum.body': {
+      en: 'Takes over later, deepens acidity, and moves the batch toward cooking kimchi territory.',
+      ko: '후반에 우세해지며 산미를 깊게 만들고, 배치를 요리용 김치 쪽으로 이끕니다.',
+      zh: '后期逐渐占优，进一步加深酸度，让这一坛更接近适合做菜的老 Kimchi。'
+    },
 
     // Recipe
     'recipe.title': {
@@ -237,6 +522,11 @@ window.KimchiSim.i18n = (function () {
 
     // Calculator
     'calc.title': { en: 'Recipe Calculator', ko: '레시피 계산기', zh: '配方计算器' },
+    'calc.subtitle': {
+      en: 'Enter the cabbage weight and get a practical shopping list scaled from a standard household recipe.',
+      ko: '배추 무게를 입력하면 표준 가정용 레시피를 기준으로 실제 장보기 분량이 계산됩니다.',
+      zh: '输入白菜重量后，系统会按标准家庭配方换算出一份实用采购清单。'
+    },
     'calc.input': { en: 'Cabbage Weight', ko: '배추 무게', zh: '白菜重量' },
     'calc.salt.brine': { en: 'Brine (12%)', ko: '소금물 (12%)', zh: '盐水 (12%)' },
     'calc.coarse.salt': { en: 'Coarse Salt', ko: '굵은소금', zh: '粗盐' },
@@ -251,10 +541,15 @@ window.KimchiSim.i18n = (function () {
 
     // Mixer labels
     'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐' },
-    'mixer.starter': { en: 'Starter', ko: '종국', zh: '引子' },
+    'mixer.starter': { en: 'Starter', ko: '종균', zh: '母水' },
 
     // Process flowchart
     'process.title': { en: 'Making Process', ko: '제조 과정', zh: '制作流程' },
+    'process.subtitle': {
+      en: 'This is the kitchen workflow behind the chart: salting changes texture, seasoning feeds fermentation, and temperature shapes the final flavor.',
+      ko: '이 공정은 위 차트의 주방 버전입니다. 절임은 식감을 바꾸고, 양념은 발효를 돕고, 온도는 최종 풍미를 결정합니다.',
+      zh: '这是上方图表在厨房里的对应流程：盐会改变质地，酱料会喂养发酵，温度则决定最终风味。'
+    },
     'process.s1': { en: 'Select', ko: '선별', zh: '选菜' },
     'process.s1d': { en: 'Fresh napa cabbage', ko: '신선한 배추', zh: '新鲜大白菜' },
     'process.s2': { en: 'Salt', ko: '절임', zh: '腌制' },
@@ -275,11 +570,33 @@ window.KimchiSim.i18n = (function () {
     'calc.codex': { en: 'Codex CXS 223-2001', ko: 'Codex CXS 223-2001', zh: 'Codex CXS 223-2001' },
 
     // Nitrite warning
-    'nitrite.label': { en: 'Nitrite at optimal', ko: '최적시점 아질산염', zh: '最佳时点亚硝酸盐' },
+    'nitrite.label': { en: 'Nitrite at best-eating point', ko: '최적 식미 시점 아질산염', zh: '最佳食用点亚硝酸盐' },
     'chart.nitrite': { en: 'Nitrite NO2 (mg/kg)', ko: '아질산염 NO2 (mg/kg)', zh: '亚硝酸盐 NO2 (mg/kg)' },
     'nitrite.safe': { en: 'Safe', ko: '안전', zh: '安全' },
     'nitrite.caution': { en: 'Caution', ko: '주의', zh: '注意' },
     'nitrite.danger': { en: 'High Risk', ko: '위험', zh: '高风险' },
+    'nitrite.model.title': {
+      en: 'Nitrite kinetics for this batch',
+      ko: '이 배치의 아질산염 동역학',
+      zh: '这一坛的亚硝酸盐动力学'
+    },
+    'nitrite.model.body': {
+      en: 'The curve now comes from nitrate reserve, sodium strength, temperature stages, and the speed at which LAB acidify and clear nitrite.',
+      ko: '이 곡선은 이제 질산염 저장량, Na+ 강도, 온도 단계, 그리고 유산균의 산성화 및 아질산염 제거 속도에서 계산됩니다.',
+      zh: '这条曲线现在由硝酸根储量、Na+ 强度、温度阶段，以及乳酸菌的产酸和清除速度共同推演。'
+    },
+    'nitrite.no3': { en: 'NO3- reserve', ko: 'NO3- 저장량', zh: 'NO3- 储量' },
+    'nitrite.na': { en: 'Na+ strength', ko: 'Na+ 강도', zh: 'Na+ 强度' },
+    'nitrite.peak': { en: 'Predicted peak', ko: '예상 최고치', zh: '预计峰值' },
+    'nitrite.window': { en: 'Risk window', ko: '위험 구간', zh: '风险窗口' },
+    'nitrite.flux': { en: 'Dynamic balance', ko: '동역학 균형', zh: '动力学平衡' },
+    'nitrite.form': { en: 'Formation', ko: '생성', zh: '生成' },
+    'nitrite.clear': { en: 'Clearance', ko: '清除', zh: '清除' },
+    'nitrite.window.none': {
+      en: 'Below 3 mg/kg throughout',
+      ko: '전 구간 3 mg/kg 이하',
+      zh: '全程低于 3 mg/kg'
+    },
 
     // Educational tooltips (delayed hover popups)
     'tip.ph': {
@@ -314,8 +631,8 @@ window.KimchiSim.i18n = (function () {
     },
     'tip.starter': {
       en: 'Starter = old kimchi brine. It contains millions of live bacteria that jumpstart fermentation.\n\n0%: Natural fermentation (slower)\n5%: Moderate boost\n10-15%: Fast start, consistent results\n\nLike sourdough starter for bread!',
-      ko: '종국 = 묵은지국물. 수백만 유산균이 발효를 빠르게 시작합니다.\n\n0%: 자연 발효 (느림)\n5%: 적당한 촉진\n10-15%: 빠른 시작, 일정한 결과\n\n빵의 천연 효모와 같은 원리!',
-      zh: '引子=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！'
+      ko: '종균 = 묵은지국물. 수백만 유산균이 발효를 빠르게 시작합니다.\n\n0%: 자연 발효 (느림)\n5%: 적당한 촉진\n10-15%: 빠른 시작, 일정한 결과\n\n빵의 천연 효모와 같은 원리!',
+      zh: '母水=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！'
     },
     'tip.stages': {
       en: 'Real kimchi-making uses stages:\n\n1. Room temp (20-25°C): Kick-start bacteria for a few hours\n2. Fridge (4°C): Slow, deep flavor development over days\n\nThis is why Korean grandmas leave kimchi out overnight before refrigerating!',
@@ -323,14 +640,71 @@ window.KimchiSim.i18n = (function () {
       zh: '实际做泡菜分阶段：\n\n1. 室温(20-25°C)：几小时激活细菌\n2. 冷藏(4°C)：数天缓慢发展深层风味\n\n这就是韩国奶奶做好泡菜后先放室温一晚再放冰箱的原因！'
     },
     'tip.nitrite': {
-      en: 'Nitrite (NO2) forms naturally during early fermentation as bacteria convert vegetable nitrates.\n\nDANGER ZONE: Days 2-5, nitrite peaks!\nNever eat kimchi that\'s only 1-3 days old.\n\nOnce fully fermented (pH < 4.2), LAB break down nitrite to safe levels (<3 mg/kg).\n\nThis is why proper fermentation time matters for safety!',
-      ko: '아질산염(NO2)은 발효 초기에 세균이 야채의 질산염을 전환하면서 자연 발생합니다.\n\n위험 구간: 2-5일, 아질산염 최고치!\n1-3일된 김치는 먹지 마세요.\n\n충분히 발효되면 (pH < 4.2), 유산균이 아질산염을 안전 수준으로 분해합니다 (<3 mg/kg).\n\n적절한 발효 시간이 안전에 중요한 이유입니다!',
-      zh: '亚硝酸盐(NO2)在发酵初期自然产生，细菌将蔬菜中的硝酸盐转化而来。\n\n危险期：第2-5天，亚硝酸盐达到峰值！\n千万不要吃只腌了1-3天的泡菜！\n\n充分发酵后(pH<4.2)，乳酸菌会将亚硝酸盐分解到安全水平(<3mg/kg)。\n\n这就是为什么充分发酵对食品安全至关重要！'
+      en: 'Nitrite (NO2) is not assigned to a fixed day count here.\n\nThis simulator estimates a nitrate reservoir from the kimchi mix, converts salt into an equivalent Na+ brine strength, speeds or slows nitrate reduction with your temperature stages, and then lets LAB acidity and biomass clear nitrite back down.\n\nWarm starts usually compress the risk window into an earlier, sharper peak. Cold plans often spread it over more time. More starter usually shortens the window because LAB take control sooner.\n\nRead the predicted peak and risk window for your actual settings instead of assuming every batch peaks on the same day.',
+      ko: '여기서는 아질산염(NO2)을 고정된 날짜 규칙으로 처리하지 않습니다.\n\n이 시뮬레이터는 김치 혼합물의 질산염 저장량을 추정하고, 소금을 등가 Na+ 염수 강도로 바꾸며, 온도 단계에 따라 질산염 환원 속도를 조절한 뒤, 유산균의 산성화와 균수 증가로 아질산염이 다시 낮아지도록 계산합니다.\n\n따뜻한 시작은 위험 구간을 더 이르고 날카로운 최고치로 압축하는 경향이 있고, 차가운 계획은 그 구간을 더 길게 펼치는 경향이 있습니다. 종균이 많을수록 유산균이 더 빨리 주도권을 잡아 위험 구간이 짧아지는 경우가 많습니다.\n\n따라서 모든 배치가 같은 날 최고치를 찍는다고 가정하지 말고, 현재 설정에서 계산된 최고치와 위험 구간을 읽어야 합니다.',
+      zh: '这里不会把亚硝酸盐(NO2)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na+ 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。母水越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。'
     },
     'tip.phase': {
       en: 'Fermentation has 3 phases:\n\n Blue = Initial: L. sakei grows first, mild taste\n Green = Optimal: Leuconostoc makes bubbles and great flavor\n Yellow = Over-ripened: L. plantarum takes over, very sour\n\nThe marker shows where your kimchi is now!',
       ko: '발효 3단계:\n\n 파랑 = 초기: L. sakei가 먼저 자라, 순한 맛\n 초록 = 최적: Leuconostoc이 탄산과 좋은 풍미 생성\n 노랑 = 과숙: L. plantarum 우세, 매우 시큼\n\n마커가 현재 김치 상태를 보여줍니다!',
       zh: '发酵分三个阶段：\n\n 蓝色=初期：L. sakei先生长，味道温和\n 绿色=最佳：明串珠菌产生气泡和绝佳风味\n 黄色=过熟：植物乳杆菌主导，非常酸\n\n标记显示你的泡菜现在处于哪个阶段！'
+    },
+    'tip.readChart': {
+      en: 'Read it in this order:\n\n1. Red score line = overall eating quality\n2. Green dashed line = best flavor moment\n3. Nitrite line = early safety warning\n4. Colored phase bands = which bacteria are leading\n\nTurn on extra layers only when you want more detail.',
+      ko: '이 순서로 보세요:\n\n1. 빨간 점수선 = 전체 먹기 좋은 정도\n2. 초록 점선 = 풍미가 가장 좋은 순간\n3. 아질산염 선 = 초기 안전 경고\n4. 색 띠 = 어떤 균이 발효를 주도하는지\n\n더 자세히 보고 싶을 때만 추가 레이어를 켜면 됩니다.',
+      zh: '建议按这个顺序读图：\n\n1. 红色评分线 = 整体适口性\n2. 绿色虚线 = 风味最佳时刻\n3. 亚硝酸盐线 = 早期安全提醒\n4. 彩色阶段带 = 当前哪类菌在主导\n\n想看更深细节时，再打开其他图层。'
+    },
+    'tip.chartControls': {
+      en: 'The chart starts in a family-friendly mode with the most important information on screen. Use these buttons to reveal deeper scientific layers without overwhelming the first view.',
+      ko: '차트는 가장 중요한 정보만 보이는 쉬운 모드로 시작합니다. 이 버튼으로 과학적 세부 레이어를 필요할 때만 펼칠 수 있습니다.',
+      zh: '主图默认采用适合大众阅读的模式，只显示最重要的信息。用这些按钮可以在不打乱第一眼阅读的前提下，逐层打开更深入的数据。'
+    },
+    'tip.dominance': {
+      en: 'These bands summarize the dominant microbe over time.\n\nBlue: L. sakei helps the batch settle.\nGreen: Leuconostoc usually delivers peak eating quality.\nYellow: L. plantarum pushes kimchi toward stronger sourness.\n\nThe widths change with your temperature plan.',
+      ko: '이 띠는 시간에 따라 우세한 미생물을 요약합니다.\n\n파랑: L. sakei가 배치를 안정화합니다.\n초록: Leuconostoc이 보통 최고의 식미를 만듭니다.\n노랑: L. plantarum이 더 강한 산미 쪽으로 이끕니다.\n\n폭은 온도 계획에 따라 달라집니다.',
+      zh: '这些色带概括了不同时间段的优势菌。\n\n蓝色：L. sakei 帮助发酵起步并稳定。\n绿色：Leuconostoc 往往带来最佳食用品质。\n黄色：L. plantarum 会把 Kimchi 推向更明显的酸味。\n\n它们的宽度会随着你的温度计划变化。'
+    },
+    'tip.microbeBoard': {
+      en: 'Kimchi flavor is a team effort.\n\nThese cards answer a simple question: who is doing the most work around the best-tasting moment? The highlighted card updates automatically as you change time, starter, and temperature stages.',
+      ko: '김치 풍미는 팀플레이입니다.\n\n이 카드는 “가장 맛있는 시점 주변에서 누가 가장 큰 역할을 하고 있는가?”를 쉽게 보여줍니다. 시간, 종균, 온도 단계를 바꾸면 자동으로 강조 카드가 바뀝니다.',
+      zh: 'Kimchi 的风味来自菌群协作。\n\n这组卡片回答的是一个简单问题：在最佳风味附近，究竟是谁出了最多力？当你调整时间、母水和温度阶段时，高亮卡片会自动变化。'
+    },
+    'tip.presets': {
+      en: 'Presets are not rigid rules. They are teaching shortcuts.\n\nClassic Home: warm start, long cold finish\nWeekend Fast: quicker souring for short timelines\nCold Slow: mostly refrigerator fermentation for steadier texture',
+      ko: '프리셋은 절대 규칙이 아니라 학습용 지름길입니다.\n\n가정 기본: 따뜻하게 시작하고 차갑게 길게 마무리\n주말 빠르게: 짧은 일정에 맞춘 빠른 산미 형성\n저온 천천히: 냉장 중심으로 더 안정적 식감 유지',
+      zh: '这些预设不是死规则，而是学习捷径。\n\n家常经典：先温后冷，慢慢成熟\n周末快成：适合短周期，较快出酸\n冷藏慢熟：以冰箱发酵为主，质地更稳'
+    },
+    'tip.process': {
+      en: 'This flow explains why household kimchi making is staged. Salting removes water, seasoning adds nutrients and aroma, and temperature decides whether the batch develops quickly or slowly.',
+      ko: '이 흐름도는 가정용 김치가 왜 단계적으로 만들어지는지 설명합니다. 절임은 수분을 빼고, 양념은 영양과 향을 더하며, 온도는 발효 속도를 결정합니다.',
+      zh: '这个流程图解释了为什么家庭做 Kimchi 往往要分步骤进行。盐会脱水，酱料会提供营养和香气，温度则决定它是快熟还是慢熟。'
+    },
+    'tip.calc': {
+      en: 'This calculator is for practical kitchen prep. It scales a representative household recipe, so you can move from learning to making without mental math.',
+      ko: '이 계산기는 실제 주방 준비를 위한 도구입니다. 대표적인 가정용 레시피를 비례 확장하므로, 머리로 환산하지 않고 바로 장보기 분량을 얻을 수 있습니다.',
+      zh: '这个计算器服务于真实厨房准备。它会按一份代表性家庭配方等比换算，让你不用心算就能得到采购量。'
+    },
+    'tip.sakei': {
+      en: 'L. sakei often dominates early.\n\nWhat it means for you: the batch is still fresh, clean, and not yet deeply sour. Think of it as the “settling in” stage.',
+      ko: 'L. sakei는 보통 초기에 우세합니다.\n\n의미: 배치는 아직 신선하고 깔끔하며 깊게 시어지지 않았습니다. 발효가 자리를 잡는 단계라고 보면 됩니다.',
+      zh: 'L. sakei 往往在前期占优。\n\n对你意味着什么：这一坛还偏清新、干净，酸味还不深，可以理解为“进入状态”的阶段。'
+    },
+    'tip.mesenteroides': {
+      en: 'Leuconostoc is the crowd-pleaser.\n\nIt helps create aroma, light acidity, and a lively profile that many people associate with perfect eating kimchi.',
+      ko: 'Leuconostoc은 가장 많은 사람들이 좋아하는 풍미를 만드는 균입니다.\n\n향, 가벼운 산미, 생기 있는 인상을 만들어 “먹기 가장 좋은 김치”와 자주 연결됩니다.',
+      zh: 'Leuconostoc 常常是最讨喜的一类菌。\n\n它能带来香气、轻快酸感和鲜活口感，很多人心中的“最好吃 Kimchi”通常就和它有关。'
+    },
+    'tip.plantarum': {
+      en: 'L. plantarum is powerful late in fermentation.\n\nIt deepens acidity and is useful when kimchi is heading toward soups, stews, fried rice, or other cooked dishes.',
+      ko: 'L. plantarum은 발효 후반에 강해집니다.\n\n산미를 깊게 만들며, 김치찌개나 볶음밥 같은 요리용 김치로 갈 때 특히 의미가 큽니다.',
+      zh: 'L. plantarum 在发酵后期会更强势。\n\n它会进一步加深酸味，因此当 Kimchi 逐渐转向适合做汤、炒饭、炖菜时，它就很关键。'
+    },
+
+    // Freezing warning
+    'warn.frozen': {
+      en: 'Below freezing point (~-1.5°C at 2.5% salt). Kimchi will freeze, LAB go dormant. Ice crystals damage vegetable texture.',
+      ko: '빙점 이하 (~-1.5°C, 2.5% 소금 기준). 김치가 얼고 유산균이 휴면합니다. 얼음 결정이 채소 조직을 손상시킵니다.',
+      zh: '低于冰点（2.5%盐约-1.5°C）。泡菜会结冰，乳酸菌休眠。冰晶会破坏蔬菜组织。'
     },
 
     // Units
@@ -357,6 +731,16 @@ window.KimchiSim.i18n = (function () {
     for (var i = 0; i < els.length; i++) {
       var key = els[i].getAttribute('data-i18n');
       els[i].textContent = t(key);
+    }
+
+    var titleEls = document.querySelectorAll('[data-i18n-title]');
+    for (var k = 0; k < titleEls.length; k++) {
+      titleEls[k].setAttribute('title', t(titleEls[k].getAttribute('data-i18n-title')));
+    }
+
+    var ariaEls = document.querySelectorAll('[data-i18n-aria-label]');
+    for (var m = 0; m < ariaEls.length; m++) {
+      ariaEls[m].setAttribute('aria-label', t(ariaEls[m].getAttribute('data-i18n-aria-label')));
     }
 
     // Update tooltip data attributes
