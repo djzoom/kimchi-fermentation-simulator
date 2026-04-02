@@ -253,6 +253,74 @@ window.KimchiSim.i18n = (function () {
     'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐' },
     'mixer.starter': { en: 'Starter', ko: '종국', zh: '引子' },
 
+    // Process flowchart
+    'process.title': { en: 'Making Process', ko: '제조 과정', zh: '制作流程' },
+    'process.s1': { en: 'Select', ko: '선별', zh: '选菜' },
+    'process.s1d': { en: 'Fresh napa cabbage', ko: '신선한 배추', zh: '新鲜大白菜' },
+    'process.s2': { en: 'Salt', ko: '절임', zh: '腌制' },
+    'process.s2d': { en: '6-8h, 8% salt', ko: '6-8시간, 8% 소금', zh: '6-8小时, 8%盐' },
+    'process.s3': { en: 'Season', ko: '양념', zh: '调味' },
+    'process.s3d': { en: 'Mix paste into leaves', ko: '양념 배추 사이에 넣기', zh: '将调味料抹入菜叶间' },
+    'process.s4': { en: 'Pack', ko: '밀봉', zh: '装坛' },
+    'process.s4d': { en: 'Press tight, no air', ko: '꽉 눌러 공기 제거', zh: '压紧，排尽空气' },
+    'process.s5': { en: 'Ferment', ko: '발효', zh: '发酵' },
+    'process.s5d': { en: 'Room temp 1-2 days', ko: '실온 1-2일', zh: '室温1-2天' },
+    'process.s6': { en: 'Chill', ko: '냉장', zh: '冷藏' },
+    'process.s6d': { en: 'Fridge 4°C, slow ripen', ko: '냉장고 4°C 숙성', zh: '冰箱4°C，缓慢熟成' },
+    'process.s7': { en: 'Enjoy!', ko: '완성!', zh: '开吃!' },
+    'process.s7d': { en: 'Best at peak flavor', ko: '최적 풍미에서 즐기기', zh: '最佳风味期食用' },
+
+    // Calculator source
+    'calc.source': { en: 'Korean RDA Standard', ko: '농촌진흥청 기준', zh: '韩国农村振兴厅标准' },
+    'calc.codex': { en: 'Codex CXS 223-2001', ko: 'Codex CXS 223-2001', zh: 'Codex CXS 223-2001' },
+
+    // Educational tooltips (delayed hover popups)
+    'tip.ph': {
+      en: 'pH measures acidity. Fresh cabbage starts ~5.8. As bacteria produce lactic acid, pH drops. Best flavor is around pH 4.2-4.6 — tangy but not too sour.',
+      ko: 'pH는 산도를 나타냅니다. 신선 배추는 ~5.8에서 시작합니다. 유산균이 젖산을 만들면 pH가 내려갑니다. 최적 풍미는 pH 4.2-4.6 — 적당히 새콤한 맛.',
+      zh: 'pH是酸碱度。新鲜白菜约5.8，乳酸菌产酸后pH下降。最佳风味在pH 4.2-4.6之间——酸爽而不过酸。'
+    },
+    'tip.acid': {
+      en: 'Lactic acid is what makes kimchi sour. It is produced by beneficial bacteria. The ideal amount is 0.6-0.8% — enough for tang, not too sharp.',
+      ko: '젖산은 김치를 신맛나게 합니다. 유산균이 만들어냅니다. 이상적인 양은 0.6-0.8% — 적당한 신맛.',
+      zh: '乳酸是泡菜变酸的原因，由有益菌产生。理想含量0.6-0.8%——酸度适中，口感最佳。'
+    },
+    'tip.lab': {
+      en: 'LAB = Lactic Acid Bacteria. These friendly microbes are the heroes of fermentation! They preserve food, create flavor, and are great for gut health.',
+      ko: 'LAB = 유산균. 발효의 주역입니다! 음식을 보존하고, 풍미를 만들고, 장 건강에 좋습니다.',
+      zh: 'LAB=乳酸菌，发酵的功臣！它们保鲜食物、创造风味，还有益肠道健康。'
+    },
+    'tip.flavor': {
+      en: 'Flavor score combines pH (tangy), lactic acid (sour depth), and Leuconostoc bacteria (CO2 fizz + aroma). 70+ = Excellent! The green dashed line marks peak flavor.',
+      ko: '풍미 점수는 pH(신맛), 젖산(깊이), Leuconostoc 균(탄산+향)을 종합합니다. 70+ = 최고! 초록 점선이 최적 시점입니다.',
+      zh: '风味评分综合了pH（酸爽）、乳酸（酸度深度）和明串珠菌（气泡+香气）。70分以上=优秀！绿色虚线标记最佳风味点。'
+    },
+    'tip.optimalTime': {
+      en: 'The moment when flavor peaks! After this, kimchi keeps fermenting and gets more sour. Move to the fridge to slow it down.',
+      ko: '풍미가 최고인 시점! 이후에는 계속 발효되어 더 시큼해집니다. 냉장고에 넣어 속도를 늦추세요.',
+      zh: '风味达到巅峰的时刻！之后泡菜继续发酵会更酸。放入冰箱可以减缓发酵速度。'
+    },
+    'tip.salt': {
+      en: 'Salt controls fermentation speed.\n\nToo little (<2%): spoils quickly, mushy texture\nJust right (2-3%): perfect crunch and flavor\nToo much (>4%): very slow, overly salty taste\n\nKorean standard: 2.5% after salting.',
+      ko: '소금은 발효 속도를 조절합니다.\n\n너무 적으면 (<2%): 빨리 상하고 물러짐\n적당히 (2-3%): 아삭하고 맛있음\n너무 많으면 (>4%): 매우 느리고 짬\n\n한국 표준: 절임 후 2.5%.',
+      zh: '盐控制发酵速度。\n\n太少(<2%)：容易坏，口感软烂\n刚好(2-3%)：爽脆可口\n太多(>4%)：发酵很慢，太咸\n\n韩国标准：腌制后2.5%。'
+    },
+    'tip.starter': {
+      en: 'Starter = old kimchi brine. It contains millions of live bacteria that jumpstart fermentation.\n\n0%: Natural fermentation (slower)\n5%: Moderate boost\n10-15%: Fast start, consistent results\n\nLike sourdough starter for bread!',
+      ko: '종국 = 묵은지국물. 수백만 유산균이 발효를 빠르게 시작합니다.\n\n0%: 자연 발효 (느림)\n5%: 적당한 촉진\n10-15%: 빠른 시작, 일정한 결과\n\n빵의 천연 효모와 같은 원리!',
+      zh: '引子=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！'
+    },
+    'tip.stages': {
+      en: 'Real kimchi-making uses stages:\n\n1. Room temp (20-25°C): Kick-start bacteria for a few hours\n2. Fridge (4°C): Slow, deep flavor development over days\n\nThis is why Korean grandmas leave kimchi out overnight before refrigerating!',
+      ko: '실제 김치는 단계별로 만듭니다:\n\n1. 실온 (20-25°C): 몇 시간 유산균 활성화\n2. 냉장 (4°C): 며칠에 걸쳐 깊은 풍미 발달\n\n할머니들이 김치를 하룻밤 실온에 두었다 냉장하는 이유!',
+      zh: '实际做泡菜分阶段：\n\n1. 室温(20-25°C)：几小时激活细菌\n2. 冷藏(4°C)：数天缓慢发展深层风味\n\n这就是韩国奶奶做好泡菜后先放室温一晚再放冰箱的原因！'
+    },
+    'tip.phase': {
+      en: 'Fermentation has 3 phases:\n\n Blue = Initial: L. sakei grows first, mild taste\n Green = Optimal: Leuconostoc makes bubbles and great flavor\n Yellow = Over-ripened: L. plantarum takes over, very sour\n\nThe marker shows where your kimchi is now!',
+      ko: '발효 3단계:\n\n 파랑 = 초기: L. sakei가 먼저 자라, 순한 맛\n 초록 = 최적: Leuconostoc이 탄산과 좋은 풍미 생성\n 노랑 = 과숙: L. plantarum 우세, 매우 시큼\n\n마커가 현재 김치 상태를 보여줍니다!',
+      zh: '发酵分三个阶段：\n\n 蓝色=初期：L. sakei先生长，味道温和\n 绿色=最佳：明串珠菌产生气泡和绝佳风味\n 黄色=过熟：植物乳杆菌主导，非常酸\n\n标记显示你的泡菜现在处于哪个阶段！'
+    },
+
     // Units
     'unit.days': { en: 'days', ko: '일', zh: '天' },
     'unit.day': { en: 'day', ko: '일', zh: '天' },
@@ -277,6 +345,13 @@ window.KimchiSim.i18n = (function () {
     for (var i = 0; i < els.length; i++) {
       var key = els[i].getAttribute('data-i18n');
       els[i].textContent = t(key);
+    }
+
+    // Update tooltip data attributes
+    var tips = document.querySelectorAll('[data-tip]');
+    for (var j = 0; j < tips.length; j++) {
+      var tipKey = tips[j].getAttribute('data-tip');
+      tips[j].setAttribute('data-tip-text', t(tipKey));
     }
 
     try { localStorage.setItem('kimchi-lang', lang); } catch (e) {}
