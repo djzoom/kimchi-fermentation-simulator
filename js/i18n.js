@@ -770,6 +770,8 @@ window.KimchiSim.i18n = (function () {
     'nav.best': { en: 'Best at', ko: '최적 시점', zh: '最佳时间' },
     'nav.safety': { en: 'Safety', ko: '안전', zh: '安全' },
     'nav.expert': { en: 'Expert', ko: '전문가', zh: '专家' },
+    'nav.calculator': { en: 'Calculator', ko: '계산기', zh: '计算器' },
+    'nav.process': { en: 'Process', ko: '공정', zh: '制作流程' },
     'nav.why': { en: 'Why this result?', ko: '왜 이런 결과일까?', zh: '为什么是这个结果？' },
     'nav.calculating': { en: 'Calculating\u2026', ko: '계산 중\u2026', zh: '计算中\u2026' },
 
