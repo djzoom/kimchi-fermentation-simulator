@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=11">
+  <link rel="stylesheet" href="css/styles.css?v=12">
 </head>
 <body>
   <!-- ====== HEADER ====== -->
@@ -27,6 +27,14 @@
         <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark mode">
           <span class="theme-icon-light">☽</span>
           <span class="theme-icon-dark">☀</span>
+        </button>
+        <button id="btn-calc-nav" class="btn-expert" aria-pressed="false">
+          <span class="expert-icon">🧮</span>
+          <span data-i18n="nav.calculator">Calculator</span>
+        </button>
+        <button id="btn-process-nav" class="btn-expert" aria-pressed="false">
+          <span class="expert-icon">📋</span>
+          <span data-i18n="nav.process">Process</span>
         </button>
         <button id="btn-expert" class="btn-expert" aria-pressed="false">
           <span class="expert-icon">⚗</span>
@@ -112,6 +120,36 @@
         <div class="status-line" id="status-safety">
           <span class="status-dot dot-amber"></span>
           <span class="status-text">--</span>
+        </div>
+      </div>
+
+      <!-- Fermentation stages (hero input) -->
+      <div class="controls-card glass-card">
+        <div class="controls-header">
+          <h3 class="explain-title">
+            <span>🌡️</span>
+            <span data-i18n="controls.stages">Stages</span>
+          </h3>
+          <div class="batch-inline">
+            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
+            <input type="date" id="batch-start-date" class="input-date">
+            <span class="batch-elapsed" id="batch-elapsed">--</span>
+          </div>
+        </div>
+        <!-- Hidden salt input for JS -->
+        <input type="hidden" id="slider-salt" value="2.5">
+        <!-- Hidden temp slider for single-stage mode -->
+        <div id="temp-single-wrap" style="display:none">
+          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
+        </div>
+        <div id="stages-container">
+          <div class="stages-grid">
+            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
+            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
+            <span class="sg-head"></span>
+          </div>
+          <div id="stages-list"></div>
+          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
         </div>
       </div>
 
@@ -208,36 +246,6 @@
         </h3>
         <div class="extend-advice" id="extend-advice">
           <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- Compact stage editor + batch tracker merged -->
-      <div class="controls-card glass-card">
-        <div class="controls-header">
-          <h3 class="explain-title">
-            <span>🌡️</span>
-            <span data-i18n="controls.stages">Stages</span>
-          </h3>
-          <div class="batch-inline">
-            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
-            <input type="date" id="batch-start-date" class="input-date">
-            <span class="batch-elapsed" id="batch-elapsed">--</span>
-          </div>
-        </div>
-        <!-- Hidden salt input for JS -->
-        <input type="hidden" id="slider-salt" value="2.5">
-        <!-- Hidden temp slider for single-stage mode -->
-        <div id="temp-single-wrap" style="display:none">
-          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
-        </div>
-        <div id="stages-container">
-          <div class="stages-grid">
-            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
-            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
-            <span class="sg-head"></span>
-          </div>
-          <div id="stages-list"></div>
-          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
         </div>
       </div>
 
@@ -427,12 +435,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=11"></script>
-  <script src="js/models.js?v=11"></script>
-  <script src="js/simulation.js?v=11"></script>
-  <script src="js/charts.js?v=11"></script>
-  <script src="js/ui.js?v=11"></script>
-  <script src="js/recipe.js?v=11"></script>
-  <script src="js/app.js?v=11"></script>
+  <script src="js/i18n.js?v=12"></script>
+  <script src="js/models.js?v=12"></script>
+  <script src="js/simulation.js?v=12"></script>
+  <script src="js/charts.js?v=12"></script>
+  <script src="js/ui.js?v=12"></script>
+  <script src="js/recipe.js?v=12"></script>
+  <script src="js/app.js?v=12"></script>
 </body>
 </html>
