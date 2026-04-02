@@ -13,7 +13,7 @@ Interactive web-based simulation of Korean kimchi (김치) fermentation, built o
 - **Recipe calculator** — input cabbage weight, get exact ingredient amounts (Korean government standard)
 - **Trilingual UI** — English / 한국어 / 中文
 - **Industry standards** — Codex CXS 223-2001, KS H 2169
-- **Starter culture (引子/종국)** modeling — old kimchi brine as natural inoculant
+- **Starter culture (母水/종균)** modeling — old kimchi brine as natural inoculant (backslopping)
 
 ## Model Validation
 
