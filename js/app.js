@@ -13,6 +13,7 @@ window.KimchiSim = window.KimchiSim || {};
     sim.charts.update(data);
     sim.ui.updatePhaseIndicator(data);
     sim.ui.updateStats(data);
+    sim.ui.updateEducation(data);
   }
 
   function initTheme() {
@@ -47,9 +48,11 @@ window.KimchiSim = window.KimchiSim || {};
         var newLang = btn.getAttribute('data-lang');
         sim.i18n.setLang(newLang);
         sim.charts.updateLabels();
+        sim.ui.renderStages();
         sim.recipe.updateLang();
         updateCalcResults();
         updateLangButtons(newLang);
+        runAndUpdate(sim.ui.getParams(), sim.ui.getStages());
       });
     }
   }
@@ -121,31 +124,88 @@ window.KimchiSim = window.KimchiSim || {};
     var box = document.getElementById('tooltip-box');
     if (!box) return;
     var timer = null;
+    var pinnedEl = null;
+
+    function getTipText(el) {
+      var text = el.getAttribute('data-tip-text');
+      if (!text) {
+        var key = el.getAttribute('data-tip');
+        text = sim.i18n.t(key);
+      }
+      return text;
+    }
+
+    function position(el) {
+      var rect = el.getBoundingClientRect();
+      box.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
+      box.style.top = (rect.bottom + 8) + 'px';
+    }
+
+    function show(el) {
+      var text = getTipText(el);
+      if (!text || text === el.getAttribute('data-tip')) return;
+      box.textContent = text;
+      position(el);
+      box.classList.add('visible');
+    }
+
+    function hide(force) {
+      if (!force && pinnedEl) return;
+      box.classList.remove('visible');
+    }
 
     document.addEventListener('mouseenter', function(e) {
       var el = e.target.closest('[data-tip]');
-      if (!el) return;
+      if (!el || pinnedEl === el) return;
       clearTimeout(timer);
       timer = setTimeout(function() {
-        var text = el.getAttribute('data-tip-text');
-        if (!text) {
-          var key = el.getAttribute('data-tip');
-          text = sim.i18n.t(key);
-        }
-        if (!text || text === el.getAttribute('data-tip')) return;
-        box.textContent = text;
-        var rect = el.getBoundingClientRect();
-        box.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
-        box.style.top = (rect.bottom + 8) + 'px';
-        box.classList.add('visible');
-      }, 500); // 500ms delay
+        show(el);
+      }, 400);
     }, true);
 
     document.addEventListener('mouseleave', function(e) {
       var el = e.target.closest('[data-tip]');
+      if (!el || pinnedEl === el) return;
+      clearTimeout(timer);
+      hide(false);
+    }, true);
+
+    document.addEventListener('focusin', function(e) {
+      var el = e.target.closest('[data-tip]');
       if (!el) return;
       clearTimeout(timer);
-      box.classList.remove('visible');
+      show(el);
+    }, true);
+
+    document.addEventListener('focusout', function(e) {
+      var el = e.target.closest('[data-tip]');
+      if (!el || pinnedEl === el) return;
+      hide(false);
+    }, true);
+
+    document.addEventListener('click', function(e) {
+      var info = e.target.closest('.info-dot[data-tip]');
+      if (info) {
+        e.preventDefault();
+        if (pinnedEl === info) {
+          pinnedEl = null;
+          hide(true);
+        } else {
+          pinnedEl = info;
+          show(info);
+        }
+        return;
+      }
+      pinnedEl = null;
+      hide(true);
+    });
+
+    window.addEventListener('resize', function() {
+      if (pinnedEl) position(pinnedEl);
+    });
+
+    window.addEventListener('scroll', function() {
+      if (pinnedEl) position(pinnedEl);
     }, true);
   }
 

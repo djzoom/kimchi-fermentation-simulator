@@ -63,15 +63,30 @@ window.KimchiSim.models = (function () {
     flavor_acid_center: 0.6,
     flavor_acid_sigma: 0.2,
 
-    // Nitrite model — peaks early then drops as LAB consume it
-    // Based on: Korean studies show nitrite peaks at pH ~5.0-4.8, drops to safe (<3 mg/kg) by pH 4.2
-    // Model: bell curve peaking around pH 5.0, near zero below pH 4.2
-    nitrite_peak: 15,         // Peak nitrite (mg/kg) — typical 10-20 range
-    nitrite_safe: 3,          // Safe threshold (mg/kg) — Korean/WHO standard
+    // Nitrite kinetics
+    // Initial nitrate reservoir is kept modest to reflect salted/washed kimchi,
+    // then modulated by Na+ strength, temperature, and the pace of acidification.
+    kimchi_water_fraction: 0.88,
+    nitrate_base: 34,         // Initial NO3- reservoir (mg/kg as nitrate equivalent)
+    nitrate_adi_flux: 1.8,    // Early reactive nitrogen regeneration (mg/kg/day)
+    sodium_ref_molar: 0.48,   // Approx. Na+ molarity at 2.5% NaCl
+    nitrite_form_base: 0.16,  // Basal NO3- -> NO2- conversion rate (per day)
+    nitrite_yield: 0.78,      // Fraction of consumed nitrate appearing as measurable nitrite
+    nitrite_clear_base: 1.40, // Basal nitrite clearance rate (per day)
+    nitrite_safe: 3,          // Safe threshold (mg/kg)
+    nitrite_caution: 8,       // Elevated caution threshold (mg/kg)
   };
 
   function safeExp(x) {
     return Math.exp(Math.max(-500, Math.min(500, x)));
+  }
+
+  function clamp(x, min, max) {
+    return Math.max(min, Math.min(max, x));
+  }
+
+  function clamp01(x) {
+    return clamp(x, 0, 1);
   }
 
   function gaussian(x, center, sigma) {
@@ -79,10 +94,21 @@ window.KimchiSim.models = (function () {
   }
 
   /**
+   * Freezing point depression: T_freeze ≈ -0.6 * salt%
+   * At 2.5% salt → -1.5°C. Below this, kimchi is frozen.
+   */
+  function freezingPoint(salt) {
+    return -0.6 * (salt || PARAMS.salt_optimal);
+  }
+
+  /**
    * Temperature-dependent max growth rate
    * Baranyi & Roberts: μmax(T) = a₀ + a₁T + a₂T²
+   * Below freezing point, growth rate drops to near-zero (dormant LAB).
    */
-  function muMax(T) {
+  function muMax(T, salt) {
+    var Tf = freezingPoint(salt);
+    if (T < Tf) return 0.001; // frozen — LAB dormant
     var mu = PARAMS.a0 + PARAMS.a1 * T + PARAMS.a2 * T * T;
     return Math.max(0.01, mu);
   }
@@ -98,7 +124,7 @@ window.KimchiSim.models = (function () {
    * Effective growth rate (temperature + salt)
    */
   function growthRate(T, salt) {
-    return muMax(T) * saltFactor(salt);
+    return muMax(T, salt) * saltFactor(salt);
   }
 
   /**
@@ -138,7 +164,7 @@ window.KimchiSim.models = (function () {
    */
   function kPH(T, salt) {
     var sf = (salt !== undefined) ? saltFactor(salt) : 1;
-    return PARAMS.k_pH_base * (muMax(T) / PARAMS.mu_ref_for_pH) * sf;
+    return PARAMS.k_pH_base * (muMax(T, salt) / PARAMS.mu_ref_for_pH) * sf;
   }
 
   /**
@@ -203,6 +229,30 @@ window.KimchiSim.models = (function () {
     return Math.min(100, Math.max(0, 100 * (0.5 * phFactor + 0.3 * acidFactor + 0.2 * mesoFraction)));
   }
 
+  function sodiumMgKg(salt) {
+    var saltPct = Math.max(0, salt || 0);
+    return saltPct * 10000 * (22.99 / 58.44);
+  }
+
+  function sodiumMolarity(salt) {
+    var gramsNa = sodiumMgKg(salt) / 1000;
+    return (gramsNa / 22.99) / PARAMS.kimchi_water_fraction;
+  }
+
+  function initialNitriteState(salt, starter) {
+    var starterRatio = Math.min(Math.max(starter || 0, 0), 15) / 15;
+    var sodiumM = sodiumMolarity(salt);
+    var ionicAvailability = 0.88 + 0.24 * (sodiumM / PARAMS.sodium_ref_molar);
+    var nitrate = PARAMS.nitrate_base * ionicAvailability * (1 - 0.18 * starterRatio);
+
+    return {
+      nitrate: Math.max(12, nitrate),
+      nitrite: 0.4,
+      sodiumMgKg: sodiumMgKg(salt),
+      sodiumMolar: sodiumM
+    };
+  }
+
   /**
    * Optimal time estimate (days)
    * t*(T) ≈ 15.5 * exp(-0.11*T)
@@ -222,23 +272,71 @@ window.KimchiSim.models = (function () {
   }
 
   /**
-   * Nitrite level (mg/kg) based on pH
-   * Nitrite rises as bacteria convert nitrate, peaks around pH 5.0,
-   * then drops as LAB (especially Lactobacillus) degrade it.
-   * Safe threshold: <3 mg/kg (WHO/Korean standard)
+   * Nitrite kinetics step
+   * Tracks a nitrate reservoir that is converted to nitrite faster at warm,
+   * early-stage conditions, then cleared as acidity and LAB pressure rise.
    */
-  function nitriteLevel(currentPH) {
-    // Bell curve: peaks at pH 5.0, sigma 0.4
-    var peak = PARAMS.nitrite_peak * gaussian(currentPH, 5.0, 0.4);
-    // Near zero at very high pH (not started) and very low pH (fully fermented)
-    if (currentPH > 5.6) peak *= Math.max(0, (5.8 - currentPH) / 0.2);
-    return Math.max(0, peak);
+  function nitriteStep(state, context, dt) {
+    var T = context.temperature;
+    var currentPH = context.pH;
+    var currentN = context.labCount;
+    var starter = context.starter || 0;
+    var comp = context.composition || {
+      sakei: 0.33,
+      mesenteroides: 0.33,
+      plantarum: 0.33
+    };
+
+    var formTempFactor = Math.max(0.18, Math.pow(muMax(T) / muMax(10), 1.15));
+    var clearTempFactor = Math.max(0.65, Math.pow(muMax(T) / muMax(10), 0.35));
+    var pHOpen = clamp01((currentPH - 4.35) / 1.05);
+    var acidSuppression = clamp01((5.0 - currentPH) / 0.75);
+    var labShield = clamp01((currentN - 5.8) / 1.8);
+    var starterShield = 1 - 0.35 * Math.min(Math.max(starter, 0), 15) / 15;
+
+    var ionicRelease = 0.82 + 0.28 * (state.sodiumMolar / PARAMS.sodium_ref_molar);
+    var ionicBrake = 1 / (1 + Math.pow(Math.max(0, state.sodiumMolar - PARAMS.sodium_ref_molar) / 0.20, 2));
+    var reducerPressure = 0.45 + 0.30 * comp.sakei + 0.15 * comp.mesenteroides + 0.10 * pHOpen;
+
+    var kForm = PARAMS.nitrite_form_base * formTempFactor * pHOpen * ionicRelease * ionicBrake * reducerPressure;
+    kForm *= starterShield * (1 - 0.80 * labShield) * (1 - 0.85 * acidSuppression);
+    kForm = Math.max(0, kForm);
+
+    var adiFlux = PARAMS.nitrate_adi_flux * formTempFactor * pHOpen * (0.35 + 0.65 * comp.sakei);
+    adiFlux *= starterShield * (1 - 0.95 * acidSuppression);
+
+    var nitrateToNitrite = Math.min(state.nitrate, state.nitrate * kForm * dt);
+    state.nitrate = Math.max(0, state.nitrate + adiFlux * dt - nitrateToNitrite);
+
+    var plantarumScavenge = 0.45 + 0.90 * comp.plantarum;
+    var acidClear = 0.35 + 1.60 * acidSuppression;
+    var labClear = 0.45 + 1.30 * labShield;
+    var kClear = PARAMS.nitrite_clear_base * clearTempFactor * acidClear * labClear * plantarumScavenge;
+
+    var nitriteProduced = nitrateToNitrite * PARAMS.nitrite_yield;
+    var nitriteCleared = state.nitrite * kClear * dt;
+    state.nitrite = Math.max(0, state.nitrite + nitriteProduced - nitriteCleared);
+
+    return {
+      nitrite: state.nitrite,
+      nitrate: state.nitrate,
+      sodiumMgKg: state.sodiumMgKg,
+      sodiumMolar: state.sodiumMolar,
+      formationRate: dt > 0 ? nitriteProduced / dt : 0,
+      clearanceRate: dt > 0 ? nitriteCleared / dt : 0,
+      pHOpen: pHOpen,
+      acidSuppression: acidSuppression,
+      labShield: labShield
+    };
   }
 
   return {
     PARAMS: PARAMS,
     safeExp: safeExp,
+    clamp: clamp,
+    clamp01: clamp01,
     gaussian: gaussian,
+    freezingPoint: freezingPoint,
     muMax: muMax,
     saltFactor: saltFactor,
     growthRate: growthRate,
@@ -251,7 +349,10 @@ window.KimchiSim.models = (function () {
     labGrowth: labGrowth,
     microbialComposition: microbialComposition,
     flavorScore: flavorScore,
-    nitriteLevel: nitriteLevel,
+    sodiumMgKg: sodiumMgKg,
+    sodiumMolarity: sodiumMolarity,
+    initialNitriteState: initialNitriteState,
+    nitriteStep: nitriteStep,
     optimalTime: optimalTime
   };
 })();
