@@ -7,18 +7,16 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+KR:wght@500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=10">
 </head>
 <body>
+  <!-- ====== HEADER ====== -->
   <header class="header">
     <div class="header-inner">
-      <div class="header-title">
-        <div class="logo-mark"><span class="logo-icon">&#127798;</span></div>
-        <div class="header-copy">
-          <h1 data-i18n="app.title">Kimchi Fermentation Simulator</h1>
-          <p class="header-subtitle" data-i18n="app.subtitleShort">A kitchen-friendly guide to flavor, safety, and fermentation science.</p>
-        </div>
+      <div class="header-brand">
+        <div class="logo-mark">🥬</div>
+        <span class="brand-name" data-i18n="app.title">Kimchi Simulator</span>
       </div>
       <div class="header-controls">
         <div class="lang-switch" id="lang-switch">
@@ -26,135 +24,218 @@
           <button class="lang-btn" data-lang="ko">한</button>
           <button class="lang-btn" data-lang="zh">中</button>
         </div>
-        <button id="theme-toggle" class="btn-pill" aria-label="Toggle dark mode">
-          <span class="theme-icon-light">&#9789;</span>
-          <span class="theme-icon-dark">&#9788;</span>
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark mode">
+          <span class="theme-icon-light">☽</span>
+          <span class="theme-icon-dark">☀</span>
+        </button>
+        <button id="btn-expert" class="btn-expert" aria-pressed="false">
+          <span class="expert-icon">⚗</span>
+          <span data-i18n="nav.expert">Expert</span>
         </button>
       </div>
     </div>
   </header>
 
   <main class="main-layout">
-    <section class="intro-panel">
-      <div class="intro-copy">
-        <p class="intro-kicker" data-i18n="hero.kicker">Kimchi, explained for real kitchens</p>
-        <h2 class="intro-title" data-i18n="hero.title">See how salt, time, and temperature turn cabbage into lively, balanced kimchi.</h2>
-        <p class="intro-body" data-i18n="hero.body">Move the controls like a recipe, watch the chart respond instantly, and use the notes below to learn what makes kimchi crisp, tangy, safe, and deeply aromatic.</p>
+
+    <!-- ═══════════════════════════════════════════
+         L1: THE NAVIGATOR — "When is it best to eat?"
+         ═══════════════════════════════════════════ -->
+    <section class="layer layer-nav" id="layer-1">
+
+      <!-- Dashboard gauge -->
+      <div class="dash" id="dash">
+        <div class="dash-main">
+          <div class="dash-ring" id="dash-ring">
+            <svg viewBox="0 0 120 120" class="dash-svg">
+              <circle cx="60" cy="60" r="52" class="dash-track"/>
+              <circle cx="60" cy="60" r="52" class="dash-fill" id="dash-arc"/>
+            </svg>
+            <div class="dash-center">
+              <div class="dash-day" id="dash-day">--</div>
+              <div class="dash-unit" data-i18n="nav.days">days</div>
+            </div>
+          </div>
+          <div class="dash-status" id="dash-status" data-i18n="nav.calculating">Calculating…</div>
+        </div>
+        <div class="dash-meta">
+          <div class="dash-kv">
+            <span class="dash-label" data-i18n="nav.best">Best</span>
+            <span class="dash-value" id="dash-best">--</span>
+          </div>
+          <div class="dash-kv">
+            <span class="dash-label" data-i18n="stat.flavor">Flavor</span>
+            <span class="dash-value dash-accent" id="dash-flavor">--</span>
+          </div>
+          <div class="dash-kv">
+            <span class="dash-label">pH</span>
+            <span class="dash-value" id="dash-ph">--</span>
+          </div>
+          <div class="dash-kv">
+            <span class="dash-label" data-i18n="nav.safety">Safety</span>
+            <span class="dash-value" id="dash-safety">--</span>
+          </div>
+        </div>
       </div>
-      <div class="intro-facts">
-        <article class="intro-fact">
-          <div class="section-head">
-            <h3 data-i18n="intro.fact1.title">Start with the red score line</h3>
-            <button class="info-dot" type="button" data-tip="tip.readChart" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <p data-i18n="intro.fact1.body">It summarizes taste, aroma, and texture so first-time visitors know where to look.</p>
-        </article>
-        <article class="intro-fact">
-          <div class="section-head">
-            <h3 data-i18n="intro.fact2.title">Use the colored bands as a story</h3>
-            <button class="info-dot" type="button" data-tip="tip.dominance" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <p data-i18n="intro.fact2.body">Each phase shows which friendly bacteria are leading the fermentation and what that means for flavor.</p>
-        </article>
-        <article class="intro-fact">
-          <div class="section-head">
-            <h3 data-i18n="intro.fact3.title">Watch the nitrite warning carefully</h3>
-            <button class="info-dot" type="button" data-tip="tip.nitrite" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <p data-i18n="intro.fact3.body">Kimchi is not only about taste. The simulation also shows when early fermentation is still in its riskier window.</p>
-        </article>
+
+      <!-- Flavor curve (hero chart — simplified spline) -->
+      <div class="nav-chart-card">
+        <div class="nav-chart-canvas" id="nav-chart-canvas">
+          <canvas id="flavor-chart"></canvas>
+        </div>
       </div>
+
+      <!-- Phase timeline strip -->
+      <div class="phase-strip">
+        <div class="phase-seg phase-blue" id="phase-seg-1">
+          <span class="phase-label" data-i18n="phase.initial">Initial</span>
+        </div>
+        <div class="phase-seg phase-green" id="phase-seg-2">
+          <span class="phase-label" data-i18n="phase.optimal">Optimal</span>
+        </div>
+        <div class="phase-seg phase-amber" id="phase-seg-3">
+          <span class="phase-label" data-i18n="phase.over">Over</span>
+        </div>
+        <div class="phase-marker" id="phase-marker"></div>
+      </div>
+
+      <!-- Status sentences (judgment-based) -->
+      <div class="status-panel" id="status-panel">
+        <div class="status-line" id="status-flavor">
+          <span class="status-dot dot-green"></span>
+          <span class="status-text" data-i18n="nav.calculating">--</span>
+        </div>
+        <div class="status-line" id="status-acidity">
+          <span class="status-dot dot-blue"></span>
+          <span class="status-text">--</span>
+        </div>
+        <div class="status-line" id="status-safety">
+          <span class="status-dot dot-amber"></span>
+          <span class="status-text">--</span>
+        </div>
+      </div>
+
+      <!-- Quick controls (presets + starter inline) -->
+      <div class="quick-bar">
+        <div class="quick-presets" id="preset-row">
+          <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
+          <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
+          <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
+        </div>
+        <div class="quick-starter">
+          <span class="quick-label" data-i18n="mixer.starter">Starter</span>
+          <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" class="slider-flat">
+          <span class="quick-val" id="val-starter">0%</span>
+        </div>
+      </div>
+
+      <!-- Expand: "Why?" -->
+      <button class="btn-why" id="btn-why">
+        <span data-i18n="nav.why">Why this result?</span>
+        <span class="why-arrow">↓</span>
+      </button>
     </section>
 
-    <!-- ====== HERO: Flavor Score Chart ====== -->
-    <div class="hero-chart">
-      <div class="hero-chart-header">
-        <div class="hero-heading">
-          <div class="hero-chart-title-row">
-            <h2 class="hero-chart-title">
-              <span class="hero-title-icon">&#11088;</span>
-              <span data-i18n="chart.flavor.title">Flavor Score</span>
-            </h2>
-            <button class="info-dot" type="button" data-tip="tip.flavor" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
+    <!-- ═══════════════════════════════════════════
+         L2: EXPLAIN — "Why this result?"
+         ═══════════════════════════════════════════ -->
+    <section class="layer layer-explain" id="layer-2" style="display:none">
+
+      <!-- Fermentation status text -->
+      <div class="explain-card glass-card">
+        <h3 class="explain-title">
+          <span>🧬</span>
+          <span data-i18n="explain.status">Fermentation Status</span>
+        </h3>
+        <div class="explain-lines" id="explain-lines">
+          <div class="explain-line">
+            <span class="explain-cause" id="explain-microbe">--</span>
+            <span class="explain-arrow">→</span>
+            <span class="explain-effect" id="explain-microbe-effect">--</span>
           </div>
-          <p class="hero-chart-subtitle" data-i18n="chart.flavor.subtitle">Start simple with the score, then turn on pH, acid, LAB, or microbe lines when you want more detail.</p>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <div class="hero-stat-label-row">
-              <span class="hero-stat-label" data-i18n="stat.optimalTime">Optimal</span>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.optimalTime" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-            </div>
-            <span class="hero-stat-value" id="stat-optimal-time">--</span>
+          <div class="explain-line">
+            <span class="explain-cause" id="explain-acid-cause">--</span>
+            <span class="explain-arrow">→</span>
+            <span class="explain-effect" id="explain-acid-effect">--</span>
           </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label-row">
-              <span class="hero-stat-label" data-i18n="stat.ph">pH</span>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.ph" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-            </div>
-            <span class="hero-stat-value" id="stat-ph">--</span>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label-row">
-              <span class="hero-stat-label" data-i18n="stat.acid">Acid</span>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.acid" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-            </div>
-            <span class="hero-stat-value" id="stat-acid">--</span>
-          </div>
-          <div class="hero-stat">
-            <div class="hero-stat-label-row">
-              <span class="hero-stat-label" data-i18n="stat.bacteria">LAB</span>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.lab" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-            </div>
-            <span class="hero-stat-value" id="stat-bacteria">--</span>
-          </div>
-          <div class="hero-stat hero-stat-accent">
-            <div class="hero-stat-label-row">
-              <span class="hero-stat-label" data-i18n="stat.flavor">Score</span>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.flavor" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-            </div>
-            <span class="hero-stat-value" id="stat-flavor">--</span>
+          <div class="explain-line">
+            <span class="explain-cause" id="explain-safety-cause">--</span>
+            <span class="explain-arrow">→</span>
+            <span class="explain-effect" id="explain-safety-effect">--</span>
           </div>
         </div>
       </div>
-      <div class="chart-toolbar">
-        <div class="chart-toolbar-copy">
-          <span class="toolbar-title" data-i18n="chart.toolbar">Show on chart</span>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.chartControls" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
+
+      <!-- Compact stage editor + batch tracker merged -->
+      <div class="controls-card glass-card">
+        <div class="controls-header">
+          <h3 class="explain-title">
+            <span>🌡️</span>
+            <span data-i18n="controls.stages">Stages</span>
+          </h3>
+          <div class="batch-inline">
+            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
+            <input type="date" id="batch-start-date" class="input-date">
+            <span class="batch-elapsed" id="batch-elapsed">--</span>
+          </div>
         </div>
+        <!-- Hidden salt input for JS -->
+        <input type="hidden" id="slider-salt" value="2.5">
+        <!-- Hidden temp slider for single-stage mode -->
+        <div id="temp-single-wrap" style="display:none">
+          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
+        </div>
+        <div id="stages-container">
+          <div class="stages-grid">
+            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
+            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
+            <span class="sg-head"></span>
+          </div>
+          <div id="stages-list"></div>
+          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
+        </div>
+      </div>
+
+      <!-- Chart toggles (for expert lines on the curve) -->
+      <div class="chart-toggles glass-card">
+        <span class="toggle-label" data-i18n="chart.toolbar">Show on chart</span>
         <div class="chart-toggle-row">
           <button class="chart-toggle active locked" type="button" data-series="flavor">
-            <span class="chart-swatch swatch-score"></span>
+            <span class="ct-dot" style="background:var(--accent)"></span>
             <span data-i18n="chart.toggle.score">Score</span>
           </button>
           <button class="chart-toggle active" type="button" data-series="nitrite">
-            <span class="chart-swatch swatch-nitrite"></span>
+            <span class="ct-dot" style="background:var(--orange)"></span>
             <span data-i18n="chart.toggle.nitrite">Nitrite</span>
           </button>
           <button class="chart-toggle" type="button" data-series="ph">
-            <span class="chart-swatch swatch-ph"></span>
+            <span class="ct-dot" style="background:var(--blue)"></span>
             <span data-i18n="chart.toggle.ph">pH</span>
           </button>
           <button class="chart-toggle" type="button" data-series="acid">
-            <span class="chart-swatch swatch-acid"></span>
+            <span class="ct-dot" style="background:var(--red-muted)"></span>
             <span data-i18n="chart.toggle.acid">Acid</span>
           </button>
           <button class="chart-toggle" type="button" data-series="lab">
-            <span class="chart-swatch swatch-lab"></span>
+            <span class="ct-dot" style="background:var(--green-deep)"></span>
             <span data-i18n="chart.toggle.lab">LAB</span>
           </button>
           <button class="chart-toggle" type="button" data-series="microbes">
-            <span class="chart-swatch swatch-microbes"></span>
+            <span class="ct-dot" style="background:var(--purple)"></span>
             <span data-i18n="chart.toggle.microbes">Microbes</span>
           </button>
         </div>
       </div>
-      <div class="hero-chart-canvas"><canvas id="flavor-chart"></canvas></div>
-      <div class="dominance-strip">
-        <div class="dominance-strip-head">
-          <span data-i18n="dominance.title">Dominant microbes across the whole story</span>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.dominance" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         L3: EXPERT — Full scientific modules
+         ═══════════════════════════════════════════ -->
+    <section class="layer layer-expert" id="layer-3" style="display:none">
+
+      <!-- Dominance strip -->
+      <div class="expert-card glass-card">
+        <h3 class="expert-title" data-i18n="dominance.title">Dominant microbes across the whole story</h3>
         <div class="dominance-track">
           <div class="dominance-segment dominance-sakei" id="dominance-seg-1">
             <span class="dominance-name" data-i18n="microbe.sakei.name">L. sakei</span>
@@ -173,380 +254,140 @@
           </div>
         </div>
       </div>
-      <!-- Nitrite warning strip -->
-      <div class="nitrite-bar" id="nitrite-bar">
-        <span class="nitrite-icon">&#9888;&#65039;</span>
-        <span class="nitrite-label-wrap">
-          <span class="nitrite-label" data-i18n="nitrite.label">Nitrite Risk</span>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.nitrite" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-        </span>
-        <span class="nitrite-level" id="nitrite-level">--</span>
-        <span class="nitrite-status" id="nitrite-status">--</span>
-      </div>
-      <div class="nitrite-model">
-        <div class="nitrite-model-head">
-          <div class="section-head">
-            <h3 class="chart-title-sm" data-i18n="nitrite.model.title">Nitrite kinetics for this batch</h3>
-            <button class="info-dot info-dot-mini" type="button" data-tip="tip.nitrite" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <p class="section-copy" data-i18n="nitrite.model.body">The curve now comes from nitrate reserve, sodium strength, temperature stages, and the speed at which LAB acidify and clear nitrite.</p>
-        </div>
-        <div class="nitrite-model-grid">
-          <div class="nitrite-metric">
-            <span class="nitrite-metric-label" data-i18n="nitrite.no3">NO3- reserve</span>
-            <span class="nitrite-metric-value" id="nitrite-nitrate">--</span>
-          </div>
-          <div class="nitrite-metric">
-            <span class="nitrite-metric-label" data-i18n="nitrite.na">Na+ strength</span>
-            <span class="nitrite-metric-value" id="nitrite-sodium">--</span>
-          </div>
-          <div class="nitrite-metric">
-            <span class="nitrite-metric-label" data-i18n="nitrite.peak">Predicted peak</span>
-            <span class="nitrite-metric-value" id="nitrite-peak">--</span>
-          </div>
-          <div class="nitrite-metric">
-            <span class="nitrite-metric-label" data-i18n="nitrite.window">Risk window</span>
-            <span class="nitrite-metric-value" id="nitrite-window">--</span>
-          </div>
-        </div>
-        <div class="nitrite-model-note">
-          <span class="nitrite-model-note-label" data-i18n="nitrite.flux">Dynamic balance</span>
-          <span class="nitrite-model-note-value" id="nitrite-flux">--</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- ====== MIXER BOARD ====== -->
-    <div class="mixer">
-      <div class="mixer-header">
-        <div>
-          <div class="section-head">
-            <h2 class="section-title">
-              <span class="section-icon">&#127859;</span>
-              <span data-i18n="controls.title">Fermentation Parameters</span>
-            </h2>
-            <button class="info-dot" type="button" data-tip="tip.presets" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <p class="section-copy" data-i18n="controls.subtitle">Keep the household presets if you are learning, or edit each stage as if you were planning a real batch.</p>
+      <!-- Nitrite model -->
+      <div class="expert-card glass-card">
+        <h3 class="expert-title" data-i18n="nitrite.model.title">Nitrite kinetics for this batch</h3>
+        <div class="nitrite-bar" id="nitrite-bar">
+          <span class="nitrite-icon">⚠️</span>
+          <span class="nitrite-label" data-i18n="nitrite.label">Nitrite</span>
+          <span class="nitrite-level" id="nitrite-level">--</span>
+          <span class="nitrite-status" id="nitrite-status">--</span>
         </div>
-        <div class="preset-panel">
-          <span class="preset-label" data-i18n="presets.label">Quick presets</span>
-          <div class="preset-row" id="preset-row">
-            <button class="preset-btn" type="button" data-preset="classic" data-i18n="preset.classic">Classic Home</button>
-            <button class="preset-btn" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend Fast</button>
-            <button class="preset-btn" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
+        <div class="nitrite-grid">
+          <div class="n-metric">
+            <span class="n-label" data-i18n="nitrite.no3">NO₃⁻ reserve</span>
+            <span class="n-value" id="nitrite-nitrate">--</span>
           </div>
-        </div>
-      </div>
-      <div class="mixer-channels">
-        <!-- Salt is fixed at 2.5% per Korean RDA standard (hidden input for JS) -->
-        <input type="hidden" id="slider-salt" value="2.5">
-
-        <!-- Starter fader -->
-        <div class="channel" data-tip="tip.starter">
-          <div class="channel-value" id="val-starter">0%</div>
-          <div class="channel-fader">
-            <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" orient="vertical" class="fader">
+          <div class="n-metric">
+            <span class="n-label" data-i18n="nitrite.na">Na⁺ strength</span>
+            <span class="n-value" id="nitrite-sodium">--</span>
           </div>
-          <div class="channel-label" data-i18n="mixer.starter">Starter</div>
-          <div class="channel-icon">&#129388;</div>
-        </div>
-
-        <!-- Hidden single-temp -->
-        <div id="temp-single-wrap" style="display:none">
-          <div class="channel">
-            <div class="channel-value" id="val-temp">10°C</div>
-            <div class="channel-fader">
-              <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10" orient="vertical" class="fader">
-            </div>
-            <div class="channel-label" data-i18n="slider.temp">Temp</div>
-            <div class="channel-icon">&#127777;&#65039;</div>
+          <div class="n-metric">
+            <span class="n-label" data-i18n="nitrite.peak">Predicted peak</span>
+            <span class="n-value" id="nitrite-peak">--</span>
+          </div>
+          <div class="n-metric">
+            <span class="n-label" data-i18n="nitrite.window">Risk window</span>
+            <span class="n-value" id="nitrite-window">--</span>
           </div>
         </div>
-
-        <div class="mixer-divider"></div>
-
-        <!-- Stage editor -->
-        <div class="stages-panel" id="stages-container" data-tip="tip.stages">
-          <div class="stages-panel-title">
-            <span>&#127777;&#65039;</span>
-            <span data-i18n="controls.stages">Stages</span>
-            <button class="info-dot info-dot-mini" type="button" data-tip="tip.stages" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-          </div>
-          <div class="stages-head">
-            <span class="stage-head-empty"></span>
-            <span class="stage-head-text" data-i18n="controls.stageTemp">Temp</span>
-            <span class="stage-head-empty"></span>
-            <span class="stage-head-text" data-i18n="controls.stageDur">Duration</span>
-            <span class="stage-head-empty"></span>
-            <span class="stage-head-empty"></span>
-          </div>
-          <div id="stages-list"></div>
-          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage" data-i18n-title="controls.addStage">+</button>
-          <p class="stage-helper" data-i18n="controls.stageHelp">Warm stages wake the microbes up. Cold stages stretch flavor development and keep texture crisp.</p>
+        <div class="n-flux">
+          <span class="n-label" data-i18n="nitrite.flux">Dynamic balance</span>
+          <span class="n-value" id="nitrite-flux">--</span>
         </div>
       </div>
 
-      <!-- Readout strip -->
-      <div class="mixer-readout">
-        <div class="readout-item">
-          <span class="readout-label" data-i18n="stat.optimalTime">Optimal</span>
-          <span class="readout-value" id="info-opt-time">--</span>
-        </div>
-        <div class="readout-item">
-          <span class="readout-label">pH</span>
-          <span class="readout-value" id="info-ph">--</span>
-        </div>
-        <div class="readout-item">
-          <span class="readout-label" data-i18n="stat.acid">Acid</span>
-          <span class="readout-value" id="info-acid">--</span>
-        </div>
-        <div class="readout-item">
-          <span class="readout-label" data-i18n="stat.flavor">Flavor</span>
-          <span class="readout-value" id="info-flavor">--</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Batch tracker -->
-    <div class="batch-tracker" id="batch-tracker">
-      <div class="batch-tracker-header">
-        <span class="batch-tracker-icon">&#128197;</span>
-        <label data-i18n="batch.startLabel">Pickling start date</label>
-        <input type="date" id="batch-start-date" class="batch-date-input">
-        <span class="batch-elapsed" id="batch-elapsed">--</span>
-      </div>
-      <div class="batch-status" id="batch-status"></div>
-    </div>
-
-    <!-- Phase bar -->
-    <div class="phase-indicator">
-      <div class="phase-header">
-        <div class="section-head">
-          <h3 class="chart-title-sm" data-i18n="phase.title">Fermentation story at a glance</h3>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.phase" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-        </div>
-        <p class="phase-summary" data-i18n="phase.body">The marker shows where your current settings reach their best flavor moment.</p>
-      </div>
-      <div class="phase-bar">
-        <div class="phase-segment phase-1" id="phase-seg-1">
-          <span class="phase-name" data-i18n="phase.initial">Initial</span>
-          <span class="phase-sub" data-i18n="phase.initial.sub">L. sakei dominant</span>
-        </div>
-        <div class="phase-segment phase-2" id="phase-seg-2">
-          <span class="phase-name" data-i18n="phase.optimal">Optimal</span>
-          <span class="phase-sub" data-i18n="phase.optimal.sub">Leuc. mesenteroides</span>
-        </div>
-        <div class="phase-segment phase-3" id="phase-seg-3">
-          <span class="phase-name" data-i18n="phase.over">Over</span>
-          <span class="phase-sub" data-i18n="phase.over.sub">L. plantarum dominant</span>
-        </div>
-        <div class="phase-marker" id="phase-marker"></div>
-      </div>
-    </div>
-
-    <div class="learning-grid">
-      <article class="learn-card">
-        <div class="section-head">
-          <h3 class="chart-title-sm" data-i18n="guide.title">How to read this simulator</h3>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.readChart" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-        </div>
-        <p class="section-copy" data-i18n="guide.body">You do not need a lab background. Read the chart in three simple passes.</p>
-        <div class="guide-list">
-          <div class="guide-step">
-            <span class="guide-step-num">1</span>
-            <div>
-              <h4 class="guide-step-title" data-i18n="guide.step1.title">Find the best eating window</h4>
-              <p class="guide-step-body" data-i18n="guide.step1.body">Read the red score line and the green dashed marker first. That is your fastest route to “when should I eat this batch?”.</p>
-            </div>
-          </div>
-          <div class="guide-step">
-            <span class="guide-step-num">2</span>
-            <div>
-              <h4 class="guide-step-title" data-i18n="guide.step2.title">Check safety before enthusiasm</h4>
-              <p class="guide-step-body" data-i18n="guide.step2.body">The nitrite line tells you when very early fermentation is still not ideal. Flavor and safety should be read together.</p>
-            </div>
-          </div>
-          <div class="guide-step">
-            <span class="guide-step-num">3</span>
-            <div>
-              <h4 class="guide-step-title" data-i18n="guide.step3.title">Use the microbe story to understand taste</h4>
-              <p class="guide-step-body" data-i18n="guide.step3.body">The phase bands and microbe cards explain why kimchi tastes fresh, sparkly, or deep and sour at different points.</p>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="microbe-board">
-        <div class="section-head">
-          <h3 class="chart-title-sm" data-i18n="microbe.board.title">Who is leading the batch?</h3>
-          <button class="info-dot info-dot-mini" type="button" data-tip="tip.microbeBoard" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-        </div>
-        <p class="section-copy" data-i18n="microbe.board.body">These are the main friendly bacteria behind kimchi flavor. The highlighted card and percentages update with your parameters in real time.</p>
+      <!-- Microbe cards -->
+      <div class="expert-card glass-card">
+        <h3 class="expert-title" data-i18n="microbe.board.title">Who is leading the batch?</h3>
         <div class="microbe-cards">
           <article class="microbe-card" id="microbe-card-sakei">
-            <div class="microbe-card-head">
-              <div>
-                <div class="microbe-name" data-i18n="microbe.sakei.name">L. sakei</div>
-                <div class="microbe-role" data-i18n="microbe.sakei.role">Early stabilizer</div>
-              </div>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.sakei" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
+            <div class="mc-head">
+              <div class="mc-name" data-i18n="microbe.sakei.name">L. sakei</div>
+              <div class="mc-role" data-i18n="microbe.sakei.role">Early stabilizer</div>
             </div>
-            <p class="microbe-copy" data-i18n="microbe.sakei.body">Helps the batch settle in, keeps the taste fresh, and prepares the way for deeper fermentation.</p>
-            <div class="microbe-meter">
-              <span class="microbe-meter-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="microbe-meter-value" id="microbe-val-sakei">--%</span>
+            <div class="mc-meter">
+              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
+              <span class="mc-val" id="microbe-val-sakei">--%</span>
             </div>
           </article>
           <article class="microbe-card" id="microbe-card-mesenteroides">
-            <div class="microbe-card-head">
-              <div>
-                <div class="microbe-name" data-i18n="microbe.mesenteroides.name">Leuc. mesenteroides</div>
-                <div class="microbe-role" data-i18n="microbe.mesenteroides.role">Peak flavor maker</div>
-              </div>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.mesenteroides" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
+            <div class="mc-head">
+              <div class="mc-name" data-i18n="microbe.mesenteroides.name">Leuc. mesenteroides</div>
+              <div class="mc-role" data-i18n="microbe.mesenteroides.role">Peak flavor maker</div>
             </div>
-            <p class="microbe-copy" data-i18n="microbe.mesenteroides.body">Creates lively aroma, gentle tang, and the fresh sparkle people often love in ripe kimchi.</p>
-            <div class="microbe-meter">
-              <span class="microbe-meter-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="microbe-meter-value" id="microbe-val-mesenteroides">--%</span>
+            <div class="mc-meter">
+              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
+              <span class="mc-val" id="microbe-val-mesenteroides">--%</span>
             </div>
           </article>
           <article class="microbe-card" id="microbe-card-plantarum">
-            <div class="microbe-card-head">
-              <div>
-                <div class="microbe-name" data-i18n="microbe.plantarum.name">L. plantarum</div>
-                <div class="microbe-role" data-i18n="microbe.plantarum.role">Deep sour finisher</div>
-              </div>
-              <button class="info-dot info-dot-mini" type="button" data-tip="tip.plantarum" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
+            <div class="mc-head">
+              <div class="mc-name" data-i18n="microbe.plantarum.name">L. plantarum</div>
+              <div class="mc-role" data-i18n="microbe.plantarum.role">Deep sour finisher</div>
             </div>
-            <p class="microbe-copy" data-i18n="microbe.plantarum.body">Takes over later, deepens acidity, and moves the batch toward cooking kimchi territory.</p>
-            <div class="microbe-meter">
-              <span class="microbe-meter-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="microbe-meter-value" id="microbe-val-plantarum">--%</span>
+            <div class="mc-meter">
+              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
+              <span class="mc-val" id="microbe-val-plantarum">--%</span>
             </div>
           </article>
         </div>
-      </article>
-    </div>
-
-    <!-- ====== PROCESS FLOWCHART ====== -->
-    <div class="process-flow" id="process-flow">
-      <div class="section-head">
-        <h3 class="section-title">
-          <span class="section-icon">&#128203;</span>
-          <span data-i18n="process.title">Making Process</span>
-        </h3>
-        <button class="info-dot" type="button" data-tip="tip.process" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
       </div>
-      <p class="section-copy" data-i18n="process.subtitle">This is the kitchen workflow behind the chart: salting changes texture, seasoning feeds fermentation, and temperature shapes the final flavor.</p>
-      <div class="flow-steps">
-        <div class="flow-step">
-          <div class="step-icon">&#129388;</div>
-          <div class="step-num">1</div>
-          <div class="step-name" data-i18n="process.s1">Select</div>
-          <div class="step-detail" data-i18n="process.s1d">Fresh napa cabbage</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step">
-          <div class="step-icon">&#129474;</div>
-          <div class="step-num">2</div>
-          <div class="step-name" data-i18n="process.s2">Salt</div>
-          <div class="step-detail" data-i18n="process.s2d">6-8h in 8% salt</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step">
-          <div class="step-icon">&#127798;</div>
-          <div class="step-num">3</div>
-          <div class="step-name" data-i18n="process.s3">Season</div>
-          <div class="step-detail" data-i18n="process.s3d">Mix paste into leaves</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step">
-          <div class="step-icon">&#129387;</div>
-          <div class="step-num">4</div>
-          <div class="step-name" data-i18n="process.s4">Pack</div>
-          <div class="step-detail" data-i18n="process.s4d">Press tight, no air</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step step-warm">
-          <div class="step-icon">&#9728;&#65039;</div>
-          <div class="step-num">5</div>
-          <div class="step-name" data-i18n="process.s5">Ferment</div>
-          <div class="step-detail" data-i18n="process.s5d">Room temp 1-2 days</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step step-cold">
-          <div class="step-icon">&#10052;&#65039;</div>
-          <div class="step-num">6</div>
-          <div class="step-name" data-i18n="process.s6">Chill</div>
-          <div class="step-detail" data-i18n="process.s6d">Fridge 4°C, slow ripen</div>
-        </div>
-        <div class="flow-arrow">&#10140;</div>
-        <div class="flow-step step-done">
-          <div class="step-icon">&#127860;</div>
-          <div class="step-num">7</div>
-          <div class="step-name" data-i18n="process.s7">Enjoy!</div>
-          <div class="step-detail" data-i18n="process.s7d">Best at peak flavor</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- ====== RECIPE CALCULATOR ====== -->
-    <div class="calc-card" id="calc-card">
-      <div class="section-head">
-        <h3 class="section-title">
-          <span class="section-icon">&#129518;</span>
+      <!-- Recipe Calculator -->
+      <div class="expert-card glass-card">
+        <h3 class="expert-title">
+          <span>🧮</span>
           <span data-i18n="calc.title">Recipe Calculator</span>
         </h3>
-        <button class="info-dot" type="button" data-tip="tip.calc" data-i18n-title="info.more" data-i18n-aria-label="info.more" aria-label="More info" title="More info">&#9432;</button>
-      </div>
-      <p class="section-copy" data-i18n="calc.subtitle">Enter the cabbage weight and get a practical shopping list scaled from a standard household recipe.</p>
-      <div class="calc-input-row">
-        <label data-i18n="calc.input">Cabbage Weight</label>
-        <div class="calc-input-wrap">
-          <input type="number" id="calc-weight" value="2.5" min="0.5" max="50" step="0.5" class="calc-input">
-          <span class="calc-unit">kg</span>
+        <div class="calc-row">
+          <label data-i18n="calc.input">Cabbage Weight</label>
+          <div class="calc-input-wrap">
+            <input type="number" id="calc-weight" value="2.5" min="0.5" max="50" step="0.5" class="input-num">
+            <span class="calc-unit">kg</span>
+          </div>
         </div>
+        <div class="calc-results" id="calc-results"></div>
       </div>
-      <div class="calc-results" id="calc-results"></div>
-      <div class="calc-meta">
-        <span class="calc-source" data-i18n="calc.source">Source: Korean RDA (농촌진흥청)</span>
-        <span class="calc-link" data-i18n="calc.codex">Codex CXS 223-2001</span>
-      </div>
-    </div>
 
-    <!-- Recipe details (collapsible) -->
-    <section class="recipe-section" id="recipe-section">
-      <button class="recipe-toggle" id="recipe-toggle">
-        <span data-i18n="recipe.title">Standard Recipe & Process</span>
-        <span class="toggle-arrow">&#9660;</span>
-      </button>
-      <div class="recipe-content" id="recipe-content"></div>
+      <!-- Recipe details (collapsible) -->
+      <div class="expert-card glass-card">
+        <button class="recipe-toggle" id="recipe-toggle">
+          <span data-i18n="recipe.title">Standard Recipe & Process</span>
+          <span class="toggle-chevron">▾</span>
+        </button>
+        <div class="recipe-content" id="recipe-content"></div>
+      </div>
     </section>
+
   </main>
 
   <footer class="footer">
-    <div class="footer-inner">
-      <p class="footer-models" data-i18n="footer.models">Gompertz · Arrhenius · Sigmoid succession</p>
-      <p class="footer-refs">
-        <a href="https://www.fao.org/fao-who-codexalimentarius/sh-proxy/en/?lnk=1&url=https://workspace.fao.org/sites/codex/Standards/CXS+223-2001/CXS_223e.pdf" target="_blank" rel="noopener">Codex CXS 223</a> ·
-        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9728259/" target="_blank" rel="noopener">LAB Kinetics</a> ·
-        <a href="https://www.sciencedirect.com/science/article/pii/S0023643824007424" target="_blank" rel="noopener">Gompertz</a>
-      </p>
-    </div>
+    <p class="footer-models" data-i18n="footer.models">Gompertz · Arrhenius · Sigmoid succession</p>
+    <p class="footer-refs">
+      <a href="https://www.fao.org/fao-who-codexalimentarius/sh-proxy/en/?lnk=1&url=https://workspace.fao.org/sites/codex/Standards/CXS+223-2001/CXS_223e.pdf" target="_blank" rel="noopener">Codex CXS 223</a> ·
+      <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9728259/" target="_blank" rel="noopener">LAB Kinetics</a> ·
+      <a href="https://www.sciencedirect.com/science/article/pii/S0023643824007424" target="_blank" rel="noopener">Gompertz</a>
+    </p>
   </footer>
 
-  <!-- Tooltip container (populated by JS) -->
+  <!-- Tooltip container -->
   <div class="tooltip-box" id="tooltip-box"></div>
+
+  <!-- Hidden elements for backward compat with existing JS -->
+  <div style="display:none">
+    <span id="stat-optimal-time"></span>
+    <span id="stat-ph"></span>
+    <span id="stat-acid"></span>
+    <span id="stat-bacteria"></span>
+    <span id="stat-flavor"></span>
+    <span id="info-opt-time"></span>
+    <span id="info-ph"></span>
+    <span id="info-acid"></span>
+    <span id="info-flavor"></span>
+    <span id="batch-status"></span>
+    <span id="val-temp"></span>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=8"></script>
-  <script src="js/models.js?v=8"></script>
-  <script src="js/simulation.js?v=8"></script>
-  <script src="js/charts.js?v=8"></script>
-  <script src="js/ui.js?v=8"></script>
-  <script src="js/recipe.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/i18n.js?v=10"></script>
+  <script src="js/models.js?v=10"></script>
+  <script src="js/simulation.js?v=10"></script>
+  <script src="js/charts.js?v=10"></script>
+  <script src="js/ui.js?v=10"></script>
+  <script src="js/recipe.js?v=10"></script>
+  <script src="js/app.js?v=10"></script>
 </body>
 </html>

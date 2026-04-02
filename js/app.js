@@ -1,5 +1,6 @@
 /**
- * Kimchi Fermentation Simulator — Application Entry Point
+ * Kimchi Fermentation Navigator — App Entry
+ * L1/L2/L3 progressive disclosure, layer management
  */
 window.KimchiSim = window.KimchiSim || {};
 
@@ -19,6 +20,7 @@ window.KimchiSim = window.KimchiSim || {};
     updateBatchTracker();
   }
 
+  // ─── Theme ───
   function initTheme() {
     var saved = null;
     try { saved = localStorage.getItem('kimchi-theme'); } catch (e) {}
@@ -37,6 +39,7 @@ window.KimchiSim = window.KimchiSim || {};
     });
   }
 
+  // ─── Language ───
   function initLang() {
     sim.i18n.loadSaved();
     var lang = sim.i18n.getLang();
@@ -61,25 +64,47 @@ window.KimchiSim = window.KimchiSim || {};
   }
 
   function updateLangButtons(lang) {
-    var btns = document.querySelectorAll('.lang-btn');
-    btns.forEach(function (btn) {
+    document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
   }
 
-  // --- Recipe Calculator ---
-  // Per 2.5kg cabbage (1 head, 1포기) — Korean government + traditional standard
-  // Sources: 농촌진흥청 (RDA), Codex CXS 223-2001, 식품공전
-  // After salting, cabbage weighs ~1.8kg. Gov standard: 4.5g chili + 2.0g garlic per 100g salted
+  // ─── Layer Management (L1/L2/L3) ───
+  function initLayers() {
+    var btnWhy = document.getElementById('btn-why');
+    var btnExpert = document.getElementById('btn-expert');
+    var layer2 = document.getElementById('layer-2');
+    var layer3 = document.getElementById('layer-3');
+
+    // L2 toggle
+    if (btnWhy && layer2) {
+      btnWhy.addEventListener('click', function () {
+        var visible = layer2.style.display !== 'none';
+        layer2.style.display = visible ? 'none' : 'flex';
+        btnWhy.classList.toggle('expanded', !visible);
+      });
+    }
+
+    // L3 toggle
+    if (btnExpert && layer3) {
+      btnExpert.addEventListener('click', function () {
+        var pressed = btnExpert.getAttribute('aria-pressed') === 'true';
+        btnExpert.setAttribute('aria-pressed', !pressed);
+        layer3.style.display = pressed ? 'none' : 'flex';
+      });
+    }
+  }
+
+  // ─── Recipe Calculator ───
   var RECIPE_PER_2_5KG = {
-    coarseSalt: 200, // g — 8% of raw weight for dry-salting (절임)
-    chili: 80,       // g — 4.5g/100g × 1800g salted ≈ 81g (고춧가루 약1컵)
-    fish: 45,        // ml — 멸치액젓 3큰술
-    shrimp: 30,      // g — 새우젓 2큰술 (fish:shrimp = 3:2)
-    garlic: 36,      // g — 2.0g/100g × 1800g = 36g (마늘 6-7쪽)
-    ginger: 8,       // g — 생강 약1큰술
-    ricePaste: 40,   // ml — 찹쌀풀 2.5큰술
-    scallion: 50     // g — 쪽파 5-6줄기
+    coarseSalt: 200,
+    chili: 80,
+    fish: 45,
+    shrimp: 30,
+    garlic: 36,
+    ginger: 8,
+    ricePaste: 40,
+    scallion: 50
   };
 
   function updateCalcResults() {
@@ -123,6 +148,7 @@ window.KimchiSim = window.KimchiSim || {};
     updateCalcResults();
   }
 
+  // ─── Tooltips ───
   function initTooltips() {
     var box = document.getElementById('tooltip-box');
     if (!box) return;
@@ -161,9 +187,7 @@ window.KimchiSim = window.KimchiSim || {};
       var el = e.target.closest('[data-tip]');
       if (!el || pinnedEl === el) return;
       clearTimeout(timer);
-      timer = setTimeout(function() {
-        show(el);
-      }, 400);
+      timer = setTimeout(function() { show(el); }, 400);
     }, true);
 
     document.addEventListener('mouseleave', function(e) {
@@ -173,58 +197,29 @@ window.KimchiSim = window.KimchiSim || {};
       hide(false);
     }, true);
 
-    document.addEventListener('focusin', function(e) {
-      var el = e.target.closest('[data-tip]');
-      if (!el) return;
-      clearTimeout(timer);
-      show(el);
-    }, true);
-
-    document.addEventListener('focusout', function(e) {
-      var el = e.target.closest('[data-tip]');
-      if (!el || pinnedEl === el) return;
-      hide(false);
-    }, true);
-
     document.addEventListener('click', function(e) {
-      var info = e.target.closest('.info-dot[data-tip]');
+      var info = e.target.closest('[data-tip]');
       if (info) {
         e.preventDefault();
-        if (pinnedEl === info) {
-          pinnedEl = null;
-          hide(true);
-        } else {
-          pinnedEl = info;
-          show(info);
-        }
+        if (pinnedEl === info) { pinnedEl = null; hide(true); }
+        else { pinnedEl = info; show(info); }
         return;
       }
       pinnedEl = null;
       hide(true);
     });
-
-    window.addEventListener('resize', function() {
-      if (pinnedEl) position(pinnedEl);
-    });
-
-    window.addEventListener('scroll', function() {
-      if (pinnedEl) position(pinnedEl);
-    }, true);
   }
 
-  // --- Batch Tracker ---
+  // ─── Batch Tracker ───
   function initBatchTracker() {
     var dateInput = document.getElementById('batch-start-date');
     if (!dateInput) return;
 
-    // Default: today
     var today = new Date();
-    var yyyy = today.getFullYear();
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var dd = String(today.getDate()).padStart(2, '0');
-    var todayStr = yyyy + '-' + mm + '-' + dd;
+    var todayStr = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
 
-    // Restore saved date or use today
     var saved = null;
     try { saved = localStorage.getItem('kimchi-batch-date'); } catch (e) {}
     dateInput.value = saved || todayStr;
@@ -238,8 +233,7 @@ window.KimchiSim = window.KimchiSim || {};
   function updateBatchTracker() {
     var dateInput = document.getElementById('batch-start-date');
     var elapsedEl = document.getElementById('batch-elapsed');
-    var statusEl = document.getElementById('batch-status');
-    if (!dateInput || !elapsedEl || !statusEl || !lastSimData) return;
+    if (!dateInput || !elapsedEl || !lastSimData) return;
 
     var t = sim.i18n.t;
     var startDate = new Date(dateInput.value);
@@ -247,93 +241,22 @@ window.KimchiSim = window.KimchiSim || {};
 
     if (isNaN(startDate.getTime())) {
       elapsedEl.textContent = '--';
-      statusEl.innerHTML = '<span class="batch-stat-label">' + t('batch.notStarted') + '</span>';
       sim.charts.setNowMarker(null);
       return;
     }
 
     var elapsedMs = now.getTime() - startDate.getTime();
-    var elapsedDays = elapsedMs / (1000 * 60 * 60 * 24);
-    if (elapsedDays < 0) elapsedDays = 0;
+    var elapsedDays = Math.max(0, elapsedMs / (1000 * 60 * 60 * 24));
 
-    // Show elapsed time
-    var elapsedText = t('batch.elapsed').replace('{d}', elapsedDays.toFixed(1));
-    elapsedEl.textContent = elapsedText;
-
-    // Find current values in simulation data
-    var data = lastSimData;
-    var tp = data.timePoints;
-    var idx = 0;
-    for (var i = 0; i < tp.length; i++) {
-      if (tp[i] >= elapsedDays) { idx = i; break; }
-      idx = i;
-    }
-    if (idx >= tp.length) idx = tp.length - 1;
-
-    var curPH = data.pH[idx];
-    var curAcid = data.lacticAcid[idx];
-    var curFlavor = data.flavorScore[idx];
-    var curNitrite = data.nitrite[idx];
-    var comp = sim.models.microbialComposition(curPH, sim.ui.getParams().starter);
-    var dominant = 'Leuc. mesenteroides';
-    var dominantKey = 'mesenteroides';
-    if (comp.sakei > comp.mesenteroides && comp.sakei > comp.plantarum) {
-      dominant = 'L. sakei'; dominantKey = 'sakei';
-    } else if (comp.plantarum > comp.mesenteroides) {
-      dominant = 'L. plantarum'; dominantKey = 'plantarum';
-    }
-
-    // Determine phase and suggestion
-    var phase, suggestion;
-    if (curPH >= 5.0) {
-      phase = t('phase.initial');
-      suggestion = t('batch.suggestion.early');
-    } else if (curPH >= 4.0) {
-      phase = t('phase.optimal');
-      suggestion = t('batch.suggestion.optimal');
-    } else {
-      phase = t('phase.over');
-      suggestion = t('batch.suggestion.over');
-    }
-
-    // Nitrite class
-    var nitriteClass = 'safe';
-    if (curNitrite >= 8) nitriteClass = 'danger';
-    else if (curNitrite >= 3) nitriteClass = 'warning';
-
-    statusEl.innerHTML =
-      '<div class="batch-stat">' +
-        '<span class="batch-stat-label">' + t('batch.phase') + '</span>' +
-        '<span class="batch-stat-value">' + phase + '</span>' +
-      '</div>' +
-      '<div class="batch-stat">' +
-        '<span class="batch-stat-label">pH</span>' +
-        '<span class="batch-stat-value">' + curPH.toFixed(2) + '</span>' +
-      '</div>' +
-      '<div class="batch-stat">' +
-        '<span class="batch-stat-label">' + t('stat.flavor') + '</span>' +
-        '<span class="batch-stat-value">' + Math.round(curFlavor) + '/100</span>' +
-      '</div>' +
-      '<div class="batch-stat">' +
-        '<span class="batch-stat-label">' + t('batch.dominant') + '</span>' +
-        '<span class="batch-stat-value">' + t('microbe.' + dominantKey + '.name') + '</span>' +
-      '</div>' +
-      '<div class="batch-stat">' +
-        '<span class="batch-stat-label">NO\u2082</span>' +
-        '<span class="batch-stat-value ' + nitriteClass + '">' + curNitrite.toFixed(1) + ' mg/kg</span>' +
-      '</div>' +
-      '<div class="batch-stat" style="grid-column: 1 / -1;">' +
-        '<span class="batch-stat-label">' + t('batch.suggestion') + '</span>' +
-        '<span class="batch-stat-value" style="font-size:0.75rem;font-weight:500;">' + suggestion + '</span>' +
-      '</div>';
-
-    // Set NOW marker on chart
+    elapsedEl.textContent = t('batch.elapsed').replace('{d}', elapsedDays.toFixed(1));
     sim.charts.setNowMarker(elapsedDays);
   }
 
+  // ─── Init ───
   function init() {
     initTheme();
     initLang();
+    initLayers();
     initTooltips();
     sim.charts.init();
 
@@ -345,11 +268,9 @@ window.KimchiSim = window.KimchiSim || {};
     initCalc();
     initBatchTracker();
 
-    // Restore saved inputs (sliders, stages, calc weight)
     sim.ui.restoreSavedInputs();
     updateCalcResults();
 
-    // Initial run with current stages
     var params = sim.ui.getParams();
     var stg = sim.ui.getStages();
     runAndUpdate(params, stg || [
