@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kimchi Fermentation Simulator</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-title">
+        <div class="logo-mark"><span class="logo-icon">&#127798;</span></div>
+        <div>
+          <h1 data-i18n="app.title">Kimchi Fermentation Simulator</h1>
+          <p class="header-subtitle" data-i18n="app.subtitle">Modified Gompertz & Arrhenius Model</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <div class="lang-switch" id="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ko">한</button>
+          <button class="lang-btn" data-lang="zh">中</button>
+        </div>
+        <button id="theme-toggle" class="btn-pill" aria-label="Toggle dark mode">
+          <span class="theme-icon-light">&#9789;</span>
+          <span class="theme-icon-dark">&#9788;</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <!-- Controls -->
+    <div class="controls-panel">
+      <div class="controls-body" id="controls-body">
+        <!-- Salt -->
+        <div class="control-item">
+          <div class="control-header">
+            <span class="control-icon">&#129474;</span>
+            <span data-i18n="slider.salt">Salt Concentration</span>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="slider-salt" min="1" max="5" step="0.1" value="2.5">
+            <div class="slider-value" id="val-salt">2.5%</div>
+          </div>
+        </div>
+
+        <!-- Starter Culture -->
+        <div class="control-item">
+          <div class="control-header">
+            <span class="control-icon">&#129388;</span>
+            <span data-i18n="slider.starter">Starter Culture (종국)</span>
+          </div>
+          <div class="slider-row">
+            <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0">
+            <div class="slider-value" id="val-starter">0%</div>
+          </div>
+          <div class="control-hint" data-i18n="slider.starter.hint">Old kimchi brine — natural LAB inoculant</div>
+        </div>
+
+        <!-- Hidden single-temp (used when no stages) -->
+        <div id="temp-single-wrap" style="display:none">
+          <div class="control-item">
+            <div class="control-header">
+              <span class="control-icon">&#127777;&#65039;</span>
+              <span data-i18n="slider.temp">Temperature</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
+              <div class="slider-value" id="val-temp">10°C</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-stage -->
+        <div class="stages-section" id="stages-container">
+          <div class="stages-title">
+            <span>&#127777;&#65039;</span>
+            <span data-i18n="controls.stages">Fermentation Stages</span>
+          </div>
+          <div class="stages-header">
+            <span></span>
+            <span data-i18n="controls.stageTemp">Temp</span>
+            <span></span>
+            <span data-i18n="controls.stageDur">Duration</span>
+            <span></span>
+            <span></span>
+          </div>
+          <div id="stages-list"></div>
+          <div class="stages-add-row">
+            <button class="btn-add-stage" id="btn-add-stage" title="Add stage">+</button>
+          </div>
+        </div>
+
+        <!-- Realtime display -->
+        <div class="realtime-info">
+          <div class="info-row">
+            <span class="info-label" data-i18n="stat.optimalTime">Optimal Time</span>
+            <span class="info-value" id="info-opt-time">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">pH</span>
+            <span class="info-value" id="info-ph">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label" data-i18n="stat.acid">Lactic Acid</span>
+            <span class="info-value" id="info-acid">--</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label" data-i18n="stat.flavor">Flavor</span>
+            <span class="info-value" id="info-flavor">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visualization -->
+    <section class="viz-area">
+      <!-- Stats -->
+      <div class="stats-panel" id="stats-panel">
+        <div class="stat-card">
+          <div class="stat-icon">&#9201;</div>
+          <div class="stat-value" id="stat-optimal-time">--</div>
+          <div class="stat-label" data-i18n="stat.optimalTime">Optimal Time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#128200;</div>
+          <div class="stat-value" id="stat-ph">--</div>
+          <div class="stat-label" data-i18n="stat.ph">pH at Optimal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#129514;</div>
+          <div class="stat-value" id="stat-acid">--</div>
+          <div class="stat-label" data-i18n="stat.acid">Lactic Acid</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">&#129440;</div>
+          <div class="stat-value" id="stat-bacteria">--</div>
+          <div class="stat-label" data-i18n="stat.bacteria">Dominant LAB</div>
+        </div>
+        <div class="stat-card stat-card-accent">
+          <div class="stat-icon">&#11088;</div>
+          <div class="stat-value" id="stat-flavor">--</div>
+          <div class="stat-label" data-i18n="stat.flavor">Flavor Score</div>
+        </div>
+      </div>
+
+      <!-- Phase -->
+      <div class="phase-indicator">
+        <div class="phase-bar">
+          <div class="phase-segment phase-1" id="phase-seg-1">
+            <span class="phase-name" data-i18n="phase.initial">Initial</span>
+            <span class="phase-sub">L. sakei</span>
+          </div>
+          <div class="phase-segment phase-2" id="phase-seg-2">
+            <span class="phase-name" data-i18n="phase.optimal">Optimal</span>
+            <span class="phase-sub">Leuc. mesenteroides</span>
+          </div>
+          <div class="phase-segment phase-3" id="phase-seg-3">
+            <span class="phase-name" data-i18n="phase.over">Over-ripened</span>
+            <span class="phase-sub">L. plantarum</span>
+          </div>
+          <div class="phase-marker" id="phase-marker"></div>
+        </div>
+      </div>
+
+      <!-- Main Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title" data-i18n="chart.main.title">Fermentation Dynamics</h3>
+        <div class="chart-wrapper"><canvas id="main-chart"></canvas></div>
+      </div>
+
+      <!-- Microbe + Flavor side by side -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3 class="chart-title" data-i18n="chart.microbe.title">Microbial Succession</h3>
+          <div class="chart-wrapper"><canvas id="microbe-chart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-title" data-i18n="chart.flavor.title">Flavor Score</h3>
+          <div class="chart-wrapper"><canvas id="flavor-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Recipe Calculator -->
+      <div class="chart-card">
+        <h3 class="chart-title" data-i18n="calc.title">Recipe Calculator</h3>
+        <div class="calc-input-row">
+          <label data-i18n="calc.input">Cabbage Weight</label>
+          <div class="calc-input-wrap">
+            <input type="number" id="calc-weight" value="2.5" min="0.5" max="50" step="0.5" class="calc-input">
+            <span class="calc-unit">kg</span>
+          </div>
+        </div>
+        <div class="calc-results" id="calc-results"></div>
+      </div>
+
+      <!-- Recipe -->
+      <section class="recipe-section" id="recipe-section">
+        <button class="recipe-toggle" id="recipe-toggle">
+          <span data-i18n="recipe.title">Standard Recipe & Process</span>
+          <span class="toggle-arrow">&#9660;</span>
+        </button>
+        <div class="recipe-content" id="recipe-content"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-models" data-i18n="footer.models">Models: Modified Gompertz · Arrhenius · Sigmoid microbial succession</p>
+      <p class="footer-refs">
+        <a href="https://www.fao.org/fao-who-codexalimentarius/sh-proxy/en/?lnk=1&url=https://workspace.fao.org/sites/codex/Standards/CXS+223-2001/CXS_223e.pdf" target="_blank" rel="noopener">Codex CXS 223-2001</a> ·
+        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9728259/" target="_blank" rel="noopener">LAB Kinetics</a> ·
+        <a href="https://www.sciencedirect.com/science/article/pii/S0023643824007424" target="_blank" rel="noopener">Gompertz Model</a>
+      </p>
+      <p class="footer-copy">MIT License · <a href="https://github.com/" target="_blank" rel="noopener" id="github-link">GitHub</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/models.js"></script>
+  <script src="js/simulation.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/recipe.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
