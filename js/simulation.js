@@ -93,7 +93,7 @@ window.KimchiSim.simulation = (function () {
 
       // pH decay — incremental exponential toward pH_min
       // Derived from dPH/dt = -k * (pH - pH_min), solution: pH(t) = pH_min + (pH0-pH_min)*e^(-kt)
-      var k_pH = m.kPH(T);
+      var k_pH = m.kPH(T, salt);
       var pHDrop = k_pH * (currentPH - m.PARAMS.pH_min) * dt;
       currentPH = Math.max(m.PARAMS.pH_min, currentPH - pHDrop);
 

@@ -126,11 +126,13 @@ window.KimchiSim.models = (function () {
   }
 
   /**
-   * pH decay rate at given temperature
-   * Scales proportionally with growth rate
+   * pH decay rate at given temperature and salt
+   * Scales proportionally with effective growth rate (temp + salt)
+   * Salt slows LAB growth → slows acid production → slows pH drop
    */
-  function kPH(T) {
-    return PARAMS.k_pH_base * (muMax(T) / PARAMS.mu_ref_for_pH);
+  function kPH(T, salt) {
+    var sf = (salt !== undefined) ? saltFactor(salt) : 1;
+    return PARAMS.k_pH_base * (muMax(T) / PARAMS.mu_ref_for_pH) * sf;
   }
 
   /**
