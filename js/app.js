@@ -93,6 +93,41 @@ window.KimchiSim = window.KimchiSim || {};
         layer3.style.display = pressed ? 'none' : 'flex';
       });
     }
+
+    // Nav shortcuts: Calculator & Process
+    var btnCalcNav = document.getElementById('btn-calc-nav');
+    var btnProcessNav = document.getElementById('btn-process-nav');
+
+    function ensureExpertVisible() {
+      if (layer3 && layer3.style.display === 'none') {
+        layer3.style.display = 'flex';
+        if (btnExpert) btnExpert.setAttribute('aria-pressed', 'true');
+      }
+    }
+
+    if (btnCalcNav) {
+      btnCalcNav.addEventListener('click', function () {
+        ensureExpertVisible();
+        var el = document.getElementById('calc-weight');
+        if (el) setTimeout(function () { el.closest('.expert-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
+      });
+    }
+
+    if (btnProcessNav) {
+      btnProcessNav.addEventListener('click', function () {
+        ensureExpertVisible();
+        var el = document.getElementById('recipe-content');
+        if (el) {
+          // Expand the recipe section if collapsed
+          var content = document.getElementById('recipe-content');
+          if (content && !content.classList.contains('expanded')) {
+            var toggle = document.getElementById('recipe-toggle');
+            if (toggle) toggle.click();
+          }
+          setTimeout(function () { el.closest('.expert-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+        }
+      });
+    }
   }
 
   // ─── Recipe Calculator ───
