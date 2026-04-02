@@ -481,9 +481,32 @@ window.KimchiSim.charts = (function () {
     chart.update('none');
   }
 
+  function setNowMarker(day) {
+    if (!chart) return;
+    var ann = chart.options.plugins.annotation.annotations;
+    if (day === null || day === undefined) {
+      if (ann.nowLine) ann.nowLine.display = false;
+      chart.update('none');
+      return;
+    }
+    var c = colors();
+    ann.nowLine = {
+      type: 'line', scaleID: 'x', value: day,
+      borderColor: c.text + 'CC', borderWidth: 2.5, borderDash: [2, 2],
+      display: true,
+      label: {
+        display: true, content: t('batch.now') || 'NOW',
+        position: 'end', backgroundColor: c.text + 'DD', color: c.text === '#1a1a1a' ? '#fff' : '#1a1a1a',
+        font: { size: 10, weight: 'bold' }, padding: 4
+      }
+    };
+    chart.update('none');
+  }
+
   return {
     init: init,
     update: update,
-    updateLabels: updateLabels
+    updateLabels: updateLabels,
+    setNowMarker: setNowMarker
   };
 })();

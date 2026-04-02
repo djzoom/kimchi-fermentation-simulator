@@ -700,6 +700,58 @@ window.KimchiSim.i18n = (function () {
       zh: 'L. plantarum 在发酵后期会更强势。\n\n它会进一步加深酸味，因此当 Kimchi 逐渐转向适合做汤、炒饭、炖菜时，它就很关键。'
     },
 
+    // Batch tracker
+    'batch.startLabel': {
+      en: 'Pickling start date',
+      ko: '담근 날짜',
+      zh: '腌渍开始日期'
+    },
+    'batch.elapsed': {
+      en: '{d} days elapsed',
+      ko: '{d}일 경과',
+      zh: '已经过 {d} 天'
+    },
+    'batch.now': {
+      en: 'Current status',
+      ko: '현재 상태',
+      zh: '当前状态'
+    },
+    'batch.phase': {
+      en: 'Phase',
+      ko: '단계',
+      zh: '阶段'
+    },
+    'batch.dominant': {
+      en: 'Dominant',
+      ko: '우세균',
+      zh: '优势菌'
+    },
+    'batch.suggestion': {
+      en: 'Suggestion',
+      ko: '제안',
+      zh: '建议'
+    },
+    'batch.notStarted': {
+      en: 'Set a start date to track your batch',
+      ko: '담근 날짜를 입력하면 현재 상태를 볼 수 있습니다',
+      zh: '输入腌渍日期即可追踪当前状态'
+    },
+    'batch.suggestion.early': {
+      en: 'Still in early stage — nitrite may be elevated. Wait for further fermentation.',
+      ko: '아직 초기 단계 — 아질산염이 높을 수 있습니다. 더 발효시키세요.',
+      zh: '仍处于初期——亚硝酸盐可能偏高，继续等待发酵。'
+    },
+    'batch.suggestion.optimal': {
+      en: 'Peak flavor window! Best time to start eating. Move to fridge if not already.',
+      ko: '최적 풍미 구간! 지금 먹기 시작하세요. 아직 냉장하지 않았다면 냉장고에 넣으세요.',
+      zh: '最佳风味窗口！可以开始食用了。如果还没放冰箱，建议现在移入冷藏。'
+    },
+    'batch.suggestion.over': {
+      en: 'Past peak — increasingly sour. Best for cooking (kimchi jjigae, fried rice).',
+      ko: '최적기를 지남 — 점점 시어집니다. 요리용 (김치찌개, 볶음밥)으로 좋습니다.',
+      zh: '已过最佳期——酸度渐增，适合用来做菜（泡菜汤、炒饭等）。'
+    },
+
     // Freezing warning
     'warn.frozen': {
       en: 'Below freezing point (~-1.5°C at 2.5% salt). Kimchi will freeze, LAB go dormant. Ice crystals damage vegetable texture.',
