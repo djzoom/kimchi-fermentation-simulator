@@ -415,6 +415,93 @@ window.KimchiSim.ui = (function () {
     }
   }
 
+  // ─── Scoring Breakdown ───
+
+  function gaussian(x, center, sigma) {
+    var d = (x - center) / sigma;
+    return Math.exp(-0.5 * d * d);
+  }
+
+  function updateScoringBreakdown(data) {
+    var pH = data.atOptimal.pH;
+    var acid = data.atOptimal.acid;
+    var comp = data.atOptimal.composition || {};
+    var meso = comp.mesenteroides || 0;
+
+    var phFactor = gaussian(pH, 4.35, 0.3);
+    var acidFactor = gaussian(acid, 0.6, 0.2);
+
+    // Weighted contributions (out of 100)
+    var phScore = Math.round(phFactor * 50);
+    var acidScore = Math.round(acidFactor * 30);
+    var microbeScore = Math.round(meso * 20);
+
+    // Update bars
+    var barPh = document.getElementById('score-bar-ph');
+    var barAcid = document.getElementById('score-bar-acid');
+    var barMicrobe = document.getElementById('score-bar-microbe');
+    if (barPh) barPh.style.width = (phFactor * 100) + '%';
+    if (barAcid) barAcid.style.width = (acidFactor * 100) + '%';
+    if (barMicrobe) barMicrobe.style.width = (meso * 100) + '%';
+
+    setVal('score-val-ph', phScore + 'pt');
+    setVal('score-val-acid', acidScore + 'pt');
+    setVal('score-val-microbe', microbeScore + 'pt');
+  }
+
+  // ─── Extend Flavor Advice ───
+
+  function updateExtendAdvice(data) {
+    var t = window.KimchiSim.i18n.t;
+    var container = document.getElementById('extend-advice');
+    if (!container) return;
+
+    var params = getParams();
+    var tips = [];
+
+    // Always show the core tip
+    tips.push({ icon: '❄️', text: t('extend.chill'), primary: true });
+
+    // Context-sensitive tips
+    var hasWarmStage = false;
+    var hasColdStage = false;
+    var allCold = true;
+
+    for (var i = 0; i < stages.length; i++) {
+      if (stages[i].temperature > 15) hasWarmStage = true;
+      if (stages[i].temperature <= 6) hasColdStage = true;
+      if (stages[i].temperature > 10) allCold = false;
+    }
+
+    if (allCold) {
+      tips.push({ icon: '✓', text: t('extend.already.cold') });
+    } else {
+      tips.push({ icon: '🌡', text: t('extend.stage') });
+    }
+
+    if (params.starter > 5) {
+      var suggested = Math.max(0, Math.round(params.starter * 0.5));
+      tips.push({ icon: '🧪', text: t('extend.reduce.starter').replace('{n}', suggested) });
+    } else if (params.starter > 0) {
+      tips.push({ icon: '🧂', text: t('extend.salt') });
+    } else {
+      tips.push({ icon: '🧂', text: t('extend.salt') });
+    }
+
+    if (hasWarmStage && !hasColdStage) {
+      tips.push({ icon: '📋', text: t('extend.add.cold.stage') });
+    }
+
+    var html = '';
+    for (var j = 0; j < tips.length; j++) {
+      html += '<div class="extend-tip' + (tips[j].primary ? ' extend-tip-primary' : '') + '">' +
+        '<span class="extend-tip-icon">' + tips[j].icon + '</span>' +
+        '<span>' + tips[j].text + '</span>' +
+        '</div>';
+    }
+    container.innerHTML = html;
+  }
+
   // ─── Phase Indicator ───
 
   function updatePhaseIndicator(data) {
@@ -493,6 +580,8 @@ window.KimchiSim.ui = (function () {
     updateDashGauge(data);
     updateStatusSentences(data);
     updateExplainPanel(data);
+    updateScoringBreakdown(data);
+    updateExtendAdvice(data);
   }
 
   function formatCompactTime(days) {
