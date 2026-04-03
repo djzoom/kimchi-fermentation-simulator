@@ -626,11 +626,12 @@ window.KimchiSim.charts = (function () {
           display: true,
           label: {
             display: i === 0, // only show label on top chart
-            content: t('batch.now') || 'NOW',
-            position: 'end',
+            content: t('batch.now') || 'Now',
+            position: 'start',
             backgroundColor: dk ? '#E2E8F0' : '#1E293B',
             color: dk ? '#0F172A' : '#F8FAFC',
-            font: { size: 12, weight: 'bold' }, padding: 4, borderRadius: 4
+            font: { size: 12, weight: 'bold' }, padding: 4, borderRadius: 4,
+            yAdjust: -16
           }
         };
       }
@@ -701,23 +702,7 @@ window.KimchiSim.charts = (function () {
       var safeAndBestClose = (_milestones.safeDay > 0 && _milestones.bestDay > 0 &&
         Math.abs(_milestones.bestDay - _milestones.safeDay) < 2);
 
-      // Safe milestone
-      if (_milestones.safeDay > 0 && labels.safe) {
-        fann['ms_safe'] = {
-          type: 'line', scaleID: 'x', value: _milestones.safeDay,
-          borderColor: c.blue + '88', borderWidth: 1.2, borderDash: [3, 3],
-          label: {
-            display: true, content: labels.safe,
-            position: 'start',
-            backgroundColor: labelBg, color: c.blue,
-            borderColor: labelBorder, borderWidth: 1,
-            font: { size: msFont }, padding: msPad,
-            borderRadius: 4, yAdjust: 4
-          }
-        };
-      }
-
-      // Best milestone
+      // Best milestone (top position)
       if (_milestones.bestDay > 0 && labels.best) {
         fann['ms_best'] = {
           type: 'line', scaleID: 'x', value: _milestones.bestDay,
@@ -728,7 +713,24 @@ window.KimchiSim.charts = (function () {
             backgroundColor: labelBg, color: c.accent,
             borderColor: labelBorder, borderWidth: 1,
             font: { size: msFont, weight: 'bold' }, padding: msPad,
-            borderRadius: 4, yAdjust: safeAndBestClose ? (isMobile ? 28 : 42) : (isMobile ? 18 : 28)
+            borderRadius: 4, yAdjust: isMobile ? 18 : 28
+          }
+        };
+      }
+
+      // Safe milestone (below best)
+      if (_milestones.safeDay > 0 && labels.safe) {
+        var safeYAdjust = safeAndBestClose ? (isMobile ? 52 : 68) : (isMobile ? 18 : 28);
+        fann['ms_safe'] = {
+          type: 'line', scaleID: 'x', value: _milestones.safeDay,
+          borderColor: c.blue + '88', borderWidth: 1.2, borderDash: [3, 3],
+          label: {
+            display: true, content: labels.safe,
+            position: 'start',
+            backgroundColor: labelBg, color: c.blue,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: msFont }, padding: msPad,
+            borderRadius: 4, yAdjust: safeYAdjust
           }
         };
       }
