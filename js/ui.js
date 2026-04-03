@@ -30,8 +30,32 @@ window.KimchiSim.ui = (function () {
     } catch (e) { return {}; }
   }
 
+  function syncPickleHidden() {
+    var y = readNum('input-pickle-y', 0);
+    var m = readNum('input-pickle-m', 0);
+    var d = readNum('input-pickle-d', 0);
+    var hh = readNum('input-pickle-hh', 0);
+    if (y && m && d) {
+      var iso = y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0') +
+        'T' + String(hh).padStart(2,'0') + ':00';
+      setInput('input-pickle-time', iso);
+    } else {
+      setInput('input-pickle-time', '');
+    }
+  }
+
+  function setPickleToNow() {
+    var now = new Date();
+    setInput('input-pickle-y', now.getFullYear());
+    setInput('input-pickle-m', now.getMonth() + 1);
+    setInput('input-pickle-d', now.getDate());
+    setInput('input-pickle-hh', now.getHours());
+    syncPickleHidden();
+  }
+
   function saveState() {
     try {
+      syncPickleHidden();
       var state = {
         pickleTime: (document.getElementById('input-pickle-time') || {}).value || '',
         roomTemp: readNum('input-room-temp', 28),
@@ -49,7 +73,18 @@ window.KimchiSim.ui = (function () {
 
   function restoreSavedInputs() {
     var s = loadState();
-    if (s.pickleTime) setInput('input-pickle-time', s.pickleTime);
+    if (s.pickleTime) {
+      setInput('input-pickle-time', s.pickleTime);
+      var pd = new Date(s.pickleTime);
+      if (!isNaN(pd.getTime())) {
+        setInput('input-pickle-y', pd.getFullYear());
+        setInput('input-pickle-m', pd.getMonth() + 1);
+        setInput('input-pickle-d', pd.getDate());
+        setInput('input-pickle-hh', pd.getHours());
+      }
+    } else {
+      setPickleToNow();
+    }
     if (s.roomTemp != null) setInput('input-room-temp', s.roomTemp);
     if (s.roomHours != null) setInput('input-room-hours', s.roomHours);
     if (s.fridgeTemp != null) setInput('input-fridge-temp', s.fridgeTemp);
@@ -238,9 +273,10 @@ window.KimchiSim.ui = (function () {
     onChangeCallback = onChange;
 
     // Timeline inputs
-    ['input-pickle-time', 'input-room-temp', 'input-room-hours', 'input-fridge-temp'].forEach(function(id) {
+    ['input-pickle-y', 'input-pickle-m', 'input-pickle-d', 'input-pickle-hh',
+     'input-room-temp', 'input-room-hours', 'input-fridge-temp'].forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) el.addEventListener('input', function() { debouncedChange(); });
+      if (el) el.addEventListener('input', function() { syncPickleHidden(); debouncedChange(); });
     });
 
     // Starter slider
@@ -347,7 +383,7 @@ window.KimchiSim.ui = (function () {
     if (elapsedEl && pickleDate) {
       var elapsed = (Date.now() - pickleDate.getTime()) / 86400000;
       if (elapsed >= 0) {
-        elapsedEl.textContent = t('ferment.elapsed') + ' ' + elapsed.toFixed(1) + ' ' + t('nav.days');
+        elapsedEl.textContent = t('ferment.elapsed') + ' ' + formatDayDisplay(elapsed);
       } else {
         elapsedEl.textContent = '';
       }
@@ -364,28 +400,88 @@ window.KimchiSim.ui = (function () {
     }
   }
 
+  function findPh435Time(data) {
+    var tp = data.timePoints;
+    var ph = data.pH;
+    if (!tp || !ph) return null;
+    for (var i = 0; i < tp.length; i++) {
+      if (ph[i] <= 4.35) return tp[i];
+    }
+    return null;
+  }
+
+  function dayToDate(pickleDate, days) {
+    if (!pickleDate) return '';
+    return formatDateLocale(new Date(pickleDate.getTime() + days * 86400000));
+  }
+
   function updateTimelineMilestones(data) {
     var pickleDate = getPickleDate();
+    var t = window.KimchiSim.i18n.t;
+    var lang = window.KimchiSim.i18n.getLang();
 
-    // Best flavor
-    setVal('tl-best-val', formatTimeDisplay(data.optimalTime));
-    if (pickleDate) {
-      setVal('tl-best-date', formatDateLocale(new Date(pickleDate.getTime() + data.optimalTime * 86400000)));
+    // i18n labels
+    var sincePickle = lang === 'zh' ? '装坛后 ' : lang === 'ko' ? '담근 후 ' : 'After ';
+    var fromNow = lang === 'zh' ? '距今 ' : lang === 'ko' ? '지금부터 ' : 'From now ';
+
+    // Elapsed days from now
+    var elapsedDays = 0;
+    if (pickleDate) elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+
+    // Helper: build "date  装坛后 Xd  距今 Yd" line
+    function msWhen(days, suffix) {
+      var sfx = suffix || '';
+      var parts = [];
+      if (pickleDate) parts.push(dayToDate(pickleDate, days) + sfx);
+      parts.push(sincePickle + formatDayDisplay(days) + sfx);
+      if (pickleDate) {
+        var remaining = days - elapsedDays;
+        if (remaining > 0) parts.push(fromNow + formatDayDisplay(remaining));
+        else parts.push(fromNow + formatDayDisplay(Math.abs(remaining)) + (lang === 'zh' ? '前' : lang === 'ko' ? ' 전' : ' ago'));
+      }
+      return parts.join('  ');
     }
 
-    // Over-sour (phase2End)
+    // ── Old compat elements (hidden) ──
+    setVal('tl-best-val', formatTimeDisplay(data.optimalTime));
+    if (pickleDate) setVal('tl-best-date', dayToDate(pickleDate, data.optimalTime));
+    var ph435Time = findPh435Time(data);
+    if (ph435Time != null) {
+      setVal('tl-ph435-val', formatTimeDisplay(ph435Time));
+      if (pickleDate) setVal('tl-ph435-date', dayToDate(pickleDate, ph435Time));
+    }
     var overSourDays = data.phases.phase2End;
     setVal('tl-sour-val', formatTimeDisplay(overSourDays));
-    if (pickleDate) {
-      setVal('tl-sour-date', formatDateLocale(new Date(pickleDate.getTime() + overSourDays * 86400000)));
-    }
-
-    // End (over-sour + 7)
+    if (pickleDate) setVal('tl-sour-date', dayToDate(pickleDate, overSourDays));
     var endDays = overSourDays + 7;
     setVal('tl-end-val', formatTimeDisplay(endDays));
-    if (pickleDate) {
-      setVal('tl-end-date', formatDateLocale(new Date(pickleDate.getTime() + endDays * 86400000)));
-    }
+    if (pickleDate) setVal('tl-end-date', dayToDate(pickleDate, endDays));
+
+    // ── New dashboard milestones ──
+    var meta = data.nitriteMeta || {};
+    var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : null;
+
+    // 1. Nitrite clears — safe to eat
+    var safeDays = riskEnd != null ? riskEnd : 0;
+    setVal('tl-safe-when', msWhen(safeDays));
+    setVal('tl-safe-desc', t('dash.nitriteClear'));
+
+    // 2. Best flavor
+    setVal('tl-best-when', msWhen(data.optimalTime));
+    var flavor = data.atOptimal.flavor;
+    setVal('tl-best-desc', t('dash.bestFlavor') + ' · pH ' + data.atOptimal.pH.toFixed(2));
+
+    // 3. Over-sour
+    setVal('tl-sour-when', msWhen(overSourDays));
+    setVal('tl-sour-desc', t('dash.lastEdible'));
+
+    // 4. Starter brine
+    var starterDays = overSourDays;
+    setVal('tl-starter-when', msWhen(starterDays, '+'));
+    var starterNote = lang === 'zh' ? '可作母水（老泡菜液）· 下次加入 5–10% 提升发酵稳定性'
+                    : lang === 'ko' ? '종균으로 사용 가능 · 다음 배치에 5-10% 추가'
+                    : 'Use as starter brine · Add 5–10% to next batch';
+    setVal('tl-starter-desc', starterNote);
   }
 
   // ─── Dashboard Gauge ───
@@ -396,50 +492,148 @@ window.KimchiSim.ui = (function () {
     var flavor = data.atOptimal.flavor;
     var nitrite = data.atOptimal.nitrite || 0;
     var nitriteThreshold = (data.nitriteMeta || {}).safeThreshold || 3;
+    var pickleDate = getPickleDate();
 
+    // Compat hidden elements
     setVal('dash-day', formatDayDisplay(optDays));
     setVal('dash-best', formatTimeDisplay(optDays));
     setVal('dash-flavor', Math.round(flavor) + '/100');
     setVal('dash-ph', data.atOptimal.pH.toFixed(2));
 
-    var safetyEl = document.getElementById('dash-safety');
-    if (safetyEl) {
-      if (nitrite < nitriteThreshold) {
-        safetyEl.textContent = t('judge.safe');
-        safetyEl.style.color = 'var(--accent)';
-      } else if (nitrite < 8) {
-        safetyEl.textContent = t('judge.caution');
-        safetyEl.style.color = 'var(--orange)';
+    // ── New header summary ──
+    // Current day
+    var elapsedDays = 0;
+    if (pickleDate) {
+      elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+    }
+    setVal('dash-current-day', formatDayDisplay(elapsedDays));
+
+    // Best flavor day — show "X天 (M月D日)"
+    var bestDayEl = document.getElementById('dash-best-day');
+    if (bestDayEl) {
+      var bestDayMain = formatDayDisplay(optDays);
+      if (pickleDate) {
+        var bestDate = new Date(pickleDate.getTime() + optDays * 86400000);
+        bestDayMain += ' (' + (bestDate.getMonth() + 1) + '/' + bestDate.getDate() + ')';
+      }
+      bestDayEl.textContent = bestDayMain;
+    }
+
+    // Status
+    var statusEl = document.getElementById('dash-hero-status');
+    if (statusEl) {
+      var pH = data.atOptimal.pH;
+      if (elapsedDays >= data.phases.phase2End) {
+        statusEl.textContent = t('status.overSour');
+        statusEl.style.color = 'var(--amber)';
+      } else if (elapsedDays >= optDays * 0.85 && elapsedDays <= data.phases.phase2End) {
+        statusEl.textContent = t('status.optimal');
+        statusEl.style.color = 'var(--accent)';
+      } else if (elapsedDays >= data.phases.phase1End) {
+        statusEl.textContent = t('status.improving');
+        statusEl.style.color = 'var(--blue)';
       } else {
-        safetyEl.textContent = t('judge.danger');
-        safetyEl.style.color = 'var(--red)';
+        statusEl.textContent = t('status.developing');
+        statusEl.style.color = 'var(--text-muted)';
       }
     }
 
-    var statusEl = document.getElementById('dash-status');
-    if (statusEl) {
-      statusEl.className = 'dash-status';
-      if (flavor >= 80) { statusEl.textContent = t('judge.excellent'); statusEl.classList.add('status-peak'); }
-      else if (flavor >= 60) { statusEl.textContent = t('judge.good'); statusEl.classList.add('status-improving'); }
-      else if (data.atOptimal.pH > 5.0) { statusEl.textContent = t('judge.developing'); statusEl.classList.add('status-improving'); }
-      else if (data.atOptimal.pH < 3.9) { statusEl.textContent = t('judge.overSour'); statusEl.classList.add('status-over'); }
-      else { statusEl.textContent = t('judge.improving'); statusEl.classList.add('status-improving'); }
+    // ── Insight panel ──
+    updateInsights(data, elapsedDays);
+
+    // ── Pass milestones to charts ──
+    var meta = data.nitriteMeta || {};
+    var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : 0;
+    if (window.KimchiSim.charts && window.KimchiSim.charts.setMilestones) {
+      window.KimchiSim.charts.setMilestones({
+        safeDay: riskEnd,
+        bestDay: optDays,
+        sourDay: data.phases.phase2End
+      });
     }
 
+    // Compat hidden elements
+    var safetyEl = document.getElementById('dash-safety');
+    if (safetyEl) {
+      if (nitrite < nitriteThreshold) { safetyEl.textContent = t('judge.safe'); safetyEl.style.color = 'var(--accent)'; }
+      else if (nitrite < 8) { safetyEl.textContent = t('judge.caution'); safetyEl.style.color = 'var(--orange)'; }
+      else { safetyEl.textContent = t('judge.danger'); safetyEl.style.color = 'var(--red)'; }
+    }
+    var dashStatusEl = document.getElementById('dash-status');
+    if (dashStatusEl) {
+      dashStatusEl.className = 'dash-status';
+      if (flavor >= 80) { dashStatusEl.textContent = t('judge.excellent'); }
+      else if (flavor >= 60) { dashStatusEl.textContent = t('judge.good'); }
+      else { dashStatusEl.textContent = t('judge.improving'); }
+    }
     var arc = document.getElementById('dash-arc');
     if (arc) {
       var circumference = 326.73;
       var progress = Math.min(1, Math.max(0, flavor / 100));
       arc.style.strokeDashoffset = circumference * (1 - progress);
-      if (flavor >= 70) arc.style.stroke = 'var(--accent)';
-      else if (flavor >= 40) arc.style.stroke = 'var(--amber)';
-      else arc.style.stroke = 'var(--blue)';
+    }
+  }
+
+  function updateInsights(data, elapsedDays) {
+    var t = window.KimchiSim.i18n.t;
+    var meta = data.nitriteMeta || {};
+    var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : 0;
+    var optDays = data.optimalTime;
+    var p2End = data.phases.phase2End;
+
+    var insights = [];
+
+    // Safety insight
+    if (elapsedDays < riskEnd) {
+      insights.push({ icon: '⚠️', text: t('insight.notSafe') });
+    } else {
+      insights.push({ icon: '✅', text: t('insight.safe') });
+    }
+
+    // Flavor insight
+    if (elapsedDays >= p2End) {
+      insights.push({ icon: '🍲', text: t('insight.over') });
+    } else if (elapsedDays >= optDays * 0.85 && elapsedDays <= optDays * 1.3) {
+      insights.push({ icon: '🌟', text: t('insight.peak') });
+    } else if (elapsedDays >= data.phases.phase1End) {
+      insights.push({ icon: '📈', text: t('insight.rising') });
+    } else {
+      insights.push({ icon: '🔬', text: t('insight.developing') });
+    }
+
+    // Acid/future insight
+    if (elapsedDays < optDays && elapsedDays > optDays * 0.5) {
+      insights.push({ icon: '⏳', text: t('insight.balanced') });
+    } else if (elapsedDays >= optDays && elapsedDays < p2End) {
+      insights.push({ icon: '🔔', text: t('insight.overSoon') });
+    } else if (elapsedDays < optDays * 0.5) {
+      insights.push({ icon: '🍽', text: t('insight.balanced') });
+    } else {
+      insights.push({ icon: '🥘', text: t('insight.over') });
+    }
+
+    // Write to DOM
+    for (var i = 0; i < 3; i++) {
+      var row = document.getElementById('insight-' + (i + 1));
+      if (row && insights[i]) {
+        row.querySelector('.insight-icon').textContent = insights[i].icon;
+        row.querySelector('.insight-text').textContent = insights[i].text;
+      }
     }
   }
 
   function formatDayDisplay(days) {
-    if (days < 1) return (days * 24).toFixed(0) + 'h';
-    return days < 10 ? days.toFixed(1) : Math.round(days) + '';
+    var tr = window.KimchiSim.i18n.t;
+    var lang = window.KimchiSim.i18n.getLang();
+    var dUnit = tr('unit.days');
+    var hUnit = tr('unit.h');
+    var sp = (lang === 'en') ? ' ' : '';
+    var d = Math.floor(days);
+    var h = Math.round((days - d) * 24);
+    if (h >= 24) { d += 1; h = 0; }
+    if (d === 0) return h + sp + hUnit;
+    if (h === 0) return d + sp + dUnit;
+    return d + sp + dUnit + h + sp + hUnit;
   }
 
   // ─── Status Sentences (Judgment) ───
@@ -645,8 +839,17 @@ window.KimchiSim.ui = (function () {
   }
 
   function formatCompactTime(days) {
-    if (days < 1) return Math.round(days * 24) + 'h';
-    return days < 10 ? days.toFixed(1) + 'd' : Math.round(days) + 'd';
+    var tr = window.KimchiSim.i18n.t;
+    var lang = window.KimchiSim.i18n.getLang();
+    var dUnit = tr('unit.days');
+    var hUnit = tr('unit.h');
+    var sp = (lang === 'en') ? ' ' : '';
+    var d = Math.floor(days);
+    var h = Math.round((days - d) * 24);
+    if (h >= 24) { d += 1; h = 0; }
+    if (d === 0) return h + sp + hUnit;
+    if (h === 0) return d + sp + dUnit;
+    return d + sp + dUnit + h + sp + hUnit;
   }
 
   function formatNitriteWindow(meta) {
@@ -661,14 +864,50 @@ window.KimchiSim.ui = (function () {
     var peak = meta.peak || {};
     var sodium = meta.sodium || {};
     var atOptimal = meta.atOptimal || {};
+    var pickleDate = getPickleDate();
 
+    // Old compat elements
     if (meta.initialNitrate != null) setVal('nitrite-nitrate', meta.initialNitrate.toFixed(1) + ' → ' + (atOptimal.nitrate || 0).toFixed(1) + ' mg/kg');
     if (sodium.mgKg != null && sodium.molar != null) setVal('nitrite-sodium', (sodium.mgKg / 1000).toFixed(1) + ' g/kg · ' + Math.round(sodium.molar * 1000) + ' mmol/L');
-    if (peak.value != null && peak.time != null) setVal('nitrite-peak', peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time));
-    setVal('nitrite-window', formatNitriteWindow(meta));
+    if (peak.value != null && peak.time != null) {
+      var peakStr = peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time);
+      if (pickleDate) {
+        peakStr += ' (' + formatDateLocale(new Date(pickleDate.getTime() + peak.time * 86400000)) + ')';
+      }
+      setVal('nitrite-peak', peakStr);
+    }
+    var windowStr = formatNitriteWindow(meta);
+    if (pickleDate && meta.riskWindow && meta.riskWindow.start != null && meta.riskWindow.end != null) {
+      var wStart = formatDateLocale(new Date(pickleDate.getTime() + meta.riskWindow.start * 86400000));
+      var wEnd = formatDateLocale(new Date(pickleDate.getTime() + meta.riskWindow.end * 86400000));
+      windowStr += ' (' + wStart + ' – ' + wEnd + ')';
+    }
+    setVal('nitrite-window', windowStr);
     if (atOptimal.formationRate != null && atOptimal.clearanceRate != null) {
       setVal('nitrite-flux', t('nitrite.form') + ' ' + atOptimal.formationRate.toFixed(2) + ' · ' + t('nitrite.clear') + ' ' + atOptimal.clearanceRate.toFixed(2) + ' mg/kg/d');
     }
+
+    // New inline elements (under nitrite chart)
+    var niBar = document.getElementById('ni-bar');
+    if (niBar) {
+      var currentNitrite = atOptimal.level != null ? atOptimal.level : (peak.value || 0);
+      var safeThreshold = meta.safeThreshold || 3;
+      var cls = currentNitrite < safeThreshold * 0.5 ? 'safe' : currentNitrite < safeThreshold ? 'warning' : 'danger';
+      niBar.className = 'ni-bar ' + cls;
+      setVal('ni-level', (peak.value || 0).toFixed(1) + ' mg/kg');
+      var niStatus = document.getElementById('ni-status');
+      if (niStatus) {
+        niStatus.textContent = cls === 'safe' ? t('nitrite.safe') : cls === 'warning' ? t('nitrite.caution') : t('nitrite.danger');
+      }
+    }
+    if (peak.value != null && peak.time != null) {
+      var niPeakStr = peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time);
+      if (pickleDate) niPeakStr += ' (' + formatDateLocale(new Date(pickleDate.getTime() + peak.time * 86400000)) + ')';
+      setVal('ni-peak', niPeakStr);
+    }
+    setVal('ni-window', windowStr);
+    if (meta.initialNitrate != null) setVal('ni-nitrate', meta.initialNitrate.toFixed(1) + ' → ' + (atOptimal.nitrate || 0).toFixed(1) + ' mg/kg');
+    if (sodium.mgKg != null && sodium.molar != null) setVal('ni-sodium', (sodium.mgKg / 1000).toFixed(1) + ' g/kg · ' + Math.round(sodium.molar * 1000) + ' mmol/L');
   }
 
   function updateDominanceStrip(data) {
@@ -685,13 +924,49 @@ window.KimchiSim.ui = (function () {
     setVal('dominance-time-3', formatCompactTime(p2) + ' - ' + formatCompactTime(data.tMax));
   }
 
+  function getNowComposition(data) {
+    var pickleDate = getPickleDate();
+    if (!pickleDate) return null;
+    var elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+    var tp = data.timePoints;
+    if (!tp || tp.length === 0) return null;
+    // Find nearest time index
+    var idx = 0;
+    for (var i = 0; i < tp.length; i++) {
+      if (tp[i] <= elapsedDays) idx = i;
+      else break;
+    }
+    return {
+      sakei: data.microbial.sakei[idx],
+      mesenteroides: data.microbial.mesenteroides[idx],
+      plantarum: data.microbial.plantarum[idx],
+      elapsed: elapsedDays
+    };
+  }
+
   function updateMicrobeCards(data) {
     var comp = data.atOptimal.composition || {};
+    var nowComp = getNowComposition(data);
+    var nowDominant = null;
+    if (nowComp) {
+      var maxVal = 0;
+      ['sakei', 'mesenteroides', 'plantarum'].forEach(function(key) {
+        if (nowComp[key] > maxVal) { maxVal = nowComp[key]; nowDominant = key; }
+      });
+    }
     ['sakei', 'mesenteroides', 'plantarum'].forEach(function(key) {
       var val = comp[key];
       var card = document.getElementById('microbe-card-' + key);
-      if (card) card.classList.toggle('active', key === data.atOptimal.dominantKey);
+      if (card) {
+        card.classList.toggle('active', key === data.atOptimal.dominantKey);
+        card.classList.toggle('active-now', key === nowDominant);
+      }
       setVal('microbe-val-' + key, val == null ? '--%' : Math.round(val * 100) + '%');
+      if (nowComp) {
+        setVal('microbe-now-' + key, Math.round(nowComp[key]) + '%');
+      } else {
+        setVal('microbe-now-' + key, '--%');
+      }
     });
   }
 
@@ -701,9 +976,17 @@ window.KimchiSim.ui = (function () {
   }
 
   function formatTimeDisplay(days) {
-    if (days < 1) return (days * 24).toFixed(0) + 'h';
-    if (days < 2) return (days * 24).toFixed(0) + 'h (' + days.toFixed(1) + 'd)';
-    return days.toFixed(1) + 'd';
+    var tr = window.KimchiSim.i18n.t;
+    var lang = window.KimchiSim.i18n.getLang();
+    var dUnit = tr('unit.days');
+    var hUnit = tr('unit.h');
+    var sp = (lang === 'en') ? ' ' : '';
+    var d = Math.floor(days);
+    var h = Math.round((days - d) * 24);
+    if (h >= 24) { d += 1; h = 0; }
+    if (d === 0) return h + sp + hUnit;
+    if (h === 0) return d + sp + dUnit;
+    return d + sp + dUnit + h + sp + hUnit;
   }
 
   function setVal(id, text) {
