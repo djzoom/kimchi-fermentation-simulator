@@ -12,13 +12,17 @@ window.KimchiSim = window.KimchiSim || {};
   var currentRecipeType = 'kimchi';
   var useImperial = false; // kg vs lb
 
-  function runAndUpdate(params, stages) {
+  function runAndUpdate(params, stages, animate) {
     var data = sim.simulation.run(params, stages);
     lastSimData = data;
     var pickleVal = (document.getElementById('input-pickle-time') || {}).value;
     var pd = pickleVal ? new Date(pickleVal) : null;
     sim.charts.setPickleDate(pd && !isNaN(pd.getTime()) ? pd : null);
-    sim.charts.update(data);
+    if (animate && sim.charts.animateUpdate) {
+      sim.charts.animateUpdate(data);
+    } else {
+      sim.charts.update(data);
+    }
     sim.ui.updatePhaseIndicator(data);
     sim.ui.updateStats(data);
     sim.ui.updateEducation(data);
@@ -432,7 +436,7 @@ window.KimchiSim = window.KimchiSim || {};
         sim.ui.saveState();
         var p = sim.ui.getParams();
         var s = sim.ui.getStages();
-        runAndUpdate(p, s);
+        runAndUpdate(p, s, true);
         updateCalcResults();
       });
     }
