@@ -43,6 +43,36 @@
          ═══════════════════════════════════════════ -->
     <section class="layer layer-nav" id="layer-1">
 
+      <!-- Stage editor + batch tracker (top priority input) -->
+      <div class="controls-card glass-card">
+        <div class="controls-header">
+          <h3 class="explain-title">
+            <span>🌡️</span>
+            <span data-i18n="controls.stages">Stages</span>
+          </h3>
+          <div class="batch-inline">
+            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
+            <input type="date" id="batch-start-date" class="input-date">
+            <span class="batch-elapsed" id="batch-elapsed">--</span>
+          </div>
+        </div>
+        <!-- Hidden salt input for JS -->
+        <input type="hidden" id="slider-salt" value="2.5">
+        <!-- Hidden temp slider for single-stage mode -->
+        <div id="temp-single-wrap" style="display:none">
+          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
+        </div>
+        <div id="stages-container">
+          <div class="stages-grid">
+            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
+            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
+            <span class="sg-head"></span>
+          </div>
+          <div id="stages-list"></div>
+          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
+        </div>
+      </div>
+
       <!-- Dashboard gauge -->
       <div class="dash" id="dash">
         <div class="dash-main">
@@ -208,36 +238,6 @@
         </h3>
         <div class="extend-advice" id="extend-advice">
           <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- Compact stage editor + batch tracker merged -->
-      <div class="controls-card glass-card">
-        <div class="controls-header">
-          <h3 class="explain-title">
-            <span>🌡️</span>
-            <span data-i18n="controls.stages">Stages</span>
-          </h3>
-          <div class="batch-inline">
-            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
-            <input type="date" id="batch-start-date" class="input-date">
-            <span class="batch-elapsed" id="batch-elapsed">--</span>
-          </div>
-        </div>
-        <!-- Hidden salt input for JS -->
-        <input type="hidden" id="slider-salt" value="2.5">
-        <!-- Hidden temp slider for single-stage mode -->
-        <div id="temp-single-wrap" style="display:none">
-          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
-        </div>
-        <div id="stages-container">
-          <div class="stages-grid">
-            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
-            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
-            <span class="sg-head"></span>
-          </div>
-          <div id="stages-list"></div>
-          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
         </div>
       </div>
 
