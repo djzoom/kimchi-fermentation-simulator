@@ -1123,18 +1123,12 @@ a:hover { text-decoration: underline; }
   padding: 0;
 }
 .collapse-inline .collapse-toggle {
-  padding: 12px 0;
+  padding: 14px 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
 }
 .collapse-inline .collapse-body {
   padding: 0 0 8px;
-}
-.collapse-inline .collapse-chevron {
-  font-size: var(--fs-sm);
-  transition: transform var(--transition);
-  color: var(--text-muted);
-}
-.collapse-inline[open] .collapse-chevron {
-  transform: rotate(180deg);
 }
 .collapse-inline .collapse-toggle::-webkit-details-marker { display: none; }
 
@@ -1268,11 +1262,25 @@ a:hover { text-decoration: underline; }
 .collapse-toggle::-webkit-details-marker { display: none; }
 .collapse-toggle:hover { color: var(--text); }
 .collapse-chevron {
-  font-size: var(--fs-sm);
-  transition: transform var(--transition);
-  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  transition: transform var(--transition), background var(--transition);
+  flex-shrink: 0;
 }
-.collapse-section[open] .collapse-chevron {
+.collapse-toggle:hover .collapse-chevron {
+  background: var(--accent);
+  color: #fff;
+}
+.collapse-section[open] .collapse-chevron,
+.collapse-inline[open] .collapse-chevron {
   transform: rotate(180deg);
 }
 .collapse-body {
