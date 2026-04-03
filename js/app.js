@@ -17,7 +17,17 @@ window.KimchiSim = window.KimchiSim || {};
     sim.ui.updatePhaseIndicator(data);
     sim.ui.updateStats(data);
     sim.ui.updateEducation(data);
-    updateBatchTracker();
+    updateNowMarker();
+  }
+
+  // ─── Now Marker (from pickle time) ───
+  function updateNowMarker() {
+    var pickleVal = (document.getElementById('input-pickle-time') || {}).value;
+    if (!pickleVal) { sim.charts.setNowMarker(null); return; }
+    var pickleDate = new Date(pickleVal);
+    if (isNaN(pickleDate.getTime())) { sim.charts.setNowMarker(null); return; }
+    var elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+    sim.charts.setNowMarker(elapsedDays);
   }
 
   // ─── Theme ───
@@ -54,7 +64,6 @@ window.KimchiSim = window.KimchiSim || {};
         var newLang = btn.getAttribute('data-lang');
         sim.i18n.setLang(newLang);
         sim.charts.updateLabels();
-        sim.ui.renderStages();
         sim.recipe.updateLang();
         updateCalcResults();
         updateLangButtons(newLang);
@@ -76,7 +85,6 @@ window.KimchiSim = window.KimchiSim || {};
     var layer2 = document.getElementById('layer-2');
     var layer3 = document.getElementById('layer-3');
 
-    // L2 toggle
     if (btnWhy && layer2) {
       btnWhy.addEventListener('click', function () {
         var visible = layer2.style.display !== 'none';
@@ -85,7 +93,6 @@ window.KimchiSim = window.KimchiSim || {};
       });
     }
 
-    // L3 toggle
     if (btnExpert && layer3) {
       btnExpert.addEventListener('click', function () {
         var pressed = btnExpert.getAttribute('aria-pressed') === 'true';
@@ -97,14 +104,8 @@ window.KimchiSim = window.KimchiSim || {};
 
   // ─── Recipe Calculator ───
   var RECIPE_PER_2_5KG = {
-    coarseSalt: 200,
-    chili: 80,
-    fish: 45,
-    shrimp: 30,
-    garlic: 36,
-    ginger: 8,
-    ricePaste: 40,
-    scallion: 50
+    coarseSalt: 200, chili: 80, fish: 45, shrimp: 30,
+    garlic: 36, ginger: 8, ricePaste: 40, scallion: 50
   };
 
   function updateCalcResults() {
@@ -129,10 +130,9 @@ window.KimchiSim = window.KimchiSim || {};
 
     var html = '';
     for (var i = 0; i < items.length; i++) {
-      html += '<div class="calc-item">' +
-        '<div class="calc-item-name">' + items[i].name + '</div>' +
-        '<div class="calc-item-amount">' + items[i].amount + '<span class="calc-item-unit"> ' + items[i].unit + '</span></div>' +
-        '</div>';
+      html += '<div class="calc-item"><div class="calc-item-name">' + items[i].name +
+        '</div><div class="calc-item-amount">' + items[i].amount +
+        '<span class="calc-item-unit"> ' + items[i].unit + '</span></div></div>';
     }
     html += '<div class="calc-note">' + t('calc.note') + '</div>';
     container.innerHTML = html;
@@ -141,10 +141,7 @@ window.KimchiSim = window.KimchiSim || {};
   function initCalc() {
     var input = document.getElementById('calc-weight');
     if (!input) return;
-    input.addEventListener('input', function() {
-      updateCalcResults();
-      sim.ui.saveState();
-    });
+    input.addEventListener('input', function() { updateCalcResults(); sim.ui.saveState(); });
     updateCalcResults();
   }
 
@@ -155,26 +152,13 @@ window.KimchiSim = window.KimchiSim || {};
     var timer = null;
     var pinnedEl = null;
 
-    function getTipText(el) {
-      var text = el.getAttribute('data-tip-text');
-      if (!text) {
-        var key = el.getAttribute('data-tip');
-        text = sim.i18n.t(key);
-      }
-      return text;
-    }
-
-    function position(el) {
+    function show(el) {
+      var text = el.getAttribute('data-tip-text') || sim.i18n.t(el.getAttribute('data-tip'));
+      if (!text || text === el.getAttribute('data-tip')) return;
+      box.textContent = text;
       var rect = el.getBoundingClientRect();
       box.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
       box.style.top = (rect.bottom + 8) + 'px';
-    }
-
-    function show(el) {
-      var text = getTipText(el);
-      if (!text || text === el.getAttribute('data-tip')) return;
-      box.textContent = text;
-      position(el);
       box.classList.add('visible');
     }
 
@@ -210,48 +194,6 @@ window.KimchiSim = window.KimchiSim || {};
     });
   }
 
-  // ─── Batch Tracker ───
-  function initBatchTracker() {
-    var dateInput = document.getElementById('batch-start-date');
-    if (!dateInput) return;
-
-    var today = new Date();
-    var todayStr = today.getFullYear() + '-' +
-      String(today.getMonth() + 1).padStart(2, '0') + '-' +
-      String(today.getDate()).padStart(2, '0');
-
-    var saved = null;
-    try { saved = localStorage.getItem('kimchi-batch-date'); } catch (e) {}
-    dateInput.value = saved || todayStr;
-
-    dateInput.addEventListener('change', function () {
-      try { localStorage.setItem('kimchi-batch-date', dateInput.value); } catch (e) {}
-      updateBatchTracker();
-    });
-  }
-
-  function updateBatchTracker() {
-    var dateInput = document.getElementById('batch-start-date');
-    var elapsedEl = document.getElementById('batch-elapsed');
-    if (!dateInput || !elapsedEl || !lastSimData) return;
-
-    var t = sim.i18n.t;
-    var startDate = new Date(dateInput.value);
-    var now = new Date();
-
-    if (isNaN(startDate.getTime())) {
-      elapsedEl.textContent = '--';
-      sim.charts.setNowMarker(null);
-      return;
-    }
-
-    var elapsedMs = now.getTime() - startDate.getTime();
-    var elapsedDays = Math.max(0, elapsedMs / (1000 * 60 * 60 * 24));
-
-    elapsedEl.textContent = t('batch.elapsed').replace('{d}', elapsedDays.toFixed(1));
-    sim.charts.setNowMarker(elapsedDays);
-  }
-
   // ─── Init ───
   function init() {
     initTheme();
@@ -263,20 +205,15 @@ window.KimchiSim = window.KimchiSim || {};
     sim.ui.initSliders(function (params, stages) {
       runAndUpdate(params, stages);
     });
-    sim.ui.initControlsToggle();
     sim.recipe.init();
     initCalc();
-    initBatchTracker();
 
     sim.ui.restoreSavedInputs();
     updateCalcResults();
 
     var params = sim.ui.getParams();
     var stg = sim.ui.getStages();
-    runAndUpdate(params, stg || [
-      { temperature: 25, duration: 6 },
-      { temperature: 4, duration: 504 }
-    ]);
+    runAndUpdate(params, stg);
   }
 
   if (document.readyState === 'loading') {

@@ -854,6 +854,23 @@ window.KimchiSim.i18n = (function () {
     'explain.safety.risk': { en: 'Nitrite still above threshold', ko: '아질산염이 기준치 이상', zh: '亚硝酸盐仍超标' },
     'explain.safety.risk.effect': { en: 'Wait for LAB to clear it', ko: '유산균이 제거할 때까지 기다리세요', zh: '等乳酸菌将其清除' },
 
+    // Fermentation timeline
+    'ferment.title': { en: 'Fermentation Stages', ko: '발효 단계', zh: '发酵阶段' },
+    'ferment.pickle': { en: 'Pickling complete', ko: '절임 완료', zh: '腌渍完成' },
+    'ferment.room': { en: 'Room temp rest', ko: '실온 숙성', zh: '室温静置' },
+    'ferment.fridge': { en: 'Refrigerate', ko: '냉장 보관', zh: '冰箱冷藏' },
+    'ferment.accel': { en: 'Room temp boost', ko: '실온 가속', zh: '室温加速' },
+    'ferment.addAccel': { en: '+ Room temp boost', ko: '+ 실온 가속 추가', zh: '+ 添加室温加速' },
+    'ferment.removeAccel': { en: 'Remove', ko: '삭제', zh: '删除' },
+    'ferment.best': { en: 'Best flavor', ko: '최적 풍미', zh: '最佳风味' },
+    'ferment.overSour': { en: 'Over-sour', ko: '과발효', zh: '过酸' },
+    'ferment.end': { en: 'End (+7 days)', ko: '종료 (+7일)', zh: '终止（过酸+7天）' },
+    'ferment.moveToFridge': { en: 'Move to fridge', ko: '냉장고 이동', zh: '移入冰箱' },
+    'ferment.afterHours': { en: 'after h in fridge', ko: '냉장 후', zh: '冷藏后' },
+    'ferment.elapsed': { en: 'Elapsed', ko: '경과', zh: '已经过' },
+    'ferment.making': { en: 'Making Process', ko: '제조 과정', zh: '制作阶段' },
+    'ferment.makingSub': { en: 'Expand for process & calculator', ko: '공정 및 계산기 펼치기', zh: '可展开详细流程与用量计算器' },
+
     // Scoring breakdown (L2)
     'score.title': {
       en: 'How the score is calculated',

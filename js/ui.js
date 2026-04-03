@@ -1,6 +1,6 @@
 /**
  * Kimchi Fermentation Navigator — UI
- * Dashboard gauge, judgment sentences, stage editor, layer management
+ * Timeline-based input, dashboard gauge, judgment sentences
  */
 window.KimchiSim = window.KimchiSim || {};
 
@@ -10,26 +10,18 @@ window.KimchiSim.ui = (function () {
   var debounceTimer = null;
   var onChangeCallback = null;
   var STORAGE_KEY = 'kimchi-sim-state';
+  var useFahrenheit = false;
+
+  // Timeline presets (room temp + fridge)
   var PRESETS = {
-    classic: [
-      { temperature: 22, duration: 10 },
-      { temperature: 4, duration: 216 }
-    ],
-    weekend: [
-      { temperature: 25, duration: 8 },
-      { temperature: 8, duration: 72 }
-    ],
-    slow: [
-      { temperature: 6, duration: 336 }
-    ]
+    classic: { roomTemp: 22, roomHours: 10, fridgeTemp: 4 },
+    weekend: { roomTemp: 25, roomHours: 8, fridgeTemp: 8 },
+    slow:    { roomTemp: 6, roomHours: 0, fridgeTemp: 6 }
   };
 
-  var savedState = loadState();
-  var stages = savedState.stages || [
-    { temperature: 25, duration: 6 },
-    { temperature: 4, duration: 504 }
-  ];
-  var useMultiStage = true;
+  var accelStages = []; // [{afterHours, temp, hours}]
+
+  // ─── Persistence ───
 
   function loadState() {
     try {
@@ -41,10 +33,15 @@ window.KimchiSim.ui = (function () {
   function saveState() {
     try {
       var state = {
-        salt: parseFloat(document.getElementById('slider-salt').value),
-        starter: parseFloat(document.getElementById('slider-starter').value),
-        stages: stages,
-        calcWeight: parseFloat((document.getElementById('calc-weight') || {}).value || 2.5)
+        pickleTime: (document.getElementById('input-pickle-time') || {}).value || '',
+        roomTemp: readNum('input-room-temp', 28),
+        roomHours: readNum('input-room-hours', 7),
+        fridgeTemp: readNum('input-fridge-temp', 4),
+        starter: readNum('slider-starter', 0),
+        salt: readNum('slider-salt', 2.5),
+        accelStages: accelStages,
+        useFahrenheit: useFahrenheit,
+        calcWeight: readNum('calc-weight', 2.5)
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) {}
@@ -52,10 +49,22 @@ window.KimchiSim.ui = (function () {
 
   function restoreSavedInputs() {
     var s = loadState();
-    if (s.salt != null) document.getElementById('slider-salt').value = s.salt;
+    if (s.pickleTime) setInput('input-pickle-time', s.pickleTime);
+    if (s.roomTemp != null) setInput('input-room-temp', s.roomTemp);
+    if (s.roomHours != null) setInput('input-room-hours', s.roomHours);
+    if (s.fridgeTemp != null) setInput('input-fridge-temp', s.fridgeTemp);
     if (s.starter != null) {
-      document.getElementById('slider-starter').value = s.starter;
+      setInput('slider-starter', s.starter);
       updateSliderDisplay('starter');
+    }
+    if (s.accelStages && s.accelStages.length) {
+      accelStages = s.accelStages;
+      renderAccelStages();
+    }
+    if (s.useFahrenheit) {
+      useFahrenheit = true;
+      convertTempsToUnit();
+      updateUnitLabels();
     }
     if (s.calcWeight != null) {
       var w = document.getElementById('calc-weight');
@@ -63,172 +72,320 @@ window.KimchiSim.ui = (function () {
     }
   }
 
-  function readNumberValue(el, fallback) {
+  function readNum(id, fallback) {
+    var el = document.getElementById(id);
     if (!el) return fallback;
     var v = parseFloat(el.value);
     return isNaN(v) ? fallback : v;
   }
 
-  function getParams() {
-    return {
-      temperature: readNumberValue(document.getElementById('slider-temp'), 10),
-      salt: readNumberValue(document.getElementById('slider-salt'), 2.5),
-      starter: readNumberValue(document.getElementById('slider-starter'), 0)
-    };
+  function setInput(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  // ─── Temperature Unit Toggle ───
+
+  function toggleUnit() {
+    useFahrenheit = !useFahrenheit;
+    convertTempsToUnit();
+    updateUnitLabels();
+    saveState();
+  }
+
+  function convertTempsToUnit() {
+    ['input-room-temp', 'input-fridge-temp'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var c = parseFloat(el.getAttribute('data-celsius'));
+      if (isNaN(c)) c = parseFloat(el.value);
+      if (useFahrenheit) {
+        el.value = Math.round(c * 9 / 5 + 32);
+      } else {
+        el.value = c;
+      }
+    });
+    // accel temps
+    document.querySelectorAll('.accel-temp-input').forEach(function(el) {
+      var c = parseFloat(el.getAttribute('data-celsius'));
+      if (isNaN(c)) c = parseFloat(el.value);
+      el.value = useFahrenheit ? Math.round(c * 9 / 5 + 32) : c;
+    });
+  }
+
+  function updateUnitLabels() {
+    var label = useFahrenheit ? '°F' : '°C';
+    ['unit-room', 'unit-fridge'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = label;
+    });
+    document.querySelectorAll('.accel-unit').forEach(function(el) {
+      el.textContent = label;
+    });
+    var btn = document.getElementById('btn-unit-toggle');
+    if (btn) btn.textContent = useFahrenheit ? '°C' : '°F'; // show what to switch TO
+  }
+
+  function toCelsius(displayVal) {
+    return useFahrenheit ? (displayVal - 32) * 5 / 9 : displayVal;
+  }
+
+  // ─── Timeline → Stages Conversion ───
+
+  function getTimelineStages() {
+    var roomTemp = toCelsius(readNum('input-room-temp', 28));
+    var roomHours = readNum('input-room-hours', 7);
+    var fridgeTemp = toCelsius(readNum('input-fridge-temp', 4));
+
+    // Store celsius for unit conversion
+    document.getElementById('input-room-temp').setAttribute('data-celsius', roomTemp);
+    document.getElementById('input-fridge-temp').setAttribute('data-celsius', fridgeTemp);
+
+    var stages = [];
+    if (roomHours > 0) {
+      stages.push({ temperature: roomTemp, duration: roomHours });
+    }
+
+    // Acceleration stages
+    for (var i = 0; i < accelStages.length; i++) {
+      var a = accelStages[i];
+      stages.push({ temperature: fridgeTemp, duration: a.afterHours || 48 });
+      stages.push({ temperature: toCelsius(a.temp || 25), duration: a.hours || 4 });
+    }
+
+    // Final fridge — generous duration (90 days)
+    stages.push({ temperature: fridgeTemp, duration: 2160 });
+
+    return stages;
   }
 
   function getStages() {
-    if (!useMultiStage) return null;
-    var rows = document.querySelectorAll('.stage-row');
-    var result = [];
-    rows.forEach(function(row) {
-      var tempInput = row.querySelector('.stage-temp');
-      var durInput = row.querySelector('.stage-dur');
-      if (tempInput && durInput) {
-        result.push({
-          temperature: readNumberValue(tempInput, 10),
-          duration: readNumberValue(durInput, 24)
-        });
-      }
-    });
-    return result.length > 0 ? result : null;
+    return getTimelineStages();
   }
 
-  function renderStages() {
-    var container = document.getElementById('stages-list');
+  function getParams() {
+    return {
+      temperature: toCelsius(readNum('input-room-temp', 28)),
+      salt: readNum('slider-salt', 2.5),
+      starter: readNum('slider-starter', 0)
+    };
+  }
+
+  // ─── Acceleration Stages ───
+
+  function addAccelStage() {
+    accelStages.push({ afterHours: 48, temp: 25, hours: 4 });
+    renderAccelStages();
+    debouncedChange();
+  }
+
+  function removeAccelStage(idx) {
+    accelStages.splice(idx, 1);
+    renderAccelStages();
+    debouncedChange();
+  }
+
+  function renderAccelStages() {
+    var container = document.getElementById('accel-container');
     if (!container) return;
     var t = window.KimchiSim.i18n.t;
-
-    var freezePoint = window.KimchiSim.models ? window.KimchiSim.models.freezingPoint(2.5) : -1.5;
+    var unit = useFahrenheit ? '°F' : '°C';
     var html = '';
-    for (var i = 0; i < stages.length; i++) {
-      var frozen = stages[i].temperature < freezePoint;
-      html += '<div class="stage-row' + (frozen ? ' stage-frozen' : '') + '">' +
-        '<div class="stage-num">' + (i + 1) + '</div>' +
-        '<input type="number" class="stage-input stage-temp" value="' + stages[i].temperature + '" min="-5" max="40" step="0.5">' +
-        '<span class="stage-unit">\u00B0C</span>' +
-        (frozen ? '<span class="stage-freeze-warn" title="' + t('warn.frozen') + '">\u2744\uFE0F</span>' : '') +
-        '<input type="number" class="stage-input stage-dur" value="' + stages[i].duration + '" min="1" max="2400" step="1">' +
-        '<span class="stage-unit" data-i18n="unit.h">' + t('unit.h') + '</span>' +
-        (stages.length > 1 ?
-          '<button class="btn-remove-stage" data-idx="' + i + '" title="' + t('controls.removeStage') + '">&times;</button>' :
-          '<div style="width:28px"></div>') +
+    for (var i = 0; i < accelStages.length; i++) {
+      var a = accelStages[i];
+      var tempVal = useFahrenheit ? Math.round(a.temp * 9 / 5 + 32) : a.temp;
+      html += '<div class="accel-row" data-idx="' + i + '">' +
+        '<span class="tl-dot tl-dot-warm" style="width:14px;height:14px;font-size:0"></span>' +
+        '<span class="tl-unit-lbl">' + t('ferment.afterHours') + '</span>' +
+        '<input type="number" class="tl-input accel-after" value="' + a.afterHours + '" min="1" max="2000" step="1">' +
+        '<span class="tl-unit-lbl">' + t('unit.h') + '</span>' +
+        '<input type="number" class="tl-input accel-temp-input" value="' + tempVal + '" data-celsius="' + a.temp + '" min="15" max="40" step="0.5">' +
+        '<span class="tl-unit-lbl accel-unit">' + unit + '</span>' +
+        '<input type="number" class="tl-input accel-hours" value="' + a.hours + '" min="1" max="72" step="1">' +
+        '<span class="tl-unit-lbl">' + t('unit.h') + '</span>' +
+        '<button class="accel-remove" data-idx="' + i + '">&times;</button>' +
         '</div>';
     }
     container.innerHTML = html;
 
-    container.querySelectorAll('.stage-input').forEach(function(input) {
+    container.querySelectorAll('.accel-row input').forEach(function(input) {
       input.addEventListener('input', function() {
-        readStagesFromDOM();
+        readAccelFromDOM();
         debouncedChange();
       });
     });
-    container.querySelectorAll('.btn-remove-stage').forEach(function(btn) {
+    container.querySelectorAll('.accel-remove').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        var idx = parseInt(btn.getAttribute('data-idx'));
-        stages.splice(idx, 1);
-        renderStages();
-        debouncedChange();
-      });
-    });
-
-    syncPresetButtons();
-  }
-
-  function readStagesFromDOM() {
-    stages = [];
-    document.querySelectorAll('.stage-row').forEach(function(row) {
-      var tempInput = row.querySelector('.stage-temp');
-      var durInput = row.querySelector('.stage-dur');
-      if (tempInput && durInput) {
-        stages.push({
-          temperature: readNumberValue(tempInput, 10),
-          duration: readNumberValue(durInput, 24)
-        });
-      }
-    });
-  }
-
-  function cloneStages(list) {
-    return list.map(function(s) {
-      return { temperature: s.temperature, duration: s.duration };
-    });
-  }
-
-  function sameStages(a, b) {
-    if (!a || !b || a.length !== b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (Math.abs(a[i].temperature - b[i].temperature) > 0.01) return false;
-      if (Math.abs(a[i].duration - b[i].duration) > 0.01) return false;
-    }
-    return true;
-  }
-
-  function syncPresetButtons() {
-    document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
-      var preset = btn.getAttribute('data-preset');
-      btn.classList.toggle('active', !!(PRESETS[preset] && sameStages(stages, PRESETS[preset])));
-    });
-  }
-
-  function initPresets() {
-    document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var preset = btn.getAttribute('data-preset');
-        if (!PRESETS[preset]) return;
-        stages = cloneStages(PRESETS[preset]);
-        useMultiStage = true;
-        renderStages();
-        debouncedChange();
+        removeAccelStage(parseInt(btn.getAttribute('data-idx')));
       });
     });
   }
+
+  function readAccelFromDOM() {
+    accelStages = [];
+    document.querySelectorAll('.accel-row').forEach(function(row) {
+      accelStages.push({
+        afterHours: parseFloat(row.querySelector('.accel-after').value) || 48,
+        temp: toCelsius(parseFloat(row.querySelector('.accel-temp-input').value) || 25),
+        hours: parseFloat(row.querySelector('.accel-hours').value) || 4
+      });
+    });
+  }
+
+  // ─── Initialization ───
 
   function initSliders(onChange) {
     onChangeCallback = onChange;
 
-    ['temp', 'salt', 'starter'].forEach(function(id) {
-      var slider = document.getElementById('slider-' + id);
-      if (!slider) return;
-      slider.addEventListener('input', function() {
-        updateSliderDisplay(id);
-        if (id === 'temp' && !useMultiStage) {
-          stages = [{ temperature: parseFloat(slider.value), duration: 720 }];
-        }
-        debouncedChange();
-      });
+    // Timeline inputs
+    ['input-pickle-time', 'input-room-temp', 'input-room-hours', 'input-fridge-temp'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function() { debouncedChange(); });
     });
 
-    var addBtn = document.getElementById('btn-add-stage');
-    if (addBtn) {
-      addBtn.addEventListener('click', function() {
-        stages.push({ temperature: 4, duration: 168 });
-        renderStages();
+    // Starter slider
+    var starter = document.getElementById('slider-starter');
+    if (starter) {
+      starter.addEventListener('input', function() {
+        updateSliderDisplay('starter');
         debouncedChange();
       });
     }
 
+    // Unit toggle
+    var unitBtn = document.getElementById('btn-unit-toggle');
+    if (unitBtn) unitBtn.addEventListener('click', function() {
+      toggleUnit();
+      debouncedChange();
+    });
+
+    // Acceleration
+    var accelBtn = document.getElementById('btn-add-accel');
+    if (accelBtn) accelBtn.addEventListener('click', addAccelStage);
+
+    // Presets
     initPresets();
-    renderStages();
   }
 
   function updateSliderDisplay(id) {
     var slider = document.getElementById('slider-' + id);
     var display = document.getElementById('val-' + id);
     if (!slider || !display) return;
-    var val = slider.value;
-    if (id === 'temp') display.textContent = val + '\u00B0C';
-    else display.textContent = val + '%';
+    display.textContent = slider.value + '%';
+  }
+
+  function initPresets() {
+    document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var preset = btn.getAttribute('data-preset');
+        var p = PRESETS[preset];
+        if (!p) return;
+        setInput('input-room-temp', useFahrenheit ? Math.round(p.roomTemp * 9 / 5 + 32) : p.roomTemp);
+        setInput('input-room-hours', p.roomHours);
+        setInput('input-fridge-temp', useFahrenheit ? Math.round(p.fridgeTemp * 9 / 5 + 32) : p.fridgeTemp);
+        document.getElementById('input-room-temp').setAttribute('data-celsius', p.roomTemp);
+        document.getElementById('input-fridge-temp').setAttribute('data-celsius', p.fridgeTemp);
+        accelStages = [];
+        renderAccelStages();
+        syncPresetButtons();
+        debouncedChange();
+      });
+    });
+  }
+
+  function syncPresetButtons() {
+    var roomT = toCelsius(readNum('input-room-temp', 28));
+    var roomH = readNum('input-room-hours', 7);
+    var fridgeT = toCelsius(readNum('input-fridge-temp', 4));
+    document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
+      var p = PRESETS[btn.getAttribute('data-preset')];
+      if (!p) return;
+      var match = Math.abs(roomT - p.roomTemp) < 1 && Math.abs(roomH - p.roomHours) < 1 && Math.abs(fridgeT - p.fridgeTemp) < 1;
+      btn.classList.toggle('active', match);
+    });
   }
 
   function debouncedChange() {
     if (debounceTimer) clearTimeout(debounceTimer);
     debounceTimer = setTimeout(function() {
+      syncPresetButtons();
+      updateTimelineDisplay();
       if (onChangeCallback) {
-        onChangeCallback(getParams(), useMultiStage ? stages : null);
+        onChangeCallback(getParams(), getTimelineStages());
       }
       saveState();
     }, 30);
+  }
+
+  // ─── Timeline Display Updates ───
+
+  function formatDateLocale(date) {
+    if (!date || isNaN(date.getTime())) return '--';
+    var lang = window.KimchiSim.i18n.getLang();
+    var y = date.getFullYear();
+    var m = String(date.getMonth() + 1).padStart(2, '0');
+    var d = String(date.getDate()).padStart(2, '0');
+    var h = String(date.getHours()).padStart(2, '0');
+    var min = String(date.getMinutes()).padStart(2, '0');
+    if (lang === 'zh') return y + '年' + m + '月' + d + '日 ' + h + ':' + min;
+    if (lang === 'ko') return y + '년 ' + m + '월 ' + d + '일 ' + h + ':' + min;
+    return m + '/' + d + '/' + y + ' ' + h + ':' + min;
+  }
+
+  function getPickleDate() {
+    var val = (document.getElementById('input-pickle-time') || {}).value;
+    if (!val) return null;
+    return new Date(val);
+  }
+
+  function updateTimelineDisplay() {
+    var pickleDate = getPickleDate();
+    var t = window.KimchiSim.i18n.t;
+
+    // Elapsed time
+    var elapsedEl = document.getElementById('tl-elapsed');
+    if (elapsedEl && pickleDate) {
+      var elapsed = (Date.now() - pickleDate.getTime()) / 86400000;
+      if (elapsed >= 0) {
+        elapsedEl.textContent = t('ferment.elapsed') + ' ' + elapsed.toFixed(1) + ' ' + t('nav.days');
+      } else {
+        elapsedEl.textContent = '';
+      }
+    }
+
+    // Room end → fridge start
+    var roomHours = readNum('input-room-hours', 7);
+    var noteEl = document.getElementById('tl-room-end');
+    if (noteEl && pickleDate && roomHours > 0) {
+      var roomEnd = new Date(pickleDate.getTime() + roomHours * 3600000);
+      noteEl.textContent = '→ ' + t('ferment.moveToFridge') + ': ' + formatDateLocale(roomEnd);
+    } else if (noteEl) {
+      noteEl.textContent = '';
+    }
+  }
+
+  function updateTimelineMilestones(data) {
+    var pickleDate = getPickleDate();
+
+    // Best flavor
+    setVal('tl-best-val', formatTimeDisplay(data.optimalTime));
+    if (pickleDate) {
+      setVal('tl-best-date', formatDateLocale(new Date(pickleDate.getTime() + data.optimalTime * 86400000)));
+    }
+
+    // Over-sour (phase2End)
+    var overSourDays = data.phases.phase2End;
+    setVal('tl-sour-val', formatTimeDisplay(overSourDays));
+    if (pickleDate) {
+      setVal('tl-sour-date', formatDateLocale(new Date(pickleDate.getTime() + overSourDays * 86400000)));
+    }
+
+    // End (over-sour + 7)
+    var endDays = overSourDays + 7;
+    setVal('tl-end-val', formatTimeDisplay(endDays));
+    if (pickleDate) {
+      setVal('tl-end-date', formatDateLocale(new Date(pickleDate.getTime() + endDays * 86400000)));
+    }
   }
 
   // ─── Dashboard Gauge ───
@@ -237,24 +394,14 @@ window.KimchiSim.ui = (function () {
     var t = window.KimchiSim.i18n.t;
     var optDays = data.optimalTime;
     var flavor = data.atOptimal.flavor;
-    var pH = data.atOptimal.pH;
     var nitrite = data.atOptimal.nitrite || 0;
     var nitriteThreshold = (data.nitriteMeta || {}).safeThreshold || 3;
 
-    // Day display
-    var dayEl = document.getElementById('dash-day');
-    if (dayEl) dayEl.textContent = formatDayDisplay(optDays);
-
-    // Best time
+    setVal('dash-day', formatDayDisplay(optDays));
     setVal('dash-best', formatTimeDisplay(optDays));
-
-    // Flavor score
     setVal('dash-flavor', Math.round(flavor) + '/100');
+    setVal('dash-ph', data.atOptimal.pH.toFixed(2));
 
-    // pH value with judgment
-    setVal('dash-ph', pH.toFixed(2));
-
-    // Safety
     var safetyEl = document.getElementById('dash-safety');
     if (safetyEl) {
       if (nitrite < nitriteThreshold) {
@@ -269,35 +416,21 @@ window.KimchiSim.ui = (function () {
       }
     }
 
-    // Status word
     var statusEl = document.getElementById('dash-status');
     if (statusEl) {
       statusEl.className = 'dash-status';
-      if (flavor >= 80) {
-        statusEl.textContent = t('judge.excellent');
-        statusEl.classList.add('status-peak');
-      } else if (flavor >= 60) {
-        statusEl.textContent = t('judge.good');
-        statusEl.classList.add('status-improving');
-      } else if (pH > 5.0) {
-        statusEl.textContent = t('judge.developing');
-        statusEl.classList.add('status-improving');
-      } else if (pH < 3.9) {
-        statusEl.textContent = t('judge.overSour');
-        statusEl.classList.add('status-over');
-      } else {
-        statusEl.textContent = t('judge.improving');
-        statusEl.classList.add('status-improving');
-      }
+      if (flavor >= 80) { statusEl.textContent = t('judge.excellent'); statusEl.classList.add('status-peak'); }
+      else if (flavor >= 60) { statusEl.textContent = t('judge.good'); statusEl.classList.add('status-improving'); }
+      else if (data.atOptimal.pH > 5.0) { statusEl.textContent = t('judge.developing'); statusEl.classList.add('status-improving'); }
+      else if (data.atOptimal.pH < 3.9) { statusEl.textContent = t('judge.overSour'); statusEl.classList.add('status-over'); }
+      else { statusEl.textContent = t('judge.improving'); statusEl.classList.add('status-improving'); }
     }
 
-    // Arc progress (flavor score / 100)
     var arc = document.getElementById('dash-arc');
     if (arc) {
-      var circumference = 326.73; // 2π×52
+      var circumference = 326.73;
       var progress = Math.min(1, Math.max(0, flavor / 100));
       arc.style.strokeDashoffset = circumference * (1 - progress);
-      // Color by score
       if (flavor >= 70) arc.style.stroke = 'var(--accent)';
       else if (flavor >= 40) arc.style.stroke = 'var(--amber)';
       else arc.style.stroke = 'var(--blue)';
@@ -317,61 +450,32 @@ window.KimchiSim.ui = (function () {
     var flavor = data.atOptimal.flavor;
     var pH = data.atOptimal.pH;
     var nitrite = data.atOptimal.nitrite || 0;
-    var dominantKey = data.atOptimal.dominantKey || 'mesenteroides';
     var nitriteThreshold = (data.nitriteMeta || {}).safeThreshold || 3;
 
-    // Flavor sentence
     var flavorLine = document.querySelector('#status-flavor .status-text');
     var flavorDot = document.querySelector('#status-flavor .status-dot');
     if (flavorLine) {
-      if (flavor >= 80) {
-        flavorLine.textContent = t('judge.flavor.excellent');
-        setDotClass(flavorDot, 'dot-green');
-      } else if (flavor >= 60) {
-        flavorLine.textContent = t('judge.flavor.good');
-        setDotClass(flavorDot, 'dot-green');
-      } else if (tr.flavor > 0.5) {
-        flavorLine.textContent = t('judge.flavor.rising');
-        setDotClass(flavorDot, 'dot-blue');
-      } else {
-        flavorLine.textContent = t('judge.flavor.developing');
-        setDotClass(flavorDot, 'dot-blue');
-      }
+      if (flavor >= 80) { flavorLine.textContent = t('judge.flavor.excellent'); setDotClass(flavorDot, 'dot-green'); }
+      else if (flavor >= 60) { flavorLine.textContent = t('judge.flavor.good'); setDotClass(flavorDot, 'dot-green'); }
+      else if (tr.flavor > 0.5) { flavorLine.textContent = t('judge.flavor.rising'); setDotClass(flavorDot, 'dot-blue'); }
+      else { flavorLine.textContent = t('judge.flavor.developing'); setDotClass(flavorDot, 'dot-blue'); }
     }
 
-    // Acidity sentence
     var acidLine = document.querySelector('#status-acidity .status-text');
     var acidDot = document.querySelector('#status-acidity .status-dot');
     if (acidLine) {
-      if (pH >= 5.0) {
-        acidLine.textContent = t('judge.acid.mild');
-        setDotClass(acidDot, 'dot-blue');
-      } else if (pH >= 4.2) {
-        acidLine.textContent = t('judge.acid.balanced');
-        setDotClass(acidDot, 'dot-green');
-      } else if (pH >= 3.9) {
-        acidLine.textContent = t('judge.acid.sour');
-        setDotClass(acidDot, 'dot-amber');
-      } else {
-        acidLine.textContent = t('judge.acid.verySour');
-        setDotClass(acidDot, 'dot-red');
-      }
+      if (pH >= 5.0) { acidLine.textContent = t('judge.acid.mild'); setDotClass(acidDot, 'dot-blue'); }
+      else if (pH >= 4.2) { acidLine.textContent = t('judge.acid.balanced'); setDotClass(acidDot, 'dot-green'); }
+      else if (pH >= 3.9) { acidLine.textContent = t('judge.acid.sour'); setDotClass(acidDot, 'dot-amber'); }
+      else { acidLine.textContent = t('judge.acid.verySour'); setDotClass(acidDot, 'dot-red'); }
     }
 
-    // Safety sentence
     var safetyLine = document.querySelector('#status-safety .status-text');
     var safetyDot = document.querySelector('#status-safety .status-dot');
     if (safetyLine) {
-      if (nitrite < nitriteThreshold) {
-        safetyLine.textContent = t('judge.safety.clear');
-        setDotClass(safetyDot, 'dot-green');
-      } else if (nitrite < 8) {
-        safetyLine.textContent = t('judge.safety.caution');
-        setDotClass(safetyDot, 'dot-amber');
-      } else {
-        safetyLine.textContent = t('judge.safety.risk');
-        setDotClass(safetyDot, 'dot-red');
-      }
+      if (nitrite < nitriteThreshold) { safetyLine.textContent = t('judge.safety.clear'); setDotClass(safetyDot, 'dot-green'); }
+      else if (nitrite < 8) { safetyLine.textContent = t('judge.safety.caution'); setDotClass(safetyDot, 'dot-amber'); }
+      else { safetyLine.textContent = t('judge.safety.risk'); setDotClass(safetyDot, 'dot-red'); }
     }
   }
 
@@ -389,30 +493,15 @@ window.KimchiSim.ui = (function () {
     var nitrite = data.atOptimal.nitrite || 0;
     var nitriteThreshold = (data.nitriteMeta || {}).safeThreshold || 3;
 
-    // Microbe cause → effect
     setVal('explain-microbe', t('microbe.' + dominantKey + '.name') + ' ' + t('explain.dominant'));
     setVal('explain-microbe-effect', t('microbe.' + dominantKey + '.role'));
 
-    // Acidity cause → effect
-    if (pH >= 5.0) {
-      setVal('explain-acid-cause', t('explain.acid.high'));
-      setVal('explain-acid-effect', t('explain.acid.high.effect'));
-    } else if (pH >= 4.2) {
-      setVal('explain-acid-cause', t('explain.acid.balanced'));
-      setVal('explain-acid-effect', t('explain.acid.balanced.effect'));
-    } else {
-      setVal('explain-acid-cause', t('explain.acid.low'));
-      setVal('explain-acid-effect', t('explain.acid.low.effect'));
-    }
+    if (pH >= 5.0) { setVal('explain-acid-cause', t('explain.acid.high')); setVal('explain-acid-effect', t('explain.acid.high.effect')); }
+    else if (pH >= 4.2) { setVal('explain-acid-cause', t('explain.acid.balanced')); setVal('explain-acid-effect', t('explain.acid.balanced.effect')); }
+    else { setVal('explain-acid-cause', t('explain.acid.low')); setVal('explain-acid-effect', t('explain.acid.low.effect')); }
 
-    // Safety cause → effect
-    if (nitrite < nitriteThreshold) {
-      setVal('explain-safety-cause', t('explain.safety.clear'));
-      setVal('explain-safety-effect', t('explain.safety.clear.effect'));
-    } else {
-      setVal('explain-safety-cause', t('explain.safety.risk'));
-      setVal('explain-safety-effect', t('explain.safety.risk.effect'));
-    }
+    if (nitrite < nitriteThreshold) { setVal('explain-safety-cause', t('explain.safety.clear')); setVal('explain-safety-effect', t('explain.safety.clear.effect')); }
+    else { setVal('explain-safety-cause', t('explain.safety.risk')); setVal('explain-safety-effect', t('explain.safety.risk.effect')); }
   }
 
   // ─── Scoring Breakdown ───
@@ -431,12 +520,10 @@ window.KimchiSim.ui = (function () {
     var phFactor = gaussian(pH, 4.35, 0.3);
     var acidFactor = gaussian(acid, 0.6, 0.2);
 
-    // Weighted contributions (out of 100)
     var phScore = Math.round(phFactor * 50);
     var acidScore = Math.round(acidFactor * 30);
     var microbeScore = Math.round(meso * 20);
 
-    // Update bars
     var barPh = document.getElementById('score-bar-ph');
     var barAcid = document.getElementById('score-bar-acid');
     var barMicrobe = document.getElementById('score-bar-microbe');
@@ -456,22 +543,14 @@ window.KimchiSim.ui = (function () {
     var container = document.getElementById('extend-advice');
     if (!container) return;
 
-    var params = getParams();
+    var starter = readNum('slider-starter', 0);
     var tips = [];
 
-    // Always show the core tip
     tips.push({ icon: '❄️', text: t('extend.chill'), primary: true });
 
-    // Context-sensitive tips
-    var hasWarmStage = false;
-    var hasColdStage = false;
     var allCold = true;
-
-    for (var i = 0; i < stages.length; i++) {
-      if (stages[i].temperature > 15) hasWarmStage = true;
-      if (stages[i].temperature <= 6) hasColdStage = true;
-      if (stages[i].temperature > 10) allCold = false;
-    }
+    var roomH = readNum('input-room-hours', 7);
+    if (roomH > 0) allCold = false;
 
     if (allCold) {
       tips.push({ icon: '✓', text: t('extend.already.cold') });
@@ -479,25 +558,18 @@ window.KimchiSim.ui = (function () {
       tips.push({ icon: '🌡', text: t('extend.stage') });
     }
 
-    if (params.starter > 5) {
-      var suggested = Math.max(0, Math.round(params.starter * 0.5));
+    if (starter > 5) {
+      var suggested = Math.max(0, Math.round(starter * 0.5));
       tips.push({ icon: '🧪', text: t('extend.reduce.starter').replace('{n}', suggested) });
-    } else if (params.starter > 0) {
-      tips.push({ icon: '🧂', text: t('extend.salt') });
     } else {
       tips.push({ icon: '🧂', text: t('extend.salt') });
-    }
-
-    if (hasWarmStage && !hasColdStage) {
-      tips.push({ icon: '📋', text: t('extend.add.cold.stage') });
     }
 
     var html = '';
     for (var j = 0; j < tips.length; j++) {
       html += '<div class="extend-tip' + (tips[j].primary ? ' extend-tip-primary' : '') + '">' +
         '<span class="extend-tip-icon">' + tips[j].icon + '</span>' +
-        '<span>' + tips[j].text + '</span>' +
-        '</div>';
+        '<span>' + tips[j].text + '</span></div>';
     }
     container.innerHTML = html;
   }
@@ -516,23 +588,20 @@ window.KimchiSim.ui = (function () {
     });
 
     var optPH = data.atOptimal.pH;
-    if (optPH >= 5.0) { setOpacity('phase-seg-1', '1'); }
-    else if (optPH >= 4.0) { setOpacity('phase-seg-2', '1'); }
-    else { setOpacity('phase-seg-3', '1'); }
+    if (optPH >= 5.0) setOpacity('phase-seg-1', '1');
+    else if (optPH >= 4.0) setOpacity('phase-seg-2', '1');
+    else setOpacity('phase-seg-3', '1');
   }
 
-  function setOpacity(id, val) {
-    var el = document.getElementById(id);
-    if (el) el.style.opacity = val;
-  }
+  function setOpacity(id, val) { var el = document.getElementById(id); if (el) el.style.opacity = val; }
 
   // ─── Expert Stats (backward compat) ───
 
   function trendArrow(rate, threshold) {
     threshold = threshold || 0.5;
-    if (rate > threshold) return ' \u2197';
-    if (rate < -threshold) return ' \u2198';
-    return ' \u2192';
+    if (rate > threshold) return ' ↗';
+    if (rate < -threshold) return ' ↘';
+    return ' →';
   }
 
   function updateStats(data) {
@@ -555,33 +624,24 @@ window.KimchiSim.ui = (function () {
     setVal('info-acid', data.atOptimal.acid.toFixed(2) + '%' + trendArrow(tr.acid, 0.02));
     setVal('info-flavor', Math.round(data.atOptimal.flavor) + '/100' + trendArrow(tr.flavor, 0.5));
 
-    // Nitrite
     var nitrite = data.atOptimal.nitrite || 0;
     var nitriteBar = document.getElementById('nitrite-bar');
     if (nitriteBar) {
       setVal('nitrite-level', nitrite.toFixed(1) + ' mg/kg' + trendArrow(tr.nitrite, 0.3));
       nitriteBar.classList.remove('safe', 'warning', 'danger');
       var statusEl = document.getElementById('nitrite-status');
-      if (nitrite < nitriteThreshold) {
-        nitriteBar.classList.add('safe');
-        if (statusEl) statusEl.textContent = t('nitrite.safe');
-      } else if (nitrite < cautionThreshold) {
-        nitriteBar.classList.add('warning');
-        if (statusEl) statusEl.textContent = t('nitrite.caution');
-      } else {
-        nitriteBar.classList.add('danger');
-        if (statusEl) statusEl.textContent = t('nitrite.danger');
-      }
+      if (nitrite < nitriteThreshold) { nitriteBar.classList.add('safe'); if (statusEl) statusEl.textContent = t('nitrite.safe'); }
+      else if (nitrite < cautionThreshold) { nitriteBar.classList.add('warning'); if (statusEl) statusEl.textContent = t('nitrite.caution'); }
+      else { nitriteBar.classList.add('danger'); if (statusEl) statusEl.textContent = t('nitrite.danger'); }
     }
 
     updateNitriteModel(data);
-
-    // Dashboard + sentences
     updateDashGauge(data);
     updateStatusSentences(data);
     updateExplainPanel(data);
     updateScoringBreakdown(data);
     updateExtendAdvice(data);
+    updateTimelineMilestones(data);
   }
 
   function formatCompactTime(days) {
@@ -591,9 +651,7 @@ window.KimchiSim.ui = (function () {
 
   function formatNitriteWindow(meta) {
     var t = window.KimchiSim.i18n.t;
-    if (!meta || !meta.riskWindow || meta.riskWindow.start == null || meta.riskWindow.end == null) {
-      return t('nitrite.window.none');
-    }
+    if (!meta || !meta.riskWindow || meta.riskWindow.start == null || meta.riskWindow.end == null) return t('nitrite.window.none');
     return formatCompactTime(meta.riskWindow.start) + ' - ' + formatCompactTime(meta.riskWindow.end);
   }
 
@@ -604,22 +662,12 @@ window.KimchiSim.ui = (function () {
     var sodium = meta.sodium || {};
     var atOptimal = meta.atOptimal || {};
 
-    if (meta.initialNitrate != null) {
-      setVal('nitrite-nitrate', meta.initialNitrate.toFixed(1) + ' \u2192 ' + (atOptimal.nitrate || 0).toFixed(1) + ' mg/kg');
-    }
-    if (sodium.mgKg != null && sodium.molar != null) {
-      setVal('nitrite-sodium', (sodium.mgKg / 1000).toFixed(1) + ' g/kg \u00B7 ' + Math.round(sodium.molar * 1000) + ' mmol/L');
-    }
-    if (peak.value != null && peak.time != null) {
-      setVal('nitrite-peak', peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time));
-    }
+    if (meta.initialNitrate != null) setVal('nitrite-nitrate', meta.initialNitrate.toFixed(1) + ' → ' + (atOptimal.nitrate || 0).toFixed(1) + ' mg/kg');
+    if (sodium.mgKg != null && sodium.molar != null) setVal('nitrite-sodium', (sodium.mgKg / 1000).toFixed(1) + ' g/kg · ' + Math.round(sodium.molar * 1000) + ' mmol/L');
+    if (peak.value != null && peak.time != null) setVal('nitrite-peak', peak.value.toFixed(1) + ' mg/kg @ ' + formatCompactTime(peak.time));
     setVal('nitrite-window', formatNitriteWindow(meta));
     if (atOptimal.formationRate != null && atOptimal.clearanceRate != null) {
-      setVal(
-        'nitrite-flux',
-        t('nitrite.form') + ' ' + atOptimal.formationRate.toFixed(2) + ' \u00B7 ' +
-        t('nitrite.clear') + ' ' + atOptimal.clearanceRate.toFixed(2) + ' mg/kg/d'
-      );
+      setVal('nitrite-flux', t('nitrite.form') + ' ' + atOptimal.formationRate.toFixed(2) + ' · ' + t('nitrite.clear') + ' ' + atOptimal.clearanceRate.toFixed(2) + ' mg/kg/d');
     }
   }
 
@@ -639,8 +687,7 @@ window.KimchiSim.ui = (function () {
 
   function updateMicrobeCards(data) {
     var comp = data.atOptimal.composition || {};
-    var keys = ['sakei', 'mesenteroides', 'plantarum'];
-    keys.forEach(function(key) {
+    ['sakei', 'mesenteroides', 'plantarum'].forEach(function(key) {
       var val = comp[key];
       var card = document.getElementById('microbe-card-' + key);
       if (card) card.classList.toggle('active', key === data.atOptimal.dominantKey);
@@ -664,7 +711,9 @@ window.KimchiSim.ui = (function () {
     if (el) el.textContent = text;
   }
 
-  function initControlsToggle() { /* no-op in new layout */ }
+  // ─── Compat stubs ───
+  function renderStages() {}
+  function initControlsToggle() {}
 
   return {
     getParams: getParams,
@@ -677,6 +726,7 @@ window.KimchiSim.ui = (function () {
     renderStages: renderStages,
     restoreSavedInputs: restoreSavedInputs,
     saveState: saveState,
-    stages: stages
+    updateTimelineMilestones: updateTimelineMilestones,
+    stages: [] // compat
   };
 })();
