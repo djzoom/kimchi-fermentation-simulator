@@ -697,6 +697,10 @@ window.KimchiSim.charts = (function () {
       var msFont = isMobile ? 7 : 9;
       var msPad = isMobile ? { top: 2, bottom: 2, left: 4, right: 4 } : { top: 3, bottom: 3, left: 6, right: 6 };
 
+      // Check if safe and best are close (within 2 days)
+      var safeAndBestClose = (_milestones.safeDay > 0 && _milestones.bestDay > 0 &&
+        Math.abs(_milestones.bestDay - _milestones.safeDay) < 2);
+
       // Safe milestone
       if (_milestones.safeDay > 0 && labels.safe) {
         fann['ms_safe'] = {
@@ -724,7 +728,7 @@ window.KimchiSim.charts = (function () {
             backgroundColor: labelBg, color: c.accent,
             borderColor: labelBorder, borderWidth: 1,
             font: { size: msFont, weight: 'bold' }, padding: msPad,
-            borderRadius: 4, yAdjust: isMobile ? 18 : 28
+            borderRadius: 4, yAdjust: safeAndBestClose ? (isMobile ? 28 : 42) : (isMobile ? 18 : 28)
           }
         };
       }
