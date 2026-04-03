@@ -276,7 +276,15 @@ window.KimchiSim.ui = (function () {
     ['input-pickle-y', 'input-pickle-m', 'input-pickle-d', 'input-pickle-hh',
      'input-room-temp', 'input-room-hours', 'input-fridge-temp'].forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) el.addEventListener('input', function() { syncPickleHidden(); debouncedChange(); });
+      if (el) el.addEventListener('input', function() {
+        syncPickleHidden();
+        // Save manual values when user directly edits temp/hours/fridge
+        if (id === 'input-room-temp' || id === 'input-room-hours' || id === 'input-fridge-temp') {
+          saveManualValues();
+          syncPresetButtons();
+        }
+        debouncedChange();
+      });
     });
 
     // Starter slider
@@ -310,10 +318,35 @@ window.KimchiSim.ui = (function () {
     display.textContent = slider.value + '%';
   }
 
+  // Manual preset: stores user's custom values
+  var manualValues = { roomTemp: 28, roomHours: 7, fridgeTemp: 4 };
+
+  function saveManualValues() {
+    manualValues.roomTemp = toCelsius(readNum('input-room-temp', 28));
+    manualValues.roomHours = readNum('input-room-hours', 7);
+    manualValues.fridgeTemp = toCelsius(readNum('input-fridge-temp', 4));
+  }
+
   function initPresets() {
     document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var preset = btn.getAttribute('data-preset');
+
+        if (preset === 'manual') {
+          // Restore saved manual values
+          setInput('input-room-temp', useFahrenheit ? Math.round(manualValues.roomTemp * 9 / 5 + 32) : manualValues.roomTemp);
+          setInput('input-room-hours', manualValues.roomHours);
+          setInput('input-fridge-temp', useFahrenheit ? Math.round(manualValues.fridgeTemp * 9 / 5 + 32) : manualValues.fridgeTemp);
+          document.getElementById('input-room-temp').setAttribute('data-celsius', manualValues.roomTemp);
+          document.getElementById('input-fridge-temp').setAttribute('data-celsius', manualValues.fridgeTemp);
+          syncPresetButtons();
+          debouncedChange();
+          return;
+        }
+
+        // Save current values as manual before switching to preset
+        saveManualValues();
+
         var p = PRESETS[preset];
         if (!p) return;
         setInput('input-room-temp', useFahrenheit ? Math.round(p.roomTemp * 9 / 5 + 32) : p.roomTemp);
@@ -333,12 +366,19 @@ window.KimchiSim.ui = (function () {
     var roomT = toCelsius(readNum('input-room-temp', 28));
     var roomH = readNum('input-room-hours', 7);
     var fridgeT = toCelsius(readNum('input-fridge-temp', 4));
+    var anyPresetActive = false;
     document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
-      var p = PRESETS[btn.getAttribute('data-preset')];
+      var preset = btn.getAttribute('data-preset');
+      if (preset === 'manual') return; // handle below
+      var p = PRESETS[preset];
       if (!p) return;
       var match = Math.abs(roomT - p.roomTemp) < 1 && Math.abs(roomH - p.roomHours) < 1 && Math.abs(fridgeT - p.fridgeTemp) < 1;
       btn.classList.toggle('active', match);
+      if (match) anyPresetActive = true;
     });
+    // Manual button: active when no preset matches
+    var manualBtn = document.querySelector('[data-preset="manual"]');
+    if (manualBtn) manualBtn.classList.toggle('active', !anyPresetActive);
   }
 
   function debouncedChange() {
@@ -484,6 +524,49 @@ window.KimchiSim.ui = (function () {
     setVal('tl-starter-desc', starterNote);
   }
 
+  // ─── Milestone Labels for Chart Annotations ───
+
+  function buildMilestoneLabels(safeDays, bestDays, sourDays, data) {
+    var t = window.KimchiSim.i18n.t;
+    var pickleDate = getPickleDate();
+    var labels = {};
+
+    function fmtDay(days) {
+      return formatDayDisplay(days);
+    }
+    function fmtDate(days) {
+      if (!pickleDate) return '';
+      var d = new Date(pickleDate.getTime() + days * 86400000);
+      return (d.getMonth() + 1) + '/' + d.getDate();
+    }
+
+    // Safe
+    if (safeDays > 0) {
+      var safeLine1 = t('dash.nitriteClear');
+      var safeLine2 = fmtDay(safeDays);
+      if (pickleDate) safeLine2 += ' (' + fmtDate(safeDays) + ')';
+      labels.safe = [safeLine1, safeLine2];
+    }
+
+    // Best
+    var bestLine1 = t('dash.bestFlavor') + ' · pH ' + data.atOptimal.pH.toFixed(2);
+    var bestLine2 = fmtDay(bestDays);
+    if (pickleDate) bestLine2 += ' (' + fmtDate(bestDays) + ')';
+    labels.best = [bestLine1, bestLine2];
+
+    // Sour
+    var sourLine1 = t('dash.lastEdible');
+    var sourLine2 = fmtDay(sourDays);
+    if (pickleDate) sourLine2 += ' (' + fmtDate(sourDays) + ')';
+    labels.sour = [sourLine1, sourLine2];
+
+    // Starter
+    var starterLine1 = t('dash.starterReady');
+    labels.starter = [starterLine1, sourLine2];
+
+    return labels;
+  }
+
   // ─── Dashboard Gauge ───
 
   function updateDashGauge(data) {
@@ -544,11 +627,14 @@ window.KimchiSim.ui = (function () {
     // ── Pass milestones to charts ──
     var meta = data.nitriteMeta || {};
     var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : 0;
+    var sourDay = data.phases.phase2End;
     if (window.KimchiSim.charts && window.KimchiSim.charts.setMilestones) {
       window.KimchiSim.charts.setMilestones({
         safeDay: riskEnd,
         bestDay: optDays,
-        sourDay: data.phases.phase2End
+        sourDay: sourDay,
+        starterDay: sourDay,
+        labels: buildMilestoneLabels(riskEnd, optDays, sourDay, data)
       });
     }
 
