@@ -100,6 +100,7 @@ window.KimchiSim.charts = (function () {
       responsive: true,
       maintainAspectRatio: false,
       animation: false,
+      layout: { padding: { top: 20, left: 4 } },
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
@@ -135,7 +136,7 @@ window.KimchiSim.charts = (function () {
             }
           }
         },
-        annotation: { annotations: extraAnnotations || {} }
+        annotation: { clip: false, annotations: extraAnnotations || {} }
       },
       scales: scales
     };
@@ -630,8 +631,8 @@ window.KimchiSim.charts = (function () {
             position: 'start',
             backgroundColor: dk ? '#E2E8F0' : '#1E293B',
             color: dk ? '#0F172A' : '#F8FAFC',
-            font: { size: 12, weight: 'bold' }, padding: 4, borderRadius: 4,
-            yAdjust: -16
+            font: { size: 10, weight: 'bold' }, padding: { top: 2, bottom: 2, left: 5, right: 5 }, borderRadius: 3,
+            yAdjust: -14
           }
         };
       }
@@ -720,7 +721,7 @@ window.KimchiSim.charts = (function () {
 
       // Safe milestone (below best)
       if (_milestones.safeDay > 0 && labels.safe) {
-        var safeYAdjust = safeAndBestClose ? (isMobile ? 52 : 68) : (isMobile ? 18 : 28);
+        var safeYAdjust = safeAndBestClose ? (isMobile ? 52 : 68) : (isMobile ? 42 : 58);
         fann['ms_safe'] = {
           type: 'line', scaleID: 'x', value: _milestones.safeDay,
           borderColor: c.blue + '88', borderWidth: 1.2, borderDash: [3, 3],
