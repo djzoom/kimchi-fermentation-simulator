@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=25">
+  <link rel="stylesheet" href="css/styles.css?v=26">
 </head>
 <body>
   <!-- ====== HEADER ====== -->
@@ -232,8 +232,8 @@
       <!-- Collapsible scientific details inside same card -->
       <details class="collapse-inline" id="explain-zone">
         <summary class="collapse-toggle">
-          <span data-i18n="ez.toggle">Scientific Details</span>
-          <span class="collapse-chevron">⌄</span>
+          <span class="collapse-label" data-i18n="ez.toggle">Scientific Details</span>
+          <span class="collapse-arrow">▾</span>
         </summary>
         <div class="collapse-body">
             <div class="sub-chart" id="sub-chart-ph">
@@ -267,7 +267,7 @@
                   <span class="ml-pct ml-pct-now"><span class="ml-pct-l" data-i18n="microbe.atNow">Now</span> <span id="microbe-now-mesenteroides">--%</span></span>
                 </div>
                 <div class="ml-item ml-plant" id="microbe-card-plantarum">
-                  <span class="ml-dot" style="background:var(--amber)"></span>
+                  <span class="ml-dot" style="background:var(--purple)"></span>
                   <div class="ml-info">
                     <span class="ml-name" data-i18n="microbe.plantarum.name">L. plantarum</span>
                     <span class="ml-role" data-i18n="microbe.plantarum.role">Deep sour finisher</span>
@@ -303,8 +303,8 @@
     <!-- ─── Standard Recipe & Process (collapsible) ─── -->
     <details class="collapse-section glass-card" id="section-recipe">
           <summary class="collapse-toggle" id="recipe-toggle">
-            <span data-i18n="recipe.title">Standard Recipe & Process</span>
-            <span class="collapse-chevron">⌄</span>
+            <span class="collapse-label" data-i18n="recipe.title">Standard Recipe & Process</span>
+            <span class="collapse-arrow">▾</span>
           </summary>
           <div class="collapse-body">
             <div class="recipe-content" id="recipe-content"></div>
@@ -349,7 +349,6 @@
       <span id="stat-optimal-time"></span><span id="stat-ph"></span><span id="stat-acid"></span>
       <span id="stat-bacteria"></span><span id="stat-flavor"></span>
       <span id="info-opt-time"></span><span id="info-ph"></span><span id="info-acid"></span><span id="info-flavor"></span>
-      <span id="batch-status"></span><span id="val-temp"></span>
       <div id="status-panel">
         <div id="status-flavor"><span class="status-dot"></span><span class="status-text"></span></div>
         <div id="status-acidity"><span class="status-dot"></span><span class="status-text"></span></div>
@@ -413,12 +412,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=25"></script>
-  <script src="js/models.js?v=25"></script>
-  <script src="js/simulation.js?v=25"></script>
-  <script src="js/charts.js?v=25"></script>
-  <script src="js/ui.js?v=25"></script>
-  <script src="js/recipe.js?v=25"></script>
-  <script src="js/app.js?v=25"></script>
+  <script src="js/i18n.js?v=26"></script>
+  <script src="js/models.js?v=26"></script>
+  <script src="js/simulation.js?v=26"></script>
+  <script src="js/charts.js?v=26"></script>
+  <script src="js/ui.js?v=26"></script>
+  <script src="js/recipe.js?v=26"></script>
+  <script src="js/app.js?v=26"></script>
 </body>
 </html>
