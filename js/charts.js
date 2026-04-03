@@ -186,7 +186,7 @@ window.KimchiSim.charts = (function () {
         position: 'left', min: 0, max: 100,
         grid: { color: gridColor() },
         ticks: { color: c.muted, font: { size: 12 } },
-        title: { display: true, text: t('chart.flavor.yaxis'), color: c.muted, font: { size: 12, family: 'Inter' } }
+        title: { display: false }
       }
     }, {
       excellent: {
