@@ -152,7 +152,7 @@ window.KimchiSim.ui = (function () {
     var c = parseFloat(el.getAttribute('data-celsius'));
     if (isNaN(c)) {
       var raw = parseFloat(el.value);
-      c = isNaN(raw) ? fallback : (useFahrenheit ? (raw - 32) * 5 / 9 : raw);
+      c = isNaN(raw) ? fallback : (useFahrenheit ? Math.round((raw - 32) * 5 / 9) : raw);
       el.setAttribute('data-celsius', c);
     }
     return c;
@@ -162,7 +162,7 @@ window.KimchiSim.ui = (function () {
     var el = document.getElementById(id);
     if (!el) return fallback;
     var raw = parseFloat(el.value);
-    var c = isNaN(raw) ? fallback : (useFahrenheit ? (raw - 32) * 5 / 9 : raw);
+    var c = isNaN(raw) ? fallback : (useFahrenheit ? Math.round((raw - 32) * 5 / 9) : raw);
     el.setAttribute('data-celsius', c);
     return c;
   }

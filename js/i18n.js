@@ -1090,7 +1090,7 @@ window.KimchiSim.i18n = (function () {
     'unit.imperial': { en: 'Imperial', ko: '야드파운드', zh: '英制', de: 'Imperial' }
   };
 
-  var langOrder = ['en', 'ko', 'zh', 'de'];
+  var langOrder = ['zh', 'ko', 'en', 'de'];
   var currentLang = 'en';
 
   function t(key) {

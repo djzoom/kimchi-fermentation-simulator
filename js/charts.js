@@ -688,6 +688,11 @@ window.KimchiSim.charts = (function () {
       var starterDay = _milestones.starterDay;
       var sourAndStarter = (sourDay && starterDay && Math.abs(sourDay - starterDay) < 0.5);
 
+      // Label style helper — opaque pill with readable text
+      var dk = isDark();
+      var labelBg = dk ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.95)';
+      var labelBorder = dk ? 'rgba(148,163,184,0.3)' : 'rgba(148,163,184,0.25)';
+
       // Safe milestone
       if (_milestones.safeDay > 0 && labels.safe) {
         fann['ms_safe'] = {
@@ -696,9 +701,10 @@ window.KimchiSim.charts = (function () {
           label: {
             display: true, content: labels.safe,
             position: 'start',
-            backgroundColor: c.blue + '12', color: c.blue,
-            font: { size: 9 }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
-            borderRadius: 3, yAdjust: 16
+            backgroundColor: labelBg, color: c.blue,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: 9 }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
+            borderRadius: 4, yAdjust: 4
           }
         };
       }
@@ -711,9 +717,10 @@ window.KimchiSim.charts = (function () {
           label: {
             display: true, content: labels.best,
             position: 'start',
-            backgroundColor: c.accent + '12', color: c.accent,
-            font: { size: 9, weight: 'bold' }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
-            borderRadius: 3, yAdjust: 8
+            backgroundColor: labelBg, color: c.accent,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: 9, weight: 'bold' }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
+            borderRadius: 4, yAdjust: 28
           }
         };
       }
@@ -729,9 +736,10 @@ window.KimchiSim.charts = (function () {
           label: {
             display: true, content: sourContent,
             position: 'end',
-            backgroundColor: c.amber + '12', color: c.amber,
-            font: { size: 9 }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
-            borderRadius: 3, yAdjust: 16
+            backgroundColor: labelBg, color: c.amber,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: 9 }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
+            borderRadius: 4, yAdjust: 4
           }
         };
         // Remove separate starter line if merged
