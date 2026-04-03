@@ -1093,11 +1093,12 @@ window.KimchiSim.i18n = (function () {
     'ferment.makingSub': { en: 'Expand for process & calculator', ko: '공정 및 계산기 펼치기', zh: '可展开详细流程与用量计算器', de: 'Aufklappen für Prozess & Rechner' },
 
     // Decision zone
-    'dz.developing': { en: 'Developing', ko: '발효 중', zh: '发酵中', de: 'In Entwicklung' },
+    'dz.prefix': { en: 'Status:', ko: '현재 상태:', zh: '目前状态：', de: 'Status:' },
+    'dz.developing': { en: 'Fermenting, not yet ripened', ko: '발효 중, 아직 숙성 미완료', zh: '发酵中，尚未熟成完毕', de: 'In Gärung, noch nicht gereift' },
     'dz.canEat': { en: 'Safe to eat', ko: '먹어도 됩니다', zh: '可以食用', de: 'Essbar' },
     'dz.bestNow': { en: 'Best flavor now', ko: '지금이 가장 맛있습니다', zh: '现在最好吃', de: 'Jetzt am besten' },
     'dz.overSour': { en: 'Over-sour — cook with it', ko: '과숙 — 요리에 활용하세요', zh: '偏酸 — 适合做菜', de: '\u00dcbers\u00e4uert \u2014 zum Kochen' },
-    'dz.notSafe': { en: 'Not ready yet', ko: '아직 이릅니다', zh: '尚未准备好', de: 'Noch nicht bereit' },
+    'dz.notSafe': { en: 'Fermenting, not yet ripened', ko: '발효 중, 아직 숙성 미완료', zh: '发酵中，尚未熟成完毕', de: 'In Gärung, noch nicht gereift' },
     'dz.elapsed': { en: '{d} since packed', ko: '장입 후 {d}', zh: '装坛后 {d}', de: '{d} seit Einpacken' },
     'dz.nextBest': { en: '{d} until best flavor', ko: '최적 풍미까지 {d}', zh: '距最佳风味 {d}', de: '{d} bis zum besten Geschmack' },
     'dz.pastBest': { en: '{d} past peak', ko: '최적기 이후 {d}', zh: '过了最佳期 {d}', de: '{d} nach Höhepunkt' },

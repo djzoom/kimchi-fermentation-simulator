@@ -999,26 +999,28 @@ window.KimchiSim.ui = (function () {
 
     // Determine state
     stateEl.className = 'dz-state';
+    var stateText = '';
     if (elapsedDays < riskEnd) {
-      stateEl.textContent = t('dz.notSafe');
+      stateText = t('dz.notSafe');
       stateEl.classList.add('state-risk');
     } else if (elapsedDays >= p2End) {
-      stateEl.textContent = t('dz.overSour');
+      stateText = t('dz.overSour');
       stateEl.classList.add('state-warn');
     } else if (elapsedDays >= optDays * 0.85 && elapsedDays <= optDays * 1.3) {
-      stateEl.textContent = t('dz.bestNow');
+      stateText = t('dz.bestNow');
       stateEl.classList.add('state-best');
     } else if (elapsedDays >= riskEnd) {
-      stateEl.textContent = t('dz.canEat');
+      stateText = t('dz.canEat');
       stateEl.classList.add('state-safe');
     } else {
-      stateEl.textContent = t('dz.developing');
+      stateText = t('dz.developing');
       stateEl.classList.add('state-risk');
     }
+    stateEl.textContent = t('dz.prefix') + ' ' + stateText;
 
     // Elapsed time
     if (pickleDate && elapsedEl) {
-      elapsedEl.textContent = t('dz.elapsed').replace('{d}', formatCompactTime(elapsedDays));
+      elapsedEl.textContent = ' / ' + t('dz.elapsed').replace('{d}', formatCompactTime(elapsedDays));
     } else if (elapsedEl) {
       elapsedEl.textContent = '';
     }
