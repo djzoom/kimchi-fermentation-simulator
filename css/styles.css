@@ -216,7 +216,7 @@ a:hover { text-decoration: underline; }
 /* ═══ HERO SPLIT ═══ */
 .hero-split {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
 }
@@ -444,7 +444,11 @@ a:hover { text-decoration: underline; }
   color: var(--text-muted);
   margin-bottom: 2px;
 }
-.tl-date-row { gap: 3px; }
+.tl-date-row { gap: 3px; align-items: flex-end; }
+.tl-date-field { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tl-date-hint {
+  font-size: var(--fs-3xs); color: var(--text-muted); letter-spacing: 0.02em;
+}
 .tl-input-year { width: 68px; }
 .tl-input-md { width: 52px; }
 /* Hide number spinners on small inputs */
@@ -455,12 +459,15 @@ a:hover { text-decoration: underline; }
   font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: 1;
+  padding-bottom: 6px;
 }
 .tl-starter-row {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--border-light);
 }
+.tl-starter-compact { max-width: 280px; }
+.tl-starter-compact .slider-flat { flex: 1; min-width: 0; }
 /* Inline calculator in timeline */
 .tl-calc-inline {
   margin: 8px 0;

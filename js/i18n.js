@@ -152,6 +152,11 @@ window.KimchiSim.i18n = (function () {
       ko: '저온 천천히',
       zh: '冷藏慢熟'
     },
+    'preset.manual': {
+      en: 'Manual',
+      ko: '수동 입력',
+      zh: '手动输入'
+    },
 
     // Sliders
     'slider.temp': {
@@ -758,6 +763,12 @@ window.KimchiSim.i18n = (function () {
       ko: '빙점 이하 (~-1.5°C, 2.5% 소금 기준). 김치가 얼고 유산균이 휴면합니다. 얼음 결정이 채소 조직을 손상시킵니다.',
       zh: '低于冰点（2.5%盐约-1.5°C）。泡菜会结冰，乳酸菌休眠。冰晶会破坏蔬菜组织。'
     },
+
+    // Date labels
+    'date.year': { en: 'Year', ko: '년', zh: '年' },
+    'date.month': { en: 'Mon', ko: '월', zh: '月' },
+    'date.day': { en: 'Day', ko: '일', zh: '日' },
+    'date.hour': { en: 'Hour', ko: '시', zh: '时' },
 
     // Units
     'unit.days': { en: 'days', ko: '일', zh: '天' },

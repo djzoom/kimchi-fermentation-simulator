@@ -106,17 +106,28 @@
                 <div class="tl-label" data-i18n="ferment.pickle">Pickling complete</div>
                 <div class="tl-sub-label" data-i18n="ferment.completeTime">Completion time:</div>
                 <div class="tl-input-row tl-date-row">
-                  <input type="number" id="input-pickle-y" class="tl-input tl-input-year" placeholder="YYYY" min="2020" max="2099" step="1">
+                  <div class="tl-date-field">
+                    <span class="tl-date-hint" data-i18n="date.year">Year</span>
+                    <input type="number" id="input-pickle-y" class="tl-input tl-input-year" placeholder="2026" min="2020" max="2099" step="1">
+                  </div>
                   <span class="tl-date-sep">/</span>
-                  <input type="number" id="input-pickle-m" class="tl-input tl-input-md" placeholder="MM" min="1" max="12" step="1">
+                  <div class="tl-date-field">
+                    <span class="tl-date-hint" data-i18n="date.month">Month</span>
+                    <input type="number" id="input-pickle-m" class="tl-input tl-input-md" placeholder="4" min="1" max="12" step="1">
+                  </div>
                   <span class="tl-date-sep">/</span>
-                  <input type="number" id="input-pickle-d" class="tl-input tl-input-md" placeholder="DD" min="1" max="31" step="1">
-                  <input type="number" id="input-pickle-hh" class="tl-input tl-input-md" placeholder="HH" min="0" max="23" step="1">
-                  <span class="tl-date-sep" data-i18n="unit.hourShort">h</span>
+                  <div class="tl-date-field">
+                    <span class="tl-date-hint" data-i18n="date.day">Day</span>
+                    <input type="number" id="input-pickle-d" class="tl-input tl-input-md" placeholder="3" min="1" max="31" step="1">
+                  </div>
+                  <div class="tl-date-field">
+                    <span class="tl-date-hint" data-i18n="date.hour">Hour</span>
+                    <input type="number" id="input-pickle-hh" class="tl-input tl-input-md" placeholder="14" min="0" max="23" step="1">
+                  </div>
                 </div>
                 <div class="tl-elapsed" id="tl-elapsed"></div>
                 <!-- Starter (母水) -->
-                <div class="quick-starter tl-starter-row">
+                <div class="quick-starter tl-starter-row tl-starter-compact">
                   <span class="quick-label" data-i18n="mixer.starter">Starter</span>
                   <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" class="slider-flat">
                   <span class="quick-val" id="val-starter">0%</span>
@@ -136,6 +147,7 @@
                   <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
                   <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
                   <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
+                  <button class="preset-chip preset-manual" type="button" data-preset="manual" data-i18n="preset.manual">Manual</button>
                 </div>
               </div>
             </div>
@@ -185,58 +197,25 @@
           <div style="display:none"><input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10"></div>
         </div>
 
-        <!-- RIGHT: 这坛泡菜 Dashboard -->
-        <div class="hero-right">
-          <!-- Milestone Timeline -->
-          <div class="dash-milestones-card glass-card">
-            <div class="dash-milestones">
-              <div class="ms-row ms-safe">
-                <span class="ms-dot ms-dot-safe"></span>
-                <div class="ms-body">
-                  <span class="ms-when" id="tl-safe-when">--</span>
-                  <span class="ms-desc" id="tl-safe-desc" data-i18n="dash.nitriteClear">Nitrite clears — safe to eat</span>
-                </div>
-              </div>
-              <div class="ms-row ms-peak">
-                <span class="ms-dot ms-dot-peak"></span>
-                <div class="ms-body">
-                  <span class="ms-when" id="tl-best-when">--</span>
-                  <span class="ms-desc" id="tl-best-desc">--</span>
-                </div>
-              </div>
-              <div class="ms-row ms-warn">
-                <span class="ms-dot ms-dot-warn"></span>
-                <div class="ms-body">
-                  <span class="ms-when" id="tl-sour-when">--</span>
-                  <span class="ms-desc" id="tl-sour-desc" data-i18n="dash.lastEdible">Over-sour — last good window</span>
-                </div>
-              </div>
-              <div class="ms-row ms-starter">
-                <span class="ms-dot ms-dot-starter"></span>
-                <div class="ms-body">
-                  <span class="ms-when" id="tl-starter-when">--</span>
-                  <span class="ms-desc" id="tl-starter-desc">--</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- hidden compat -->
-          <div style="display:none">
-            <span id="dash-current-day"></span><span id="dash-best-day"></span><span id="dash-hero-status"></span>
-            <span id="dash-best"></span><span id="dash-day"></span><span id="dash-flavor"></span>
-            <span id="dash-ph"></span><span id="dash-safety"></span><span id="dash-status"></span><span id="dash-arc"></span>
-            <span id="insight-1"><span class="insight-icon"></span><span class="insight-text"></span></span>
-            <span id="insight-2"><span class="insight-icon"></span><span class="insight-text"></span></span>
-            <span id="insight-3"><span class="insight-icon"></span><span class="insight-text"></span></span>
-            <span id="explain-microbe"></span><span id="explain-microbe-effect"></span>
-            <span id="explain-acid-cause"></span><span id="explain-acid-effect"></span>
-            <span id="explain-safety-cause"></span><span id="explain-safety-effect"></span>
-            <span id="tl-best-val"></span><span id="tl-best-date"></span>
-            <span id="tl-ph435-val"></span><span id="tl-ph435-date"></span>
-            <span id="tl-sour-val"></span><span id="tl-sour-date"></span>
-            <span id="tl-end-val"></span><span id="tl-end-date"></span>
-          </div>
+        <!-- hidden compat -->
+        <div style="display:none">
+          <span id="dash-current-day"></span><span id="dash-best-day"></span><span id="dash-hero-status"></span>
+          <span id="dash-best"></span><span id="dash-day"></span><span id="dash-flavor"></span>
+          <span id="dash-ph"></span><span id="dash-safety"></span><span id="dash-status"></span><span id="dash-arc"></span>
+          <span id="insight-1"><span class="insight-icon"></span><span class="insight-text"></span></span>
+          <span id="insight-2"><span class="insight-icon"></span><span class="insight-text"></span></span>
+          <span id="insight-3"><span class="insight-icon"></span><span class="insight-text"></span></span>
+          <span id="explain-microbe"></span><span id="explain-microbe-effect"></span>
+          <span id="explain-acid-cause"></span><span id="explain-acid-effect"></span>
+          <span id="explain-safety-cause"></span><span id="explain-safety-effect"></span>
+          <span id="tl-safe-when"></span><span id="tl-safe-desc"></span>
+          <span id="tl-best-when"></span><span id="tl-best-desc"></span>
+          <span id="tl-sour-when"></span><span id="tl-sour-desc"></span>
+          <span id="tl-starter-when"></span><span id="tl-starter-desc"></span>
+          <span id="tl-best-val"></span><span id="tl-best-date"></span>
+          <span id="tl-ph435-val"></span><span id="tl-ph435-date"></span>
+          <span id="tl-sour-val"></span><span id="tl-sour-date"></span>
+          <span id="tl-end-val"></span><span id="tl-end-date"></span>
         </div>
 
       </div><!-- /hero-split -->
