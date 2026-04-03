@@ -10,6 +10,7 @@ window.KimchiSim.recipe = (function () {
   function getContent(lang) {
     if (lang === 'ko') return getKorean();
     if (lang === 'zh') return getChinese();
+    if (lang === 'de') return getGerman();
     return getEnglish();
   }
 
@@ -164,13 +165,7 @@ window.KimchiSim.recipe = (function () {
     var lang = window.KimchiSim.i18n.getLang();
     content.innerHTML = getContent(lang);
 
-    toggle.addEventListener('click', function () {
-      content.classList.toggle('expanded');
-      var arrow = toggle.querySelector('.toggle-arrow');
-      if (arrow) {
-        arrow.style.transform = content.classList.contains('expanded') ? 'rotate(180deg)' : '';
-      }
-    });
+    // <details> handles toggle natively, no JS needed
   }
 
   /**
@@ -250,8 +245,153 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>过熟</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>强酸味，质地变软（适合做泡菜锅 김치찌개）</td></tr>' +
     '</table>' +
 
+    '</div>' +
+
+    getSichuan();
+  }
+
+  function getSichuan() {
+    return '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+
+    '<h3>四川泡菜 Sichuan Paocai</h3>' +
+
+    '<h4>国家标准：GB/T 24421-2009《泡菜》</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>项目</th><th>规格</th></tr>' +
+    '<tr><td>定义</td><td>以新鲜蔬菜为原料，经食盐水浸泡自然发酵（乳酸发酵）而成的蔬菜制品</td></tr>' +
+    '<tr><td>食盐 (NaCl)</td><td>3.0 \u2013 8.0%（盐水浓度）</td></tr>' +
+    '<tr><td>总酸度（以乳酸计 lactic acid）</td><td>0.3 \u2013 1.0%</td></tr>' +
+    '<tr><td>pH</td><td>3.5 \u2013 4.5（成熟品）</td></tr>' +
+    '<tr><td>亚硝酸盐 (nitrite)</td><td>\u2264 4 mg/kg</td></tr>' +
+    '<tr><td>食品添加剂</td><td>不得使用人工防腐剂（传统工艺）</td></tr>' +
+    '</table>' +
+
+    '<h4>四川地方特色</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>特征</th><th>说明</th></tr>' +
+    '<tr><td>发酵容器</td><td>泡菜坛子（陶瓷坛）\u2014\u2014 坛口有凹槽（水槽/water seal），注水形成厌氧密封（anaerobic seal）</td></tr>' +
+    '<tr><td>水封发酵法</td><td>坛沿注入清水，盖上坛盖，利用水封隔绝空气，维持严格厌氧环境。水槽需每2-3天检查补水。</td></tr>' +
+    '<tr><td>花椒 (Sichuan peppercorn)</td><td>核心香料，提供独特麻味（hydroxy-alpha-sanshool），兼有抑菌作用</td></tr>' +
+    '<tr><td>干辣椒 (dried chili)</td><td>整根投入，增色增香，辣椒素（capsaicin）抑制杂菌</td></tr>' +
+    '<tr><td>老姜 (aged ginger)</td><td>切厚片投入，增香暖胃，姜辣素（gingerol）有抑菌功能</td></tr>' +
+    '<tr><td>大蒜 (garlic)</td><td>整瓣投入，大蒜素（allicin）抑制有害菌</td></tr>' +
+    '<tr><td>白酒 (baijiu)</td><td>加入少量高度白酒（\u226552\u00b0），乙醇抑菌、酯化增香</td></tr>' +
+    '<tr><td>母水/老卤</td><td>传统泡菜坛终年不换水，老卤含丰富乳酸菌（Lactobacillus），新菜入坛即可快速发酵</td></tr>' +
+    '</table>' +
+
+    '<h4>传统配方（蔬菜约2.5公斤）</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
+    '<tr><td>混合蔬菜（萝卜、豇豆、白菜、芹菜、嫩姜等）</td><td>2.5 kg</td><td>主料基质（substrate）</td></tr>' +
+    '<tr><td>清水（凉白开或纯净水）</td><td>约2 L（没过蔬菜）</td><td>盐水介质（brine medium）</td></tr>' +
+    '<tr><td>食盐（不加碘 non-iodized）</td><td>120\u2013150 g（水重5\u20137%）</td><td>渗透压选择LAB（osmotic selection）</td></tr>' +
+    '<tr><td>花椒 (Sichuan peppercorn)</td><td>15\u201320 g（约2大匙）</td><td>麻味、抑菌</td></tr>' +
+    '<tr><td>干辣椒 (dried chili)</td><td>5\u20138 根（整根）</td><td>辣味、抑菌、增色</td></tr>' +
+    '<tr><td>老姜 (ginger)</td><td>50 g（切厚片）</td><td>增香、抑菌</td></tr>' +
+    '<tr><td>大蒜 (garlic)</td><td>1 整头（剥瓣）</td><td>大蒜素抑菌</td></tr>' +
+    '<tr><td>白酒 (baijiu, \u226552\u00b0)</td><td>20\u201330 mL（约2大匙）</td><td>乙醇抑菌、酯化增香</td></tr>' +
+    '<tr><td>冰糖 (rock sugar)（可选）</td><td>10\u201315 g</td><td>提供碳源促发酵、调和口味</td></tr>' +
+    '</table>' +
+
+    '<h4>标准制作流程（5步）</h4>' +
+    '<ol>' +
+    '<li><strong>制盐水：</strong>将清水烧开，加入食盐搅拌至完全溶解（5\u20137%浓度），放凉至室温。切勿使用生水，以免引入杂菌。</li>' +
+    '<li><strong>投入香料：</strong>在泡菜坛底部放入花椒、干辣椒、姜片、蒜瓣。倒入白酒和冰糖（如使用）。</li>' +
+    '<li><strong>处理蔬菜：</strong>蔬菜洗净沥干（表面无生水），切成适当大小。萝卜切条/块，豇豆切段，嫩姜切片。蔬菜表面需完全晾干后入坛。</li>' +
+    '<li><strong>入坛浸泡：</strong>将蔬菜放入坛中，倒入冷却的盐水，确保蔬菜完全没入液面以下（可用竹片或陶瓷篦子压住）。液面距坛口留5\u201310cm空间。</li>' +
+    '<li><strong>水封发酵：</strong>盖上坛盖，坛沿凹槽注满清水密封。置于阴凉通风处（18\u201325\u00b0C）。跳水泡菜（快泡菜）约1\u20132天即可食用；深度发酵3\u20137天风味更佳；老坛泡菜可持续发酵数月。</li>' +
+    '</ol>' +
+
+    '<h4>品质指标</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>指标</th><th>合格标准</th><th>说明</th></tr>' +
+    '<tr><td>盐水澄清度 (brine clarity)</td><td>清亮透明，无浑浊</td><td>浑浊或起白膜（kahm yeast）表示杂菌污染，需捞除</td></tr>' +
+    '<tr><td>香气 (aroma)</td><td>酸香协调，有花椒和辣椒复合香</td><td>异味（腐臭、酒精过重）为异常</td></tr>' +
+    '<tr><td>脆度 (crunch)</td><td>咬感清脆爽口</td><td>发软或绵软表示过度发酵或蔬菜入坛前未充分沥干</td></tr>' +
+    '<tr><td>色泽 (color)</td><td>保持蔬菜原有色泽，略微半透明</td><td>发黄或发暗为异常</td></tr>' +
+    '<tr><td>亚硝酸盐安全期 (nitrite safety)</td><td>发酵第3\u20137天后食用</td><td>发酵初期（1\u20133天）亚硝酸盐峰值较高，之后被LAB降解至安全水平</td></tr>' +
+    '</table>' +
+
+    '<h4>对比：四川泡菜 vs 韩国泡菜 (Kimchi)</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>参数</th><th>四川泡菜 Sichuan Paocai</th><th>韩国泡菜 Kimchi</th></tr>' +
+    '<tr><td>腌制方式</td><td>盐水浸泡法（wet brine）</td><td>干腌法（dry salting）+ 调味酱涂抹</td></tr>' +
+    '<tr><td>盐浓度</td><td>5\u20137%（盐水浓度）</td><td>2\u20134%（成品含盐量）</td></tr>' +
+    '<tr><td>发酵温度</td><td>18\u201325\u00b0C（室温发酵）</td><td>2\u20135\u00b0C（低温慢发酵）或15\u201320\u00b0C（快速）</td></tr>' +
+    '<tr><td>发酵时长</td><td>1\u20137天（跳水泡菜）；数月（老坛）</td><td>3\u201314天（低温）；2\u20133天（常温）</td></tr>' +
+    '<tr><td>核心调料</td><td>花椒、干辣椒、老姜、白酒</td><td>辣椒粉、鱼露、虾酱、大蒜</td></tr>' +
+    '<tr><td>风味特征</td><td>酸爽、麻辣、清香</td><td>酸辣、鲜味（umami）、复合发酵香</td></tr>' +
+    '<tr><td>发酵容器</td><td>泡菜坛子（水封陶坛）</td><td>瓮器（옹기）或密封容器</td></tr>' +
+    '<tr><td>优势乳酸菌 (dominant LAB)</td><td>Lactobacillus plantarum, L. brevis</td><td>Leuconostoc mesenteroides \u2192 L. plantarum</td></tr>' +
+    '</table>' +
+
+    '</div>';
+  }
+
+  function getGerman() {
+    return '<div class="recipe-inner">' +
+
+    '<h4>Deutsches Lebensmittelbuch: Leits\u00e4tze f\u00fcr Gem\u00fcseerzeugnis\u00ade</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Spezifikation</th></tr>' +
+    '<tr><td>Definition</td><td>Milchsauer vergorenes Wei\u00dfkraut (Brassica oleracea var. capitata), durch nat\u00fcrliche Milchs\u00e4ureg\u00e4rung haltbar gemacht</td></tr>' +
+    '<tr><td>Kochsalz (NaCl)</td><td>1,5 \u2013 2,5% (typisch 2,0%)</td></tr>' +
+    '<tr><td>Gesamts\u00e4ure (als Milchs\u00e4ure)</td><td>1,0 \u2013 2,0%</td></tr>' +
+    '<tr><td>pH-Wert</td><td>\u2264 4,1 (fertig vergoren)</td></tr>' +
+    '<tr><td>Mindestg\u00e4rzeit</td><td>\u2265 7 Tage bei 15\u201320\u00b0C</td></tr>' +
+    '</table>' +
+
+    '<h4>EU-Verordnung: Gesch\u00fctzte Ursprungsbezeichnungen</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Region</th><th>Bezeichnung</th></tr>' +
+    '<tr><td>Filder (Baden-W\u00fcrttemberg)</td><td>Filderkraut \u2014 spitzkopfiges Wei\u00dfkraut, besonders mild</td></tr>' +
+    '<tr><td>Hessen / Th\u00fcringen</td><td>Fa\u00dfsauerkraut \u2014 traditionelle Holzfassg\u00e4rung</td></tr>' +
+    '</table>' +
+
+    '<h4>Traditionelles Rezept (pro 2,5 kg Kohl)</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Zutat</th><th>Menge</th><th>Funktion</th></tr>' +
+    '<tr><td>Wei\u00dfkohl</td><td>2,5 kg (fein gehobelt)</td><td>Hauptsubstrat</td></tr>' +
+    '<tr><td>Salz (nicht jodiert)</td><td>50 g (2% des Kohlgewichts)</td><td>Osmotische Entwässerung, LAB-Selektion</td></tr>' +
+    '<tr><td>Wacholderbeeren</td><td>5 g (~10 St\u00fcck)</td><td>Aroma, antimikrobiell</td></tr>' +
+    '<tr><td>K\u00fcmmel</td><td>3 g (~1 TL)</td><td>Aroma, verdauungsf\u00f6rdernd</td></tr>' +
+    '<tr><td>Lorbeerbl\u00e4tter</td><td>2\u20133 St\u00fcck</td><td>Aroma</td></tr>' +
+    '<tr><td>Pfefferk\u00f6rner</td><td>5 St\u00fcck</td><td>Aroma</td></tr>' +
+    '</table>' +
+    '<p><strong>Wichtig:</strong> Nur nicht jodiertes Salz verwenden \u2014 Jod hemmt die Milchs\u00e4urebakterien.</p>' +
+
+    '<h4>Standardverfahren (5 Schritte)</h4>' +
+    '<ol>' +
+    '<li><strong>Hobeln & Salzen:</strong> Kohl fein hobeln (3\u20135 mm). Mit 2% Salz vermengen und 30 Min. ruhen lassen, bis Saft austritt.</li>' +
+    '<li><strong>Kneten & Stampfen:</strong> Kr\u00e4ftig kneten, bis reichlich Lake entsteht. In G\u00e4rtopf oder Glas schichten und fest stampfen.</li>' +
+    '<li><strong>Abdecken:</strong> Kraut muss vollst\u00e4ndig von Lake bedeckt sein. Beschwerstein auflegen. Anaerobe Bedingungen sicherstellen.</li>' +
+    '<li><strong>G\u00e4rung (warm):</strong> 3\u20135 Tage bei 18\u201322\u00b0C. T\u00e4glich entl\u00fcften (Gasbildung durch Leuc. mesenteroides). Schaum absch\u00f6pfen.</li>' +
+    '<li><strong>Nachg\u00e4rung (kalt):</strong> 2\u20136 Wochen bei 10\u201315\u00b0C oder 4\u20138 Wochen im K\u00fchlschrank (4\u00b0C). L. plantarum \u00fcbernimmt und vertieft die S\u00e4ure.</li>' +
+    '</ol>' +
+
+    '<h4>Qualit\u00e4tsmerkmale</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Phase</th><th>pH</th><th>S\u00e4ure</th><th>Merkmale</th></tr>' +
+    '<tr><td>Frisch eingelegt</td><td>&gt; 5,0</td><td>&lt; 0,3%</td><td>Salzig, Kohlgeschmack</td></tr>' +
+    '<tr><td>Anf\u00e4ngliche G\u00e4rung</td><td>4,5 \u2013 5,0</td><td>0,3 \u2013 0,6%</td><td>Leichte S\u00e4ure, CO\u2082-Bläschen</td></tr>' +
+    '<tr><td>Optimal (essreif)</td><td>3,8 \u2013 4,2</td><td>0,8 \u2013 1,5%</td><td>Mild-s\u00e4uerlich, knackig, aromatisch</td></tr>' +
+    '<tr><td>\u00dcberreif</td><td>&lt; 3,5</td><td>&gt; 1,8%</td><td>Sehr sauer, weich (gut f\u00fcr Eintopf)</td></tr>' +
+    '</table>' +
+
+    '<h4>Vergleich mit Kimchi-Fermentation</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Sauerkraut</th><th>Kimchi</th></tr>' +
+    '<tr><td>Salzgehalt</td><td>1,5\u20132,5%</td><td>2,0\u20134,0%</td></tr>' +
+    '<tr><td>G\u00e4rtemperatur</td><td>15\u201322\u00b0C \u2192 4\u201315\u00b0C</td><td>20\u201325\u00b0C \u2192 4\u00b0C</td></tr>' +
+    '<tr><td>G\u00e4rdauer bis essreif</td><td>2\u20136 Wochen</td><td>3\u201314 Tage</td></tr>' +
+    '<tr><td>Gew\u00fcrze</td><td>K\u00fcmmel, Wacholder, Lorbeer</td><td>Chili, Knoblauch, Fischsauce</td></tr>' +
+    '<tr><td>pH optimal</td><td>3,8\u20134,2</td><td>4,0\u20134,5</td></tr>' +
+    '<tr><td>Dominante LAB</td><td>L. plantarum (sp\u00e4t)</td><td>Leuc. mesenteroides (Mitte)</td></tr>' +
+    '</table>' +
+
     '</div>';
   }
 
   return { init: init, updateLang: updateLang };
 })();
+
