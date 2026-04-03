@@ -1372,6 +1372,9 @@ a:hover { text-decoration: underline; }
 }
 .ml-info { display: flex; flex-direction: column; min-width: 0; }
 .ml-name { font-weight: 600; color: var(--text); white-space: nowrap; }
+.ml-sakei .ml-name { color: var(--blue); }
+.ml-mesen .ml-name { color: var(--accent); }
+.ml-plant .ml-name { color: var(--amber); }
 .ml-role { font-size: var(--fs-2xs); color: var(--text-muted); }
 .ml-time { color: var(--text-muted); font-family: var(--mono); font-size: var(--fs-2xs); }
 .ml-note { color: var(--text-secondary); font-size: var(--fs-2xs); flex: 1; }
@@ -1383,6 +1386,21 @@ a:hover { text-decoration: underline; }
   .dz-header { flex-direction: column; gap: 4px; }
   .tz-track { flex-wrap: wrap; gap: 12px; justify-content: center; }
   .tz-bar { display: none; }
+
+  .microbe-legend { font-size: var(--fs-2xs); gap: 4px; padding: 6px 2px 2px; }
+  .ml-item {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 2px 6px;
+    padding: 6px 8px;
+  }
+  .ml-info { flex-basis: calc(100% - 20px); }
+  .ml-name { white-space: normal; font-size: var(--fs-2xs); }
+  .ml-role { font-size: var(--fs-3xs); }
+  .ml-time { font-size: var(--fs-3xs); }
+  .ml-note { font-size: var(--fs-3xs); flex-basis: 100%; order: 10; margin-top: 2px; }
+  .ml-pct { font-size: var(--fs-3xs); }
+  .ml-pct-l { font-size: 7px; }
 }
 
 /* ═══ GLASSMORPHISM BASE ═══ */
@@ -2349,9 +2367,19 @@ a:hover { text-decoration: underline; }
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 640px) {
-  .main-layout { padding: 12px 12px; }
-  .header-inner { padding: 6px 12px; }
+  .main-layout { padding: 10px 10px; }
+  .header-inner {
+    padding: 6px 10px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .header-brand { flex: 1 1 100%; gap: 6px; }
+  .logo-icon { width: 22px; height: 22px; }
   .brand-name { font-size: var(--fs-sm); }
+  .brand-sub { display: none; }
+  .header-controls { gap: 4px; }
+  .lang-btn { padding: 3px 8px; font-size: var(--fs-2xs); }
+  .unit-btn { padding: 3px 6px; font-size: var(--fs-2xs); min-width: 26px; }
 
   .dash {
     flex-direction: column;
@@ -2375,17 +2403,45 @@ a:hover { text-decoration: underline; }
   .status-panel { padding: 12px 14px; }
 
   .microbe-cards { grid-template-columns: 1fr; }
+  .microbe-card { padding: 8px 10px; }
+  .mc-name { font-size: var(--fs-xs); }
+  .mc-head { margin-bottom: 4px; }
+  .mc-desc { font-size: var(--fs-3xs); line-height: 1.3; }
+  .mc-time { font-size: var(--fs-3xs); }
+  .mc-meter { padding-top: 4px; }
+
   .calc-results { grid-template-columns: repeat(2, 1fr); }
+
   .nitrite-grid { grid-template-columns: 1fr; }
+  .n-metric { padding: 6px 8px; }
+  .n-value { font-size: var(--fs-2xs); word-break: break-word; }
+  .n-label { font-size: var(--fs-3xs); }
 
   .controls-header { flex-direction: column; align-items: stretch; }
   .batch-inline { flex-wrap: wrap; }
+
+  /* Tighter cards on mobile */
+  .glass-card { padding: 12px; border-radius: 14px; }
+  .col-card { padding: 12px; }
+  .col-title { font-size: var(--fs-2xs); margin-bottom: 8px; }
+  .field-item { padding: 6px 0; gap: 6px; }
+  .field-marker { width: 16px; height: 16px; font-size: 8px; }
+  .input-num { width: 54px; padding: 2px 4px; font-size: var(--fs-xs); }
+  .input-num-sm { width: 48px; }
+  .input-num-xs { width: 40px; }
+  .recipe-type-btn { padding: 4px 10px; font-size: var(--fs-2xs); }
+  .process-strip { padding: 12px 10px; }
+  .pflow-step-label { font-size: var(--fs-2xs); }
+  .pflow-step-desc { font-size: var(--fs-3xs); }
 
   .dominance-track {
     flex-direction: column;
     min-height: 0;
   }
-  .dominance-segment { min-width: 100%; }
+  .dominance-segment { min-width: 100%; padding: 6px 8px; }
+  .dominance-name { font-size: var(--fs-2xs); }
+  .dominance-time { font-size: var(--fs-3xs); }
+  .dominance-note { font-size: var(--fs-3xs); }
 
   .btn-expert span:not(.expert-icon) { display: none; }
 }
