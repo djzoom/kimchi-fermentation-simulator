@@ -765,73 +765,37 @@ window.KimchiSim.i18n = (function () {
       en: 'Salt controls fermentation speed.\n\nToo little (<2%): spoils quickly, mushy texture\nJust right (2-3%): perfect crunch and flavor\nToo much (>4%): very slow, overly salty taste\n\nKorean standard: 2.5% after salting.',
       ko: '소금은 발효 속도를 조절합니다.\n\n너무 적으면 (<2%): 빨리 상하고 물러짐\n적당히 (2-3%): 아삭하고 맛있음\n너무 많으면 (>4%): 매우 느리고 짬\n\n한국 표준: 절임 후 2.5%.',
       zh: '盐控制发酵速度。\n\n太少(<2%)：容易坏，口感软烂\n刚好(2-3%)：爽脆可口\n太多(>4%)：发酵很慢，太咸\n\n韩国标准：腌制后2.5%。',
-      de: 'Salz steuert die Fermentationsgeschwindigkeit.
-
-Zu wenig (<2 %): verdirbt schnell, matschige Textur
-Genau richtig (2–3 %): perfekter Biss und Geschmack
-Zu viel (>4 %): sehr langsam, zu salziger Geschmack
-
-Koreanischer Standard: 2,5 % nach dem Salzen.'
+      de: 'Salz steuert die Fermentationsgeschwindigkeit.\n\nZu wenig (<2 %): verdirbt schnell, matschige Textur\nGenau richtig (2–3 %): perfekter Biss und Geschmack\nZu viel (>4 %): sehr langsam, zu salziger Geschmack\n\nKoreanischer Standard: 2,5 % nach dem Salzen.'
     },
     'tip.starter': {
       en: 'Starter = old kimchi brine. It contains millions of live bacteria that jumpstart fermentation.\n\n0%: Natural fermentation (slower)\n5%: Moderate boost\n10-15%: Fast start, consistent results\n\nLike sourdough starter for bread!',
       ko: '종균 = 묵은지국물. 수백만 유산균이 발효를 빠르게 시작합니다.\n\n0%: 자연 발효 (느림)\n5%: 적당한 촉진\n10-15%: 빠른 시작, 일정한 결과\n\n빵의 천연 효모와 같은 원리!',
       zh: '母水=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！',
-      de: 'Starterkultur = alte Kimchi-Lake. Sie enthält Millionen lebender Bakterien, die die Fermentation beschleunigen.
-
-0 %: Natürliche Fermentation (langsamer)
-5 %: Moderater Schub
-10–15 %: Schneller Start, gleichmäßige Ergebnisse
-
-Wie Sauerteig beim Brotbacken!'
+      de: 'Starterkultur = alte Kimchi-Lake. Sie enthält Millionen lebender Bakterien, die die Fermentation beschleunigen.\n\n0 %: Natürliche Fermentation (langsamer)\n5 %: Moderater Schub\n10–15 %: Schneller Start, gleichmäßige Ergebnisse\n\nWie Sauerteig beim Brotbacken!'
     },
     'tip.stages': {
       en: 'Real kimchi-making uses stages:\n\n1. Room temp (20-25°C): Kick-start bacteria for a few hours\n2. Fridge (4°C): Slow, deep flavor development over days\n\nThis is why Korean grandmas leave kimchi out overnight before refrigerating!',
       ko: '실제 김치는 단계별로 만듭니다:\n\n1. 실온 (20-25°C): 몇 시간 유산균 활성화\n2. 냉장 (4°C): 며칠에 걸쳐 깊은 풍미 발달\n\n할머니들이 김치를 하룻밤 실온에 두었다 냉장하는 이유!',
       zh: '实际做泡菜分阶段：\n\n1. 室温(20-25°C)：几小时激活细菌\n2. 冷藏(4°C)：数天缓慢发展深层风味\n\n这就是韩国奶奶做好泡菜后先放室温一晚再放冰箱的原因！',
-      de: 'Echte Kimchi-Herstellung nutzt Stufen:
-
-1. Raumtemperatur (20–25 °C): Bakterien für einige Stunden aktivieren
-2. Kühlschrank (4 °C): Langsame, tiefe Geschmacksentwicklung über Tage
-
-Deshalb lassen koreanische Großmütter Kimchi über Nacht draußen, bevor sie es kühlen!'
+      de: 'Echte Kimchi-Herstellung nutzt Stufen:\n\n1. Raumtemperatur (20–25 °C): Bakterien für einige Stunden aktivieren\n2. Kühlschrank (4 °C): Langsame, tiefe Geschmacksentwicklung über Tage\n\nDeshalb lassen koreanische Großmütter Kimchi über Nacht draußen, bevor sie es kühlen!'
     },
     'tip.nitrite': {
       en: 'Nitrite (NO\u2082) is not assigned to a fixed day count here.\n\nThis simulator estimates a nitrate reservoir from the kimchi mix, converts salt into an equivalent Na\u207A brine strength, speeds or slows nitrate reduction with your temperature stages, and then lets LAB acidity and biomass clear nitrite back down.\n\nWarm starts usually compress the risk window into an earlier, sharper peak. Cold plans often spread it over more time. More starter usually shortens the window because LAB take control sooner.\n\nRead the predicted peak and risk window for your actual settings instead of assuming every batch peaks on the same day.',
       ko: '여기서는 아질산염(NO\u2082)을 고정된 날짜 규칙으로 처리하지 않습니다.\n\n이 시뮬레이터는 김치 혼합물의 질산염 저장량을 추정하고, 소금을 등가 Na\u207A 염수 강도로 바꾸며, 온도 단계에 따라 질산염 환원 속도를 조절한 뒤, 유산균의 산성화와 균수 증가로 아질산염이 다시 낮아지도록 계산합니다.\n\n따뜻한 시작은 위험 구간을 더 이르고 날카로운 최고치로 압축하는 경향이 있고, 차가운 계획은 그 구간을 더 길게 펼치는 경향이 있습니다. 종균이 많을수록 유산균이 더 빨리 주도권을 잡아 위험 구간이 짧아지는 경우가 많습니다.\n\n따라서 모든 배치가 같은 날 최고치를 찍는다고 가정하지 말고, 현재 설정에서 계산된 최고치와 위험 구간을 읽어야 합니다.',
       zh: '这里不会把亚硝酸盐(NO\u2082)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na\u207A 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。母水越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。',
-      de: 'Nitrit (NO₂) wird hier nicht an eine feste Tageszahl gebunden.
-
-Dieser Simulator schätzt eine Nitratreserve aus der Kimchi-Mischung, rechnet Salz in eine äquivalente Na⁺-Lakestärke um, beschleunigt oder verlangsamt die Nitratreduktion mit Ihren Temperaturstufen und lässt dann LAB-Säure und Biomasse das Nitrit wieder abbauen.
-
-Warme Starts komprimieren das Risikofenster meist zu einem früheren, schärferen Höchstwert. Kalte Pläne verteilen es oft über mehr Zeit. Mehr Starterkultur verkürzt das Fenster meist, weil LAB schneller die Kontrolle übernehmen.
-
-Lesen Sie den vorhergesagten Höchstwert und das Risikofenster für Ihre tatsächlichen Einstellungen, anstatt anzunehmen, dass jede Charge am selben Tag ihren Höchstwert erreicht.'
+      de: 'Nitrit (NO₂) wird hier nicht an eine feste Tageszahl gebunden.\n\nDieser Simulator schätzt eine Nitratreserve aus der Kimchi-Mischung, rechnet Salz in eine äquivalente Na⁺-Lakestärke um, beschleunigt oder verlangsamt die Nitratreduktion mit Ihren Temperaturstufen und lässt dann LAB-Säure und Biomasse das Nitrit wieder abbauen.\n\nWarme Starts komprimieren das Risikofenster meist zu einem früheren, schärferen Höchstwert. Kalte Pläne verteilen es oft über mehr Zeit. Mehr Starterkultur verkürzt das Fenster meist, weil LAB schneller die Kontrolle übernehmen.\n\nLesen Sie den vorhergesagten Höchstwert und das Risikofenster für Ihre tatsächlichen Einstellungen, anstatt anzunehmen, dass jede Charge am selben Tag ihren Höchstwert erreicht.'
     },
     'tip.phase': {
       en: 'Fermentation has 3 phases:\n\n Blue = Initial: L. sakei grows first, mild taste\n Green = Optimal: Leuconostoc makes bubbles and great flavor\n Yellow = Over-ripened: L. plantarum takes over, very sour\n\nThe marker shows where your kimchi is now!',
       ko: '발효 3단계:\n\n 파랑 = 초기: L. sakei가 먼저 자라, 순한 맛\n 초록 = 최적: Leuconostoc이 탄산과 좋은 풍미 생성\n 노랑 = 과숙: L. plantarum 우세, 매우 시큼\n\n마커가 현재 김치 상태를 보여줍니다!',
       zh: '发酵分三个阶段：\n\n 蓝色=初期：L. sakei先生长，味道温和\n 绿色=最佳：明串珠菌产生气泡和绝佳风味\n 黄色=过熟：植物乳杆菌主导，非常酸\n\n标记显示你的泡菜现在处于哪个阶段！',
-      de: 'Fermentation hat 3 Phasen:
-
- Blau = Anfang: L. sakei wächst zuerst, milder Geschmack
- Grün = Optimal: Leuconostoc erzeugt Bläschen und tollen Geschmack
- Gelb = Überreif: L. plantarum übernimmt, sehr sauer
-
-Die Markierung zeigt, wo Ihr Kimchi jetzt steht!'
+      de: 'Fermentation hat 3 Phasen:\n\nBlau = Anfang: L. sakei wächst zuerst, milder Geschmack\nGrün = Optimal: Leuconostoc erzeugt Bläschen und tollen Geschmack\nGelb = Überreif: L. plantarum übernimmt, sehr sauer\n\nDie Markierung zeigt, wo Ihr Kimchi jetzt steht!'
     },
     'tip.readChart': {
       en: 'Read it in this order:\n\n1. Red score line = overall eating quality\n2. Green dashed line = best flavor moment\n3. Nitrite line = early safety warning\n4. Colored phase bands = which bacteria are leading\n\nTurn on extra layers only when you want more detail.',
       ko: '이 순서로 보세요:\n\n1. 빨간 점수선 = 전체 먹기 좋은 정도\n2. 초록 점선 = 풍미가 가장 좋은 순간\n3. 아질산염 선 = 초기 안전 경고\n4. 색 띠 = 어떤 균이 발효를 주도하는지\n\n더 자세히 보고 싶을 때만 추가 레이어를 켜면 됩니다.',
       zh: '建议按这个顺序读图：\n\n1. 红色评分线 = 整体适口性\n2. 绿色虚线 = 风味最佳时刻\n3. 亚硝酸盐线 = 早期安全提醒\n4. 彩色阶段带 = 当前哪类菌在主导\n\n想看更深细节时，再打开其他图层。',
-      de: 'Lesen Sie es in dieser Reihenfolge:
-
-1. Rote Bewertungslinie = Gesamtessqualität
-2. Grüne Strichlinie = bester Geschmacksmoment
-3. Nitritlinie = Frühwarnung zur Sicherheit
-4. Farbige Phasenbänder = welche Bakterien führen
-
-Schalten Sie zusätzliche Ebenen nur ein, wenn Sie mehr Details möchten.'
+      de: 'Lesen Sie es in dieser Reihenfolge:\n\n1. Rote Bewertungslinie = Gesamtessqualität\n2. Grüne Strichlinie = bester Geschmacksmoment\n3. Nitritlinie = Frühwarnung zur Sicherheit\n4. Farbige Phasenbänder = welche Bakterien führen\n\nSchalten Sie zusätzliche Ebenen nur ein, wenn Sie mehr Details möchten.'
     },
     'tip.chartControls': {
       en: 'The chart starts in a family-friendly mode with the most important information on screen. Use these buttons to reveal deeper scientific layers without overwhelming the first view.',
@@ -843,31 +807,19 @@ Schalten Sie zusätzliche Ebenen nur ein, wenn Sie mehr Details möchten.'
       en: 'These bands summarize the dominant microbe over time.\n\nBlue: L. sakei helps the batch settle.\nGreen: Leuconostoc usually delivers peak eating quality.\nYellow: L. plantarum pushes kimchi toward stronger sourness.\n\nThe widths change with your temperature plan.',
       ko: '이 띠는 시간에 따라 우세한 미생물을 요약합니다.\n\n파랑: L. sakei가 배치를 안정화합니다.\n초록: Leuconostoc이 보통 최고의 식미를 만듭니다.\n노랑: L. plantarum이 더 강한 산미 쪽으로 이끕니다.\n\n폭은 온도 계획에 따라 달라집니다.',
       zh: '这些色带概括了不同时间段的优势菌。\n\n蓝色：L. sakei 帮助发酵起步并稳定。\n绿色：Leuconostoc 往往带来最佳食用品质。\n黄色：L. plantarum 会把 Kimchi 推向更明显的酸味。\n\n它们的宽度会随着你的温度计划变化。',
-      de: 'Diese Bänder zeigen die dominanten Mikroben im Zeitverlauf.
-
-Blau: L. sakei hilft der Charge beim Einpendeln.
-Grün: Leuconostoc liefert meist die beste Essqualität.
-Gelb: L. plantarum treibt Kimchi in Richtung stärkerer Säure.
-
-Die Breiten ändern sich mit Ihrem Temperaturplan.'
+      de: 'Diese Bänder zeigen die dominanten Mikroben im Zeitverlauf.\n\nBlau: L. sakei hilft der Charge beim Einpendeln.\nGrün: Leuconostoc liefert meist die beste Essqualität.\nGelb: L. plantarum treibt Kimchi in Richtung stärkerer Säure.\n\nDie Breiten ändern sich mit Ihrem Temperaturplan.'
     },
     'tip.microbeBoard': {
       en: 'Kimchi flavor is a team effort.\n\nThese cards answer a simple question: who is doing the most work around the best-tasting moment? The highlighted card updates automatically as you change time, starter, and temperature stages.',
       ko: '김치 풍미는 팀플레이입니다.\n\n이 카드는 “가장 맛있는 시점 주변에서 누가 가장 큰 역할을 하고 있는가?”를 쉽게 보여줍니다. 시간, 종균, 온도 단계를 바꾸면 자동으로 강조 카드가 바뀝니다.',
       zh: 'Kimchi 的风味来自菌群协作。\n\n这组卡片回答的是一个简单问题：在最佳风味附近，究竟是谁出了最多力？当你调整时间、母水和温度阶段时，高亮卡片会自动变化。',
-      de: 'Kimchi-Geschmack ist Teamarbeit.
-
-Diese Karten beantworten eine einfache Frage: Wer leistet rund um den besten Geschmacksmoment die meiste Arbeit? Die hervorgehobene Karte aktualisiert sich automatisch, wenn Sie Zeit, Starterkultur und Temperaturstufen ändern.'
+      de: 'Kimchi-Geschmack ist Teamarbeit.\n\nDiese Karten beantworten eine einfache Frage: Wer leistet rund um den besten Geschmacksmoment die meiste Arbeit? Die hervorgehobene Karte aktualisiert sich automatisch, wenn Sie Zeit, Starterkultur und Temperaturstufen ändern.'
     },
     'tip.presets': {
       en: 'Presets are not rigid rules. They are teaching shortcuts.\n\nClassic Home: warm start, long cold finish\nWeekend Fast: quicker souring for short timelines\nCold Slow: mostly refrigerator fermentation for steadier texture',
       ko: '프리셋은 절대 규칙이 아니라 학습용 지름길입니다.\n\n가정 기본: 따뜻하게 시작하고 차갑게 길게 마무리\n주말 빠르게: 짧은 일정에 맞춘 빠른 산미 형성\n저온 천천히: 냉장 중심으로 더 안정적 식감 유지',
       zh: '这些预设不是死规则，而是学习捷径。\n\n家常经典：先温后冷，慢慢成熟\n周末快成：适合短周期，较快出酸\n冷藏慢熟：以冰箱发酵为主，质地更稳',
-      de: 'Voreinstellungen sind keine starren Regeln, sondern Lernhilfen.
-
-Klassisch: Warmer Start, lange kalte Phase
-Schnell: Schnellere Säuerung für kurze Zeitpläne
-Kalt & langsam: Hauptsächlich Kühlschrankfermentation für gleichmäßigere Textur'
+      de: 'Voreinstellungen sind keine starren Regeln, sondern Lernhilfen.\n\nKlassisch: Warmer Start, lange kalte Phase\nSchnell: Schnellere Säuerung für kurze Zeitpläne\nKalt & langsam: Hauptsächlich Kühlschrankfermentation für gleichmäßigere Textur'
     },
     'tip.process': {
       en: 'This flow explains why household kimchi making is staged. Salting removes water, seasoning adds nutrients and aroma, and temperature decides whether the batch develops quickly or slowly.',
@@ -885,25 +837,19 @@ Kalt & langsam: Hauptsächlich Kühlschrankfermentation für gleichmäßigere Te
       en: 'L. sakei often dominates early.\n\nWhat it means for you: the batch is still fresh, clean, and not yet deeply sour. Think of it as the “settling in” stage.',
       ko: 'L. sakei는 보통 초기에 우세합니다.\n\n의미: 배치는 아직 신선하고 깔끔하며 깊게 시어지지 않았습니다. 발효가 자리를 잡는 단계라고 보면 됩니다.',
       zh: 'L. sakei 往往在前期占优。\n\n对你意味着什么：这一坛还偏清新、干净，酸味还不深，可以理解为“进入状态”的阶段。',
-      de: 'L. sakei dominiert oft in der Frühphase.
-
-Was das für Sie bedeutet: Die Charge ist noch frisch, sauber und noch nicht tief sauer. Betrachten Sie es als die „Einpendelungsphase".'
+      de: 'L. sakei dominiert oft in der Frühphase.\n\nWas das für Sie bedeutet: Die Charge ist noch frisch, sauber und noch nicht tief sauer. Betrachten Sie es als die „Einpendelungsphase".'
     },
     'tip.mesenteroides': {
       en: 'Leuconostoc is the crowd-pleaser.\n\nIt helps create aroma, light acidity, and a lively profile that many people associate with perfect eating kimchi.',
       ko: 'Leuconostoc은 가장 많은 사람들이 좋아하는 풍미를 만드는 균입니다.\n\n향, 가벼운 산미, 생기 있는 인상을 만들어 “먹기 가장 좋은 김치”와 자주 연결됩니다.',
       zh: 'Leuconostoc 常常是最讨喜的一类菌。\n\n它能带来香气、轻快酸感和鲜活口感，很多人心中的“最好吃 Kimchi”通常就和它有关。',
-      de: 'Leuconostoc ist der Publikumsliebling.
-
-Es hilft, Aroma, leichte Säure und ein lebhaftes Profil zu erzeugen, das viele mit perfektem Ess-Kimchi verbinden.'
+      de: 'Leuconostoc ist der Publikumsliebling.\n\nEs hilft, Aroma, leichte Säure und ein lebhaftes Profil zu erzeugen, das viele mit perfektem Ess-Kimchi verbinden.'
     },
     'tip.plantarum': {
       en: 'L. plantarum is powerful late in fermentation.\n\nIt deepens acidity and is useful when kimchi is heading toward soups, stews, fried rice, or other cooked dishes.',
       ko: 'L. plantarum은 발효 후반에 강해집니다.\n\n산미를 깊게 만들며, 김치찌개나 볶음밥 같은 요리용 김치로 갈 때 특히 의미가 큽니다.',
       zh: 'L. plantarum 在发酵后期会更强势。\n\n它会进一步加深酸味，因此当 Kimchi 逐渐转向适合做汤、炒饭、炖菜时，它就很关键。',
-      de: 'L. plantarum ist in der späten Fermentation stark.
-
-Es vertieft die Säure und ist nützlich, wenn Kimchi in Richtung Suppen, Eintöpfe, Bratreis oder andere gekochte Gerichte geht.'
+      de: 'L. plantarum ist in der späten Fermentation stark.\n\nEs vertieft die Säure und ist nützlich, wenn Kimchi in Richtung Suppen, Eintöpfe, Bratreis oder andere gekochte Gerichte geht.'
     },
 
     // Batch tracker
