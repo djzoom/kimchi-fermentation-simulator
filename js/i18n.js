@@ -9,9 +9,9 @@ window.KimchiSim.i18n = (function () {
 
   var strings = {
     'app.title': {
-      en: 'Kimchi Fermentation Simulator',
-      ko: '김치 발효 시뮬레이터',
-      zh: '韩式辣白菜发酵模拟器'
+      en: 'Kimchi Simulator',
+      ko: '김치 시뮬레이터',
+      zh: '泡菜模拟器'
     },
     'app.subtitle': {
       en: 'Interactive scientific simulation based on Modified Gompertz & Arrhenius kinetic models',
@@ -19,9 +19,9 @@ window.KimchiSim.i18n = (function () {
       zh: '基于修正 Gompertz 与 Arrhenius 动力学模型的交互式科学模拟'
     },
     'app.subtitleShort': {
-      en: 'A kitchen-friendly guide to flavor, safety, and fermentation science.',
-      ko: '풍미, 안전, 발효 과학을 쉽게 읽는 주방형 가이드.',
-      zh: '一份面向厨房场景的风味、安全与发酵科学指南。'
+      en: 'Kitchen-friendly flavor & safety guide · Fermentation biochemistry simulation',
+      ko: '풍미·안전 주방 가이드 · 발효 생화학 시뮬레이션',
+      zh: '面向厨房场景的风味与安全发酵指南 · 基于发酵生化动力学的模拟与预测'
     },
     'lang.toggle': {
       en: '中文',
