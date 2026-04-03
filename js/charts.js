@@ -115,7 +115,23 @@ window.KimchiSim.charts = (function () {
           bodyFont: { family: 'JetBrains Mono', size: 11 },
           callbacks: {
             title: function(items) {
-              return items[0].parsed.x.toFixed(1) + ' ' + t('unit.days');
+              var dayVal = items[0].parsed.x;
+              var line1 = dayVal.toFixed(1) + ' ' + t('unit.days');
+              if (!_pickleDate) return line1;
+              var d = new Date(_pickleDate.getTime() + dayVal * 86400000);
+              var lang = (window.KimchiSim.i18n && window.KimchiSim.i18n.getLang) ? window.KimchiSim.i18n.getLang() : 'en';
+              var dateStr;
+              if (lang === 'zh') {
+                dateStr = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '时';
+              } else if (lang === 'ko') {
+                dateStr = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + d.getHours() + '시';
+              } else if (lang === 'de') {
+                dateStr = d.getDate() + '. ' + d.toLocaleString('de', { month: 'short' }) + ' ' + d.getHours() + ':00';
+              } else {
+                var mon = d.toLocaleString('en', { month: 'short' });
+                dateStr = mon + ' ' + d.getDate() + ', ' + d.getHours() + ':00';
+              }
+              return [line1, dateStr];
             }
           }
         },
@@ -249,11 +265,11 @@ window.KimchiSim.charts = (function () {
       },
       acidOptLine: {
         type: 'line', scaleID: 'yAcid', value: 0.6,
-        borderColor: c.redMuted + '66', borderWidth: 1.5, borderDash: [4, 4],
+        borderColor: c.muted + '66', borderWidth: 1.5, borderDash: [4, 4],
         label: {
           display: true, content: '0.6%',
           position: 'start',
-          backgroundColor: c.redMuted + 'CC', color: '#fff',
+          backgroundColor: c.muted + 'CC', color: '#fff',
           font: { size: 9 }, padding: 3
         }
       }
@@ -283,7 +299,7 @@ window.KimchiSim.charts = (function () {
           {
             label: t('chart.acid'),
             data: [],
-            borderColor: c.redMuted,
+            borderColor: c.muted,
             borderWidth: 1.5,
             pointRadius: 0,
             tension: 0.4,
@@ -316,12 +332,12 @@ window.KimchiSim.charts = (function () {
     }, {
       mesoPeak: {
         type: 'box', yMin: 40, yMax: 100,
-        backgroundColor: c.teal + '06',
-        borderColor: c.teal + '12', borderWidth: 1,
+        backgroundColor: c.accent + '06',
+        borderColor: c.accent + '12', borderWidth: 1,
         label: {
           display: true, content: 'Leuc. dominant',
           position: { x: 'end', y: 'center' },
-          color: c.teal + '66', font: { size: 9 }
+          color: c.accent + '44', font: { size: 9 }
         }
       }
     });
@@ -337,33 +353,33 @@ window.KimchiSim.charts = (function () {
           {
             label: t('microbe.sakei.name'),
             data: [],
-            borderColor: c.orange,
-            borderWidth: 1.6,
+            borderColor: c.muted,
+            borderWidth: 1.4,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.orange + '15',
+            backgroundColor: c.muted + '10',
             tension: 0.4,
             yAxisID: 'y'
           },
           {
             label: t('microbe.mesenteroides.name'),
             data: [],
-            borderColor: c.teal,
-            borderWidth: 1.6,
+            borderColor: c.accent,
+            borderWidth: 2,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.teal + '15',
+            backgroundColor: c.accent + '12',
             tension: 0.4,
             yAxisID: 'y'
           },
           {
             label: t('microbe.plantarum.name'),
             data: [],
-            borderColor: c.purple,
-            borderWidth: 1.6,
+            borderColor: c.muted,
+            borderWidth: 1.4,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.purple + '15',
+            backgroundColor: c.muted + '10',
             tension: 0.4,
             yAxisID: 'y'
           }
@@ -383,17 +399,17 @@ window.KimchiSim.charts = (function () {
       y: {
         position: 'left', min: 0, max: 8,
         grid: { color: gridColor() },
-        ticks: { color: c.orange, font: { size: 9 } },
+        ticks: { color: c.amber, font: { size: 9 } },
         title: { display: false }
       }
     }, {
       safeLine: {
         type: 'line', scaleID: 'y', value: 3,
-        borderColor: c.orange + '88', borderWidth: 1.5, borderDash: [4, 4],
+        borderColor: c.amber + '88', borderWidth: 1.5, borderDash: [4, 4],
         label: {
           display: true, content: t('chart.nitrite.safeLine'),
           position: 'start',
-          backgroundColor: c.orange + 'CC',
+          backgroundColor: c.amber + 'CC',
           color: '#fff',
           font: { size: 9 },
           padding: 3
@@ -414,13 +430,13 @@ window.KimchiSim.charts = (function () {
         datasets: [{
           label: t('chart.nitrite'),
           data: [],
-          borderColor: c.orange,
+          borderColor: c.amber,
           borderWidth: 1.8,
           pointRadius: 0,
           tension: 0.4,
           borderDash: [5, 3],
           fill: 'origin',
-          backgroundColor: c.orange + '10',
+          backgroundColor: c.amber + '10',
           yAxisID: 'y'
         }]
       },
@@ -557,7 +573,7 @@ window.KimchiSim.charts = (function () {
       pl.options.scales.yPH.grid.color = gc;
       pl.options.scales.x.ticks.color = c.muted;
       pl.options.scales.yPH.ticks.color = c.blue;
-      pl.options.scales.yAcid.ticks.color = c.redMuted;
+      pl.options.scales.yAcid.ticks.color = c.muted;
       pl.data.datasets[0].label = t('chart.ph');
       pl.data.datasets[1].label = t('chart.acid');
       pl.update('none');
@@ -582,7 +598,7 @@ window.KimchiSim.charts = (function () {
       nr.options.scales.x.grid.color = gc;
       nr.options.scales.y.grid.color = gc;
       nr.options.scales.x.ticks.color = c.muted;
-      nr.options.scales.y.ticks.color = c.orange;
+      nr.options.scales.y.ticks.color = c.amber;
       nr.options.scales.x.title.text = t('chart.xaxis');
       nr.options.scales.x.title.color = c.muted;
       nr.data.datasets[0].label = t('chart.nitrite');

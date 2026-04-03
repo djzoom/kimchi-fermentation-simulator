@@ -56,11 +56,14 @@ window.KimchiSim.ui = (function () {
   function saveState() {
     try {
       syncPickleHidden();
+      var roomTempC = getTempInputCelsius('input-room-temp', 22);
+      var fridgeTempC = getTempInputCelsius('input-fridge-temp', 4);
+      syncAccelTempInputsFromDisplay();
       var state = {
         pickleTime: (document.getElementById('input-pickle-time') || {}).value || '',
-        roomTemp: readNum('input-room-temp', 28),
+        roomTemp: roomTempC,
         roomHours: readNum('input-room-hours', 7),
-        fridgeTemp: readNum('input-fridge-temp', 4),
+        fridgeTemp: fridgeTempC,
         starter: readNum('slider-starter', 0),
         salt: readNum('slider-salt', 2.5),
         accelStages: accelStages,
@@ -85,9 +88,13 @@ window.KimchiSim.ui = (function () {
     } else {
       setPickleToNow();
     }
-    if (s.roomTemp != null) setInput('input-room-temp', s.roomTemp);
+    if (s.roomTemp != null) {
+      setTempInputCelsius('input-room-temp', s.roomTemp);
+    }
     if (s.roomHours != null) setInput('input-room-hours', s.roomHours);
-    if (s.fridgeTemp != null) setInput('input-fridge-temp', s.fridgeTemp);
+    if (s.fridgeTemp != null) {
+      setTempInputCelsius('input-fridge-temp', s.fridgeTemp);
+    }
     if (s.starter != null) {
       setInput('slider-starter', s.starter);
       updateSliderDisplay('starter');
@@ -96,6 +103,8 @@ window.KimchiSim.ui = (function () {
       accelStages = s.accelStages;
       renderAccelStages();
     }
+    getTempInputCelsius('input-room-temp', 22);
+    getTempInputCelsius('input-fridge-temp', 4);
     if (s.useFahrenheit) {
       useFahrenheit = true;
       convertTempsToUnit();
@@ -105,6 +114,7 @@ window.KimchiSim.ui = (function () {
       var w = document.getElementById('calc-weight');
       if (w) w.value = s.calcWeight;
     }
+    syncPresetButtons();
   }
 
   function readNum(id, fallback) {
@@ -119,9 +129,59 @@ window.KimchiSim.ui = (function () {
     if (el) el.value = val;
   }
 
+  function formatMetricTemp(celsius) {
+    var rounded = Math.round(celsius * 10) / 10;
+    if (Math.abs(rounded - Math.round(rounded)) < 0.05) return String(Math.round(rounded));
+    return String(rounded);
+  }
+
+  function formatTempForDisplay(celsius) {
+    return useFahrenheit ? String(Math.round(celsius * 9 / 5 + 32)) : formatMetricTemp(celsius);
+  }
+
+  function setTempInputCelsius(id, celsius) {
+    var el = document.getElementById(id);
+    if (!el || isNaN(celsius)) return;
+    el.setAttribute('data-celsius', celsius);
+    el.value = formatTempForDisplay(celsius);
+  }
+
+  function getTempInputCelsius(id, fallback) {
+    var el = document.getElementById(id);
+    if (!el) return fallback;
+    var c = parseFloat(el.getAttribute('data-celsius'));
+    if (isNaN(c)) {
+      var raw = parseFloat(el.value);
+      c = isNaN(raw) ? fallback : (useFahrenheit ? (raw - 32) * 5 / 9 : raw);
+      el.setAttribute('data-celsius', c);
+    }
+    return c;
+  }
+
+  function syncTempInputCelsiusFromDisplay(id, fallback) {
+    var el = document.getElementById(id);
+    if (!el) return fallback;
+    var raw = parseFloat(el.value);
+    var c = isNaN(raw) ? fallback : (useFahrenheit ? (raw - 32) * 5 / 9 : raw);
+    el.setAttribute('data-celsius', c);
+    return c;
+  }
+
+  function syncAccelTempInputsFromDisplay() {
+    document.querySelectorAll('.accel-temp-input').forEach(function(el) {
+      var raw = parseFloat(el.value);
+      if (isNaN(raw)) return;
+      var c = useFahrenheit ? (raw - 32) * 5 / 9 : raw;
+      el.setAttribute('data-celsius', c);
+    });
+  }
+
   // ─── Temperature Unit Toggle ───
 
   function toggleUnit() {
+    getTempInputCelsius('input-room-temp', 22);
+    getTempInputCelsius('input-fridge-temp', 4);
+    syncAccelTempInputsFromDisplay();
     useFahrenheit = !useFahrenheit;
     convertTempsToUnit();
     updateUnitLabels();
@@ -132,19 +192,19 @@ window.KimchiSim.ui = (function () {
     ['input-room-temp', 'input-fridge-temp'].forEach(function(id) {
       var el = document.getElementById(id);
       if (!el) return;
-      var c = parseFloat(el.getAttribute('data-celsius'));
-      if (isNaN(c)) c = parseFloat(el.value);
-      if (useFahrenheit) {
-        el.value = Math.round(c * 9 / 5 + 32);
-      } else {
-        el.value = c;
-      }
+      var fallback = id === 'input-room-temp' ? 22 : 4;
+      var c = getTempInputCelsius(id, fallback);
+      el.value = formatTempForDisplay(c);
     });
     // accel temps
     document.querySelectorAll('.accel-temp-input').forEach(function(el) {
       var c = parseFloat(el.getAttribute('data-celsius'));
-      if (isNaN(c)) c = parseFloat(el.value);
-      el.value = useFahrenheit ? Math.round(c * 9 / 5 + 32) : c;
+      if (isNaN(c)) {
+        var raw = parseFloat(el.value);
+        c = isNaN(raw) ? 25 : (useFahrenheit ? (raw - 32) * 5 / 9 : raw);
+        el.setAttribute('data-celsius', c);
+      }
+      el.value = formatTempForDisplay(c);
     });
   }
 
@@ -168,13 +228,9 @@ window.KimchiSim.ui = (function () {
   // ─── Timeline → Stages Conversion ───
 
   function getTimelineStages() {
-    var roomTemp = toCelsius(readNum('input-room-temp', 28));
+    var roomTemp = getTempInputCelsius('input-room-temp', 22);
     var roomHours = readNum('input-room-hours', 7);
-    var fridgeTemp = toCelsius(readNum('input-fridge-temp', 4));
-
-    // Store celsius for unit conversion
-    document.getElementById('input-room-temp').setAttribute('data-celsius', roomTemp);
-    document.getElementById('input-fridge-temp').setAttribute('data-celsius', fridgeTemp);
+    var fridgeTemp = getTempInputCelsius('input-fridge-temp', 4);
 
     var stages = [];
     if (roomHours > 0) {
@@ -200,7 +256,7 @@ window.KimchiSim.ui = (function () {
 
   function getParams() {
     return {
-      temperature: toCelsius(readNum('input-room-temp', 28)),
+      temperature: getTempInputCelsius('input-room-temp', 22),
       salt: readNum('slider-salt', 2.5),
       starter: readNum('slider-starter', 0)
     };
@@ -228,7 +284,7 @@ window.KimchiSim.ui = (function () {
     var html = '';
     for (var i = 0; i < accelStages.length; i++) {
       var a = accelStages[i];
-      var tempVal = useFahrenheit ? Math.round(a.temp * 9 / 5 + 32) : a.temp;
+      var tempVal = formatTempForDisplay(a.temp);
       html += '<div class="accel-row" data-idx="' + i + '">' +
         '<span class="tl-dot tl-dot-warm" style="width:14px;height:14px;font-size:0"></span>' +
         '<span class="tl-unit-lbl">' + t('ferment.afterHours') + '</span>' +
@@ -259,9 +315,12 @@ window.KimchiSim.ui = (function () {
   function readAccelFromDOM() {
     accelStages = [];
     document.querySelectorAll('.accel-row').forEach(function(row) {
+      var tempInput = row.querySelector('.accel-temp-input');
+      var tempC = toCelsius(parseFloat(tempInput.value) || 25);
+      tempInput.setAttribute('data-celsius', tempC);
       accelStages.push({
         afterHours: parseFloat(row.querySelector('.accel-after').value) || 48,
-        temp: toCelsius(parseFloat(row.querySelector('.accel-temp-input').value) || 25),
+        temp: tempC,
         hours: parseFloat(row.querySelector('.accel-hours').value) || 4
       });
     });
@@ -280,6 +339,8 @@ window.KimchiSim.ui = (function () {
         syncPickleHidden();
         // Save manual values when user directly edits temp/hours/fridge
         if (id === 'input-room-temp' || id === 'input-room-hours' || id === 'input-fridge-temp') {
+          if (id === 'input-room-temp') syncTempInputCelsiusFromDisplay('input-room-temp', 22);
+          if (id === 'input-fridge-temp') syncTempInputCelsiusFromDisplay('input-fridge-temp', 4);
           saveManualValues();
           syncPresetButtons();
         }
@@ -296,12 +357,7 @@ window.KimchiSim.ui = (function () {
       });
     }
 
-    // Unit toggle
-    var unitBtn = document.getElementById('btn-unit-toggle');
-    if (unitBtn) unitBtn.addEventListener('click', function() {
-      toggleUnit();
-      debouncedChange();
-    });
+    // Unit toggle (now in header, handled by app.js)
 
     // Acceleration
     var accelBtn = document.getElementById('btn-add-accel');
@@ -322,9 +378,9 @@ window.KimchiSim.ui = (function () {
   var manualValues = { roomTemp: 28, roomHours: 7, fridgeTemp: 4 };
 
   function saveManualValues() {
-    manualValues.roomTemp = toCelsius(readNum('input-room-temp', 28));
+    manualValues.roomTemp = getTempInputCelsius('input-room-temp', 22);
     manualValues.roomHours = readNum('input-room-hours', 7);
-    manualValues.fridgeTemp = toCelsius(readNum('input-fridge-temp', 4));
+    manualValues.fridgeTemp = getTempInputCelsius('input-fridge-temp', 4);
   }
 
   function initPresets() {
@@ -334,11 +390,9 @@ window.KimchiSim.ui = (function () {
 
         if (preset === 'manual') {
           // Restore saved manual values
-          setInput('input-room-temp', useFahrenheit ? Math.round(manualValues.roomTemp * 9 / 5 + 32) : manualValues.roomTemp);
+          setTempInputCelsius('input-room-temp', manualValues.roomTemp);
           setInput('input-room-hours', manualValues.roomHours);
-          setInput('input-fridge-temp', useFahrenheit ? Math.round(manualValues.fridgeTemp * 9 / 5 + 32) : manualValues.fridgeTemp);
-          document.getElementById('input-room-temp').setAttribute('data-celsius', manualValues.roomTemp);
-          document.getElementById('input-fridge-temp').setAttribute('data-celsius', manualValues.fridgeTemp);
+          setTempInputCelsius('input-fridge-temp', manualValues.fridgeTemp);
           syncPresetButtons();
           debouncedChange();
           return;
@@ -349,11 +403,9 @@ window.KimchiSim.ui = (function () {
 
         var p = PRESETS[preset];
         if (!p) return;
-        setInput('input-room-temp', useFahrenheit ? Math.round(p.roomTemp * 9 / 5 + 32) : p.roomTemp);
+        setTempInputCelsius('input-room-temp', p.roomTemp);
         setInput('input-room-hours', p.roomHours);
-        setInput('input-fridge-temp', useFahrenheit ? Math.round(p.fridgeTemp * 9 / 5 + 32) : p.fridgeTemp);
-        document.getElementById('input-room-temp').setAttribute('data-celsius', p.roomTemp);
-        document.getElementById('input-fridge-temp').setAttribute('data-celsius', p.fridgeTemp);
+        setTempInputCelsius('input-fridge-temp', p.fridgeTemp);
         accelStages = [];
         renderAccelStages();
         syncPresetButtons();
@@ -363,9 +415,9 @@ window.KimchiSim.ui = (function () {
   }
 
   function syncPresetButtons() {
-    var roomT = toCelsius(readNum('input-room-temp', 28));
+    var roomT = getTempInputCelsius('input-room-temp', 22);
     var roomH = readNum('input-room-hours', 7);
-    var fridgeT = toCelsius(readNum('input-fridge-temp', 4));
+    var fridgeT = getTempInputCelsius('input-fridge-temp', 4);
     var anyPresetActive = false;
     document.querySelectorAll('.preset-chip, .preset-btn').forEach(function(btn) {
       var preset = btn.getAttribute('data-preset');
@@ -917,11 +969,108 @@ window.KimchiSim.ui = (function () {
 
     updateNitriteModel(data);
     updateDashGauge(data);
+    updateDecisionZone(data);
+    updateTimelineZone(data);
     updateStatusSentences(data);
     updateExplainPanel(data);
     updateScoringBreakdown(data);
     updateExtendAdvice(data);
     updateTimelineMilestones(data);
+  }
+
+  // ─── Decision Zone (Zone 1) ───
+
+  function updateDecisionZone(data) {
+    var t = window.KimchiSim.i18n.t;
+    var pickleDate = getPickleDate();
+    var elapsedDays = 0;
+    if (pickleDate) {
+      elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+    }
+    var optDays = data.optimalTime;
+    var p2End = data.phases.phase2End;
+    var meta = data.nitriteMeta || {};
+    var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : 0;
+
+    var stateEl = document.getElementById('dz-state');
+    var elapsedEl = document.getElementById('dz-elapsed');
+    var nextEl = document.getElementById('dz-next');
+    if (!stateEl) return;
+
+    // Determine state
+    stateEl.className = 'dz-state';
+    if (elapsedDays < riskEnd) {
+      stateEl.textContent = t('dz.notSafe');
+      stateEl.classList.add('state-risk');
+    } else if (elapsedDays >= p2End) {
+      stateEl.textContent = t('dz.overSour');
+      stateEl.classList.add('state-warn');
+    } else if (elapsedDays >= optDays * 0.85 && elapsedDays <= optDays * 1.3) {
+      stateEl.textContent = t('dz.bestNow');
+      stateEl.classList.add('state-best');
+    } else if (elapsedDays >= riskEnd) {
+      stateEl.textContent = t('dz.canEat');
+      stateEl.classList.add('state-safe');
+    } else {
+      stateEl.textContent = t('dz.developing');
+      stateEl.classList.add('state-risk');
+    }
+
+    // Elapsed time
+    if (pickleDate && elapsedEl) {
+      elapsedEl.textContent = t('dz.elapsed').replace('{d}', formatCompactTime(elapsedDays));
+    } else if (elapsedEl) {
+      elapsedEl.textContent = '';
+    }
+
+    // Next event
+    if (nextEl) {
+      if (elapsedDays < optDays) {
+        var remaining = optDays - elapsedDays;
+        nextEl.textContent = t('dz.nextBest').replace('{d}', formatCompactTime(remaining));
+      } else if (elapsedDays >= optDays) {
+        var pastDays = elapsedDays - optDays;
+        nextEl.textContent = t('dz.pastBest').replace('{d}', formatCompactTime(pastDays));
+      } else {
+        nextEl.textContent = '';
+      }
+    }
+  }
+
+  // ─── Timeline Zone (Zone 2) ───
+
+  function updateTimelineZone(data) {
+    var pickleDate = getPickleDate();
+    var elapsedDays = 0;
+    if (pickleDate) {
+      elapsedDays = Math.max(0, (Date.now() - pickleDate.getTime()) / 86400000);
+    }
+
+    var meta = data.nitriteMeta || {};
+    var riskEnd = (meta.riskWindow && meta.riskWindow.end != null) ? meta.riskWindow.end : 0;
+    var optDays = data.optimalTime;
+    var sourDays = data.phases.phase2End;
+    var starterDays = sourDays;
+
+    // Update times
+    setVal('tz-safe-time', formatCompactTime(riskEnd));
+    setVal('tz-best-time', formatCompactTime(optDays));
+    setVal('tz-sour-time', formatCompactTime(sourDays));
+    setVal('tz-starter-time', formatCompactTime(starterDays));
+
+    // Mark past events
+    var events = [
+      { id: 'tz-safe', day: riskEnd },
+      { id: 'tz-best', day: optDays },
+      { id: 'tz-sour', day: sourDays },
+      { id: 'tz-starter', day: starterDays }
+    ];
+    events.forEach(function(ev) {
+      var el = document.getElementById(ev.id);
+      if (el) {
+        el.classList.toggle('past', pickleDate != null && elapsedDays > ev.day);
+      }
+    });
   }
 
   function formatCompactTime(days) {
@@ -1096,6 +1245,8 @@ window.KimchiSim.ui = (function () {
     restoreSavedInputs: restoreSavedInputs,
     saveState: saveState,
     updateTimelineMilestones: updateTimelineMilestones,
+    toggleUnit: function() { toggleUnit(); },
+    getUseFahrenheit: function() { return useFahrenheit; },
     stages: [] // compat
   };
 })();

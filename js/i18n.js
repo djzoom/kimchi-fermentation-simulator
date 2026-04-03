@@ -9,217 +9,258 @@ window.KimchiSim.i18n = (function () {
 
   var strings = {
     'app.title': {
-      en: 'Kimchi Simulator',
-      ko: '김치 시뮬레이터',
-      zh: '泡菜模拟器'
+      en: 'Kimchi Dynamics',
+      ko: '김치 동역학',
+      zh: '泡菜动力学',
+      de: 'Fermentationsdynamik'
     },
     'app.subtitle': {
-      en: 'Interactive scientific simulation based on Modified Gompertz & Arrhenius kinetic models',
-      ko: '수정 Gompertz 및 Arrhenius 동역학 모델 기반 과학적 시뮬레이션',
-      zh: '基于修正 Gompertz 与 Arrhenius 动力学模型的交互式科学模拟'
+      en: 'Process prediction & flavor assessment based on fermentation kinetics',
+      ko: '발효 동역학 기반 과정 예측 및 풍미 평가',
+      zh: '基于发酵动力学的过程预测与风味评估',
+      de: 'Prozessvorhersage & Geschmacksbewertung auf Basis der G\u00e4rungskinetik'
     },
     'app.subtitleShort': {
-      en: 'Kitchen-friendly flavor & safety guide · Fermentation biochemistry simulation',
-      ko: '풍미·안전 주방 가이드 · 발효 생화학 시뮬레이션',
-      zh: '面向厨房场景的风味与安全发酵指南 · 基于发酵生化动力学的模拟与预测'
+      en: 'Process prediction & flavor assessment based on fermentation kinetics',
+      ko: '발효 동역학 기반 과정 예측 및 풍미 평가',
+      zh: '基于发酵动力学的过程预测与风味评估',
+      de: 'Prozessvorhersage & Geschmacksbewertung auf Basis der G\u00e4rungskinetik'
     },
     'lang.toggle': {
       en: '中文',
       ko: 'English',
-      zh: '한국어'
+      zh: '한국어',
+      de: 'English'
     },
     'info.more': {
       en: 'More info',
       ko: '자세히 보기',
-      zh: '更多说明'
+      zh: '更多说明',
+      de: 'Mehr Infos'
     },
     'hero.kicker': {
       en: 'Kimchi, explained for real kitchens',
       ko: '실제 부엌을 위한 김치 설명서',
-      zh: '写给真实厨房场景的 Kimchi 说明书'
+      zh: '写给真实厨房场景的 Kimchi 说明书',
+      de: 'Kimchi, erklärt für echte Küchen'
     },
     'hero.title': {
       en: 'See how salt, time, and temperature turn cabbage into lively, balanced kimchi.',
       ko: '소금, 시간, 온도가 배추를 생기 있고 균형 잡힌 김치로 바꾸는 과정을 보세요.',
-      zh: '看看盐、时间和温度如何把白菜变成鲜活而平衡的 Kimchi。'
+      zh: '看看盐、时间和温度如何把白菜变成鲜活而平衡的 Kimchi。',
+      de: 'Sehen Sie, wie Salz, Zeit und Temperatur Kohl in lebendiges, ausgewogenes Kimchi verwandeln.'
     },
     'hero.body': {
       en: 'Move the controls like a recipe, watch the chart respond instantly, and use the notes below to learn what makes kimchi crisp, tangy, safe, and deeply aromatic.',
       ko: '레시피를 조정하듯 컨트롤을 움직이고, 차트가 즉시 반응하는 모습을 보세요. 아래 설명을 통해 김치를 아삭하고, 새콤하고, 안전하고, 향기롭게 만드는 요소를 이해할 수 있습니다.',
-      zh: '像调整配方一样移动控件，观察图表即时变化，并通过下方说明理解什么让 Kimchi 爽脆、酸香、安全且富有层次。'
+      zh: '像调整配方一样移动控件，观察图表即时变化，并通过下方说明理解什么让 Kimchi 爽脆、酸香、安全且富有层次。',
+      de: 'Bewegen Sie die Regler wie bei einem Rezept, beobachten Sie die sofortige Reaktion im Diagramm und erfahren Sie, was Kimchi knackig, säuerlich, sicher und aromatisch macht.'
     },
     'intro.fact1.title': {
       en: 'Start with the red score line',
       ko: '먼저 빨간 점수 곡선을 보세요',
-      zh: '先看红色评分曲线'
+      zh: '先看红色评分曲线',
+      de: 'Beginnen Sie mit der roten Bewertungslinie'
     },
     'intro.fact1.body': {
       en: 'It summarizes taste, aroma, and texture so first-time visitors know where to look.',
       ko: '맛, 향, 식감을 하나로 요약해 처음 보는 사람도 어디를 봐야 할지 바로 알 수 있습니다.',
-      zh: '它把味道、香气和口感合成一个结果，让第一次看的用户也知道先看哪里。'
+      zh: '它把味道、香气和口感合成一个结果，让第一次看的用户也知道先看哪里。',
+      de: 'Sie fasst Geschmack, Aroma und Textur zusammen, damit Erstbesucher sofort wissen, worauf sie achten müssen.'
     },
     'intro.fact2.title': {
       en: 'Use the colored bands as a story',
       ko: '색 띠를 발효 이야기로 읽어보세요',
-      zh: '把彩色阶段带当作发酵故事来读'
+      zh: '把彩色阶段带当作发酵故事来读',
+      de: 'Lesen Sie die Farbbänder wie eine Geschichte'
     },
     'intro.fact2.body': {
       en: 'Each phase shows which friendly bacteria are leading the fermentation and what that means for flavor.',
       ko: '각 단계는 어떤 유익균이 발효를 주도하는지, 그리고 그것이 풍미에 어떤 의미인지 보여줍니다.',
-      zh: '每个阶段都会告诉你是哪类有益菌在主导发酵，以及这会怎样改变风味。'
+      zh: '每个阶段都会告诉你是哪类有益菌在主导发酵，以及这会怎样改变风味。',
+      de: 'Jede Phase zeigt, welche nützlichen Bakterien die Fermentation anführen und was das für den Geschmack bedeutet.'
     },
     'intro.fact3.title': {
       en: 'Watch the nitrite warning carefully',
       ko: '아질산염 경고도 꼭 함께 보세요',
-      zh: '别忽略亚硝酸盐提示'
+      zh: '别忽略亚硝酸盐提示',
+      de: 'Achten Sie genau auf die Nitrit-Warnung'
     },
     'intro.fact3.body': {
       en: 'Kimchi is not only about taste. This model also estimates how nitrate reserve, brine strength, and acidification shape the safer eating window.',
       ko: '김치는 맛만의 문제가 아닙니다. 이 모델은 질산염 저장량, 염도, 산성화 속도가 더 안전한 섭취 구간을 어떻게 만드는지도 함께 추정합니다.',
-      zh: 'Kimchi 不只关乎味道。这个模型也会估算硝酸根储量、盐水强度和酸化速度如何共同决定更安全的食用窗口。'
+      zh: 'Kimchi 不只关乎味道。这个模型也会估算硝酸根储量、盐水强度和酸化速度如何共同决定更安全的食用窗口。',
+      de: 'Kimchi dreht sich nicht nur um Geschmack. Dieses Modell schätzt auch, wie Nitratreserve, Salzstärke und Säurebildung das sichere Essfenster formen.'
     },
 
     // Stages
     'controls.stages': {
       en: 'Fermentation Stages',
       ko: '발효 단계',
-      zh: '发酵阶段'
+      zh: '发酵阶段',
+      de: 'Fermentationsstufen'
     },
     'controls.stageTemp': {
       en: 'Temp',
       ko: '온도',
-      zh: '温度'
+      zh: '温度',
+      de: 'Temp.'
     },
     'controls.stageDur': {
       en: 'Duration',
       ko: '시간',
-      zh: '时长'
+      zh: '时长',
+      de: 'Dauer'
     },
     'controls.singleStage': {
       en: 'Single Stage',
       ko: '단일 단계',
-      zh: '单阶段'
+      zh: '单阶段',
+      de: 'Einstufig'
     },
     'controls.multiStage': {
       en: 'Multi-Stage',
       ko: '다단계',
-      zh: '多阶段'
+      zh: '多阶段',
+      de: 'Mehrstufig'
     },
 
     // Controls
     'controls.title': {
       en: 'Fermentation Parameters',
       ko: '발효 매개변수',
-      zh: '发酵参数'
+      zh: '发酵参数',
+      de: 'Fermentationsparameter'
     },
     'controls.subtitle': {
       en: 'Keep the household presets if you are learning, or edit each stage as if you were planning a real batch.',
       ko: '처음이라면 가정용 프리셋을 그대로 사용하고, 익숙하다면 실제 배치를 설계하듯 단계를 직접 수정해 보세요.',
-      zh: '如果你正在入门，可以先用家用预设；熟悉以后，也可以像规划真实一坛泡菜那样逐段修改。'
+      zh: '如果你正在入门，可以先用家用预设；熟悉以后，也可以像规划真实一坛泡菜那样逐段修改。',
+      de: 'Behalten Sie die Haushalts-Voreinstellungen beim Lernen, oder passen Sie jede Stufe an wie bei einer echten Charge.'
     },
     'controls.stageHelp': {
       en: 'Warm stages wake the microbes up. Cold stages stretch flavor development and keep texture crisp.',
       ko: '따뜻한 단계는 미생물을 깨우고, 차가운 단계는 풍미 발달을 길게 끌어가며 식감을 더 아삭하게 유지합니다.',
-      zh: '温暖阶段负责唤醒菌群，低温阶段负责拉长风味发展并帮助保持爽脆口感。'
+      zh: '温暖阶段负责唤醒菌群，低温阶段负责拉长风味发展并帮助保持爽脆口感。',
+      de: 'Warme Stufen wecken die Mikroben. Kalte Stufen verlängern die Geschmacksentwicklung und halten die Textur knackig.'
     },
     'controls.addStage': {
       en: 'Add stage',
       ko: '단계 추가',
-      zh: '添加阶段'
+      zh: '添加阶段',
+      de: 'Stufe hinzufügen'
     },
     'controls.removeStage': {
       en: 'Remove stage',
       ko: '단계 삭제',
-      zh: '删除阶段'
+      zh: '删除阶段',
+      de: 'Stufe entfernen'
     },
     'presets.label': {
       en: 'Quick presets',
       ko: '빠른 프리셋',
-      zh: '快速预设'
+      zh: '快速预设',
+      de: 'Schnellvorlagen'
     },
     'preset.classic': {
       en: 'Classic Home',
       ko: '가정 기본',
-      zh: '家常经典'
+      zh: '家常经典',
+      de: 'Klassisch'
     },
     'preset.weekend': {
       en: 'Weekend Fast',
       ko: '주말 빠르게',
-      zh: '周末快成'
+      zh: '周末快成',
+      de: 'Schnell'
     },
     'preset.slow': {
       en: 'Cold Slow',
       ko: '저온 천천히',
-      zh: '冷藏慢熟'
+      zh: '冷藏慢熟',
+      de: 'Kalt & langsam'
     },
     'preset.manual': {
       en: 'Manual',
       ko: '수동 입력',
-      zh: '手动输入'
+      zh: '手动输入',
+      de: 'Manuell'
     },
 
     // Sliders
     'slider.temp': {
       en: 'Temperature',
       ko: '온도',
-      zh: '温度'
+      zh: '温度',
+      de: 'Temperatur'
     },
     'slider.salt': {
       en: 'Salt Concentration',
       ko: '소금 농도',
-      zh: '盐浓度'
+      zh: '盐浓度',
+      de: 'Salzkonzentration'
     },
     'slider.starter': {
-      en: 'Starter Culture (종균)',
+      en: 'Starter Culture',
       ko: '종균 (묵은지국물)',
-      zh: '母水（老泡菜发酵液）'
+      zh: '母水（老泡菜发酵液）',
+      de: 'Starterkultur'
     },
     'slider.starter.hint': {
       en: 'Old kimchi brine — natural LAB inoculant (backslopping)',
       ko: '묵은지국물 — 천연 유산균 종균',
-      zh: '旧泡菜发酵液 — 天然乳酸菌种子液'
+      zh: '旧泡菜发酵液 — 天然乳酸菌种子液',
+      de: 'Alte Kimchi-Lake — natürliches LAB-Inokulum (Rückführung)'
     },
 
     // Phases
     'phase.initial': {
       en: 'Initial',
       ko: '초기',
-      zh: '初期'
+      zh: '初期',
+      de: 'Anfang'
     },
     'phase.optimal': {
       en: 'Optimal',
       ko: '최적숙성',
-      zh: '最佳熟成'
+      zh: '最佳熟成',
+      de: 'Optimal'
     },
     'phase.over': {
       en: 'Over-ripened',
       ko: '과숙',
-      zh: '过熟'
+      zh: '过熟',
+      de: '\u00dcberreif'
     },
     'phase.initial.sub': {
       en: 'L. sakei dominant',
       ko: 'L. sakei 우세',
-      zh: 'L. sakei 主导'
+      zh: 'L. sakei 主导',
+      de: 'L. sakei dominant'
     },
     'phase.optimal.sub': {
       en: 'Leuc. mesenteroides',
       ko: 'Leuc. mesenteroides',
-      zh: 'Leuc. mesenteroides 主导'
+      zh: 'Leuc. mesenteroides 主导',
+      de: 'Leuc. mesenteroides'
     },
     'phase.over.sub': {
       en: 'L. plantarum dominant',
       ko: 'L. plantarum 우세',
-      zh: 'L. plantarum 主导'
+      zh: 'L. plantarum 主导',
+      de: 'L. plantarum dominant'
     },
     'phase.title': {
       en: 'Fermentation story at a glance',
       ko: '한눈에 보는 발효 이야기',
-      zh: '一眼看懂发酵进程'
+      zh: '一眼看懂发酵进程',
+      de: 'Die Fermentation auf einen Blick'
     },
     'phase.body': {
       en: 'The marker shows where your current settings reach their best flavor moment.',
       ko: '마커는 현재 설정에서 풍미가 가장 좋아지는 시점을 보여줍니다.',
-      zh: '标记会告诉你当前设置下风味达到最佳的时刻。'
+      zh: '标记会告诉你当前设置下风味达到最佳的时刻。',
+      de: 'Die Markierung zeigt, wann Ihre aktuellen Einstellungen den besten Geschmack erreichen.'
     },
 
     // Stats
@@ -268,7 +309,8 @@ window.KimchiSim.i18n = (function () {
     'chart.xaxis': {
       en: 'Time (days)',
       ko: '시간 (일)',
-      zh: '时间（天）'
+      zh: '时间（天）',
+      de: 'Zeit (Tage)'
     },
     'chart.ph': {
       en: 'pH',
@@ -452,7 +494,7 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.sakei.name': {
       en: 'L. sakei',
-      ko: 'L. sakei (사케이 유산균)',
+      ko: 'L. sakei (청주유산균)',
       zh: 'L. sakei (清酒乳杆菌)'
     },
     'microbe.sakei.role': {
@@ -467,7 +509,7 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.mesenteroides.name': {
       en: 'Leuc. mesenteroides',
-      ko: 'Leuc. mesenteroides (메센테로이데스)',
+      ko: 'Leuc. mesenteroides (장막구균)',
       zh: 'Leuc. mesenteroides (肠膜明串珠菌)'
     },
     'microbe.mesenteroides.role': {
@@ -482,7 +524,7 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.plantarum.name': {
       en: 'L. plantarum',
-      ko: 'L. plantarum (플란타럼 유산균)',
+      ko: 'L. plantarum (식물유산균)',
       zh: 'L. plantarum (植物乳杆菌)'
     },
     'microbe.plantarum.role': {
@@ -500,7 +542,8 @@ window.KimchiSim.i18n = (function () {
     'recipe.title': {
       en: 'Standard Recipe & Process',
       ko: '표준 레시피 및 공정',
-      zh: '标准配方与制作流程'
+      zh: '标准配方与制作流程',
+      de: 'Standardrezept & Verfahren'
     },
     'recipe.standards': {
       en: 'Industry Standards',
@@ -524,29 +567,51 @@ window.KimchiSim.i18n = (function () {
       ko: '모델: 수정 Gompertz (유산균 성장) · Arrhenius (온도 동역학) · 시그모이드 (미생물 천이)',
       zh: '模型：修正Gompertz（乳酸菌增长）· Arrhenius（温度动力学）· Sigmoid（微生物演替）'
     },
+    'footer.scope': {
+      en: 'Applicable to Sauerkraut, Chinese paocai, and Korean Kimchi — same fermentation kinetics',
+      ko: 'Sauerkraut(독일 사워크라우트), 중국 파오차이, 한국 김치에 모두 적용 가능 — 동일한 발효 동역학 원리',
+      zh: '适用于 Sauerkraut（德国酸菜）、中国泡菜与韩国 Kimchi，三者发酵动力学机制一致',
+      de: 'G\u00fcltig f\u00fcr Sauerkraut, chinesisches Paocai und koreanisches Kimchi \u2014 gleiche G\u00e4rungskinetik'
+    },
+
+    // Column titles
+    'col.recipe': { en: 'Recipe Calculator', ko: '레시피 계산기', zh: '配方计算器', de: 'Rezeptrechner' },
+    'col.ferment': { en: 'Fermentation Calculator', ko: '발효 계산기', zh: '发酵计算器', de: 'G\u00e4rungsrechner' },
 
     // Calculator
-    'calc.title': { en: 'Recipe Calculator', ko: '레시피 계산기', zh: '配方计算器' },
+    'calc.title': { en: 'Ingredients', ko: '양념 재료', zh: '配料', de: 'Zutaten' },
     'calc.subtitle': {
       en: 'Enter the cabbage weight and get a practical shopping list scaled from a standard household recipe.',
       ko: '배추 무게를 입력하면 표준 가정용 레시피를 기준으로 실제 장보기 분량이 계산됩니다.',
       zh: '输入白菜重量后，系统会按标准家庭配方换算出一份实用采购清单。'
     },
-    'calc.input': { en: 'Cabbage Weight', ko: '배추 무게', zh: '白菜重量' },
+    'calc.input': { en: 'Cabbage Weight', ko: '배추 무게', zh: '白菜重量', de: 'Kohlgewicht' },
     'calc.salt.brine': { en: 'Brine (12%)', ko: '소금물 (12%)', zh: '盐水 (12%)' },
-    'calc.coarse.salt': { en: 'Coarse Salt', ko: '굵은소금', zh: '粗盐' },
-    'calc.chili': { en: 'Chili Powder', ko: '고춧가루', zh: '辣椒粉' },
-    'calc.fish': { en: 'Fish Sauce', ko: '멸치액젓', zh: '鱼露' },
-    'calc.shrimp': { en: 'Shrimp Paste', ko: '새우젓', zh: '虾酱' },
-    'calc.garlic': { en: 'Garlic', ko: '마늘', zh: '大蒜' },
-    'calc.ginger': { en: 'Ginger', ko: '생강', zh: '生姜' },
-    'calc.rice': { en: 'Rice Paste', ko: '찹쌀풀', zh: '糯米糊' },
-    'calc.scallion': { en: 'Green Onion', ko: '쪽파', zh: '小葱' },
-    'calc.note': { en: 'Fish:Shrimp ratio = 3:2 for optimal umami', ko: '액젓:새우젓 = 3:2 최적 감칠맛', zh: '鱼露:虾酱 = 3:2 为最佳鲜味比例' },
+    'calc.coarse.salt': { en: 'Coarse Salt', ko: '굵은소금', zh: '粗盐', de: 'Grobes Salz' },
+    'calc.chili': { en: 'Chili Powder', ko: '고춧가루', zh: '辣椒粉', de: 'Chilipulver' },
+    'calc.fish': { en: 'Fish Sauce', ko: '멸치액젓', zh: '鱼露', de: 'Fischsauce' },
+    'calc.shrimp': { en: 'Shrimp Paste', ko: '새우젓', zh: '虾酱', de: 'Garnelenpaste' },
+    'calc.garlic': { en: 'Garlic', ko: '마늘', zh: '大蒜', de: 'Knoblauch' },
+    'calc.ginger': { en: 'Ginger', ko: '생강', zh: '生姜', de: 'Ingwer' },
+    'calc.rice': { en: 'Rice Paste', ko: '찹쌀풀', zh: '糯米糊', de: 'Reispaste' },
+    'calc.scallion': { en: 'Green Onion', ko: '쪽파', zh: '小葱', de: 'Fr\u00fchlingszwiebel' },
+    'calc.note': { en: 'Fish:Shrimp ratio = 3:2 for optimal umami', ko: '액젓:새우젓 = 3:2 최적 감칠맛', zh: '鱼露:虾酱 = 3:2 为最佳鲜味比例', de: 'Fischsauce:Garnelenpaste = 3:2 f\u00fcr optimalen Umami' },
 
     // Mixer labels
     'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐' },
     'mixer.starter': { en: 'Starter', ko: '종균', zh: '母水' },
+    'starter.label': {
+      en: 'Starter Culture (Old Brine)',
+      ko: '종균 (묵은지국물)',
+      zh: '母水（老泡菜发酵液）',
+      de: 'Starterkultur (Altlake)'
+    },
+    'starter.hint': {
+      en: 'Brine from a previous fermented batch — natural LAB inoculant',
+      ko: '이전 발효 배치의 국물 — 천연 유산균 종균',
+      zh: '取自上一坛充分发酵的泡菜液，含天然乳酸菌群，可加速发酵、稳定风味',
+      de: 'Lake aus einer fr\u00fcheren Charge \u2014 nat\u00fcrliches LAB-Inokulum'
+    },
 
     // Process flowchart
     'process.title': { en: 'Making Process', ko: '제조 과정', zh: '制作流程' },
@@ -555,20 +620,20 @@ window.KimchiSim.i18n = (function () {
       ko: '이 공정은 위 차트의 주방 버전입니다. 절임은 식감을 바꾸고, 양념은 발효를 돕고, 온도는 최종 풍미를 결정합니다.',
       zh: '这是上方图表在厨房里的对应流程：盐会改变质地，酱料会喂养发酵，温度则决定最终风味。'
     },
-    'process.s1': { en: 'Select', ko: '선별', zh: '选菜' },
-    'process.s1d': { en: 'Fresh napa cabbage', ko: '신선한 배추', zh: '新鲜大白菜' },
-    'process.s2': { en: 'Salt', ko: '절임', zh: '腌制' },
-    'process.s2d': { en: '6-8h, 8% salt', ko: '6-8시간, 8% 소금', zh: '6-8小时, 8%盐' },
-    'process.s3': { en: 'Season', ko: '양념', zh: '调味' },
-    'process.s3d': { en: 'Mix paste into leaves', ko: '양념 배추 사이에 넣기', zh: '将调味料抹入菜叶间' },
-    'process.s4': { en: 'Pack', ko: '밀봉', zh: '装坛' },
-    'process.s4d': { en: 'Press tight, no air', ko: '꽉 눌러 공기 제거', zh: '压紧，排尽空气' },
-    'process.s5': { en: 'Ferment', ko: '발효', zh: '发酵' },
-    'process.s5d': { en: 'Room temp 1-2 days', ko: '실온 1-2일', zh: '室温1-2天' },
-    'process.s6': { en: 'Chill', ko: '냉장', zh: '冷藏' },
-    'process.s6d': { en: 'Fridge 4°C, slow ripen', ko: '냉장고 4°C 숙성', zh: '冰箱4°C，缓慢熟成' },
-    'process.s7': { en: 'Enjoy!', ko: '완성!', zh: '开吃!' },
-    'process.s7d': { en: 'Best at peak flavor', ko: '최적 풍미에서 즐기기', zh: '最佳风味期食用' },
+    'process.s1': { en: 'Select', ko: '선별', zh: '选菜', de: 'Ausw\u00e4hlen' },
+    'process.s1d': { en: 'Fresh napa cabbage', ko: '신선한 배추', zh: '新鲜大白菜', de: 'Frischer Wei\u00dfkohl' },
+    'process.s2': { en: 'Salt', ko: '절임', zh: '腌制', de: 'Salzen' },
+    'process.s2d': { en: '6-8h, 8% salt', ko: '6-8시간, 8% 소금', zh: '6-8小时, 8%盐', de: '6\u20138 Std., 8% Salz' },
+    'process.s3': { en: 'Season', ko: '양념', zh: '调味', de: 'W\u00fcrzen' },
+    'process.s3d': { en: 'Mix paste into leaves', ko: '양념 배추 사이에 넣기', zh: '将调味料抹入菜叶间', de: 'Paste in Bl\u00e4tter einarbeiten' },
+    'process.s4': { en: 'Pack', ko: '밀봉', zh: '装坛', de: 'Einf\u00fcllen' },
+    'process.s4d': { en: 'Press tight, no air', ko: '꽉 눌러 공기 제거', zh: '压紧，排尽空气', de: 'Fest dr\u00fccken, keine Luft' },
+    'process.s5': { en: 'Ferment', ko: '발효', zh: '发酵', de: 'G\u00e4ren' },
+    'process.s5d': { en: 'Room temp 1-2 days', ko: '실온 1-2일', zh: '室温1-2天', de: 'Raumtemp. 1\u20132 Tage' },
+    'process.s6': { en: 'Chill', ko: '냉장', zh: '冷藏', de: 'K\u00fchlen' },
+    'process.s6d': { en: 'Fridge 4°C, slow ripen', ko: '냉장고 4°C 숙성', zh: '冰箱4°C，缓慢熟成', de: 'K\u00fchlschrank 4\u00b0C, langsam reifen' },
+    'process.s7': { en: 'Enjoy!', ko: '완성!', zh: '开吃!', de: 'Genie\u00dfen!' },
+    'process.s7d': { en: 'Best at peak flavor', ko: '최적 풍미에서 즐기기', zh: '最佳风味期食用', de: 'Am besten bei Spitzengeschmack' },
 
     // Calculator source
     'calc.source': { en: 'Korean RDA Standard', ko: '농촌진흥청 기준', zh: '韩国农村振兴厅标准' },
@@ -591,12 +656,12 @@ window.KimchiSim.i18n = (function () {
       zh: '这条曲线现在由硝酸根储量、Na\u207A 强度、温度阶段，以及乳酸菌的产酸和清除速度共同推演。'
     },
     'nitrite.no3': { en: 'NO\u2083\u207B reserve', ko: 'NO\u2083\u207B 저장량', zh: 'NO\u2083\u207B 储量' },
-    'nitrite.na': { en: 'Na\u207A strength', ko: 'Na\u207A 강도', zh: 'Na\u207A 强도' },
+    'nitrite.na': { en: 'Na\u207A strength', ko: 'Na\u207A 강도', zh: 'Na\u207A 强度' },
     'nitrite.peak': { en: 'Predicted peak', ko: '예상 최고치', zh: '预计峰值' },
     'nitrite.window': { en: 'Risk window', ko: '위험 구간', zh: '风险窗口' },
     'nitrite.flux': { en: 'Dynamic balance', ko: '동역학 균형', zh: '动力学平衡' },
     'nitrite.form': { en: 'Formation', ko: '생성', zh: '生成' },
-    'nitrite.clear': { en: 'Clearance', ko: '清除', zh: '清除' },
+    'nitrite.clear': { en: 'Clearance', ko: '제거', zh: '清除' },
     'nitrite.window.none': {
       en: 'Below 3 mg/kg throughout',
       ko: '전 구간 3 mg/kg 이하',
@@ -765,17 +830,17 @@ window.KimchiSim.i18n = (function () {
     },
 
     // Date labels
-    'date.year': { en: 'Year', ko: '년', zh: '年' },
-    'date.month': { en: 'Mon', ko: '월', zh: '月' },
-    'date.day': { en: 'Day', ko: '일', zh: '日' },
-    'date.hour': { en: 'Hour', ko: '시', zh: '时' },
+    'date.year': { en: 'Year', ko: '년', zh: '年', de: 'Jahr' },
+    'date.month': { en: 'Mon', ko: '월', zh: '月', de: 'Mon' },
+    'date.day': { en: 'Day', ko: '일', zh: '日', de: 'Tag' },
+    'date.hour': { en: 'Hour', ko: '시', zh: '时', de: 'Std' },
 
     // Units
-    'unit.days': { en: 'days', ko: '일', zh: '天' },
-    'unit.day': { en: 'day', ko: '일', zh: '天' },
-    'unit.hours': { en: 'hours', ko: '시간', zh: '小时' },
-    'unit.h': { en: 'h', ko: '시간', zh: '小时' },
-    'unit.hourShort': { en: 'h', ko: '시', zh: '时' },
+    'unit.days': { en: 'days', ko: '일', zh: '天', de: 'Tage' },
+    'unit.day': { en: 'day', ko: '일', zh: '天', de: 'Tag' },
+    'unit.hours': { en: 'hours', ko: '시간', zh: '小时', de: 'Stunden' },
+    'unit.h': { en: 'h', ko: '시간', zh: '小时', de: 'Std' },
+    'unit.hourShort': { en: 'h', ko: '시', zh: '时', de: 'h' },
 
     // Navigator (L1)
     'nav.days': { en: 'days', ko: '일', zh: '天' },
@@ -870,26 +935,27 @@ window.KimchiSim.i18n = (function () {
     'ferment.title': { en: 'Making Process', ko: '제작 과정', zh: '制作过程' },
     'ferment.prep': { en: 'Preparation', ko: '준비', zh: '装坛' },
     'ferment.nav.calc': { en: 'Recipe Calculator', ko: '배합 계산기', zh: '配方计算器' },
-    'ferment.nav.recipe': { en: 'Standard Recipe', ko: '표준 레시피', zh: '标准配方与流程' },
-    'ferment.pickle': { en: 'Pickling complete', ko: '절임 완료', zh: '装坛完成' },
+    'ferment.nav.recipe': { en: 'Standard Recipe', ko: '표준 레시피', zh: '标准配方与流程', de: 'Standardrezept' },
+    'ferment.pickle': { en: 'Packing Complete Time', ko: '장입 완료 시간', zh: '装坛完成时间', de: 'Einf\u00fcllzeit' },
     'ferment.completeTime': { en: 'Completion time:', ko: '완료 시간:', zh: '完成时间：' },
-    'ferment.ripenMethod': { en: 'Ripening method', ko: '숙성 방식', zh: '熟成方式' },
-    'ferment.room': { en: 'Room temp rest', ko: '실온 숙성', zh: '室温静置' },
-    'ferment.fridge': { en: 'Refrigerate', ko: '냉장 보관', zh: '冰箱冷藏' },
+    'ferment.ripenMethod': { en: 'Fermentation Method', ko: '발효 방식', zh: '发酵方式' },
+    'ferment.method': { en: 'Fermentation Method', ko: '발효 방식', zh: '发酵方式', de: 'G\u00e4rmethode' },
+    'ferment.room': { en: 'Room temp rest', ko: '실온 숙성', zh: '室温静置', de: 'Raumtemperatur' },
+    'ferment.fridge': { en: 'Refrigerate', ko: '냉장 보관', zh: '冰箱冷藏', de: 'K\u00fchlschrank' },
     'ferment.accel': { en: 'Room temp boost', ko: '실온 가속', zh: '室温加速' },
-    'ferment.addAccel': { en: '+ Room temp boost', ko: '+ 실온 가속 추가', zh: '+ 添加室温加速' },
+    'ferment.addAccel': { en: '+ Room temp boost', ko: '+ 실온 가속 추가', zh: '+ 添加室温加速', de: '+ Raumtemp.-Boost' },
     'ferment.removeAccel': { en: 'Remove', ko: '삭제', zh: '删除' },
     'ferment.best': { en: 'Best flavor', ko: '최적 풍미', zh: '最佳风味' },
     'ferment.overSour': { en: 'Over-sour', ko: '과발효', zh: '过酸' },
     'ferment.end': { en: 'End (+7 days)', ko: '종료 (+7일)', zh: '终止（过酸+7天）' },
-    'ferment.calcBtn': { en: 'Start Calculation', ko: '계산 시작', zh: '开始计算' },
-    'dash.phAtBest': { en: 'pH at best flavor', ko: '최적 풍미 시 pH', zh: '최佳风味时 pH' },
+    'ferment.calcBtn': { en: 'Start Calculation', ko: '계산 시작', zh: '开始计算', de: 'Berechnung starten' },
+    'dash.phAtBest': { en: 'pH at best flavor', ko: '최적 풍미 시 pH', zh: '最佳风味时 pH' },
     'ferment.ph435': { en: 'pH reaches 4.35', ko: 'pH 4.35 도달', zh: 'pH 降至 4.35' },
     'microbe.atNow': { en: 'Now', ko: '현재', zh: '当前' },
     'dash.nitriteClear': { en: 'Nitrite clears — safe to eat', ko: '아질산염 소멸 — 안전 섭취 가능', zh: '亚硝酸盐消退 · 可以开始吃' },
     'dash.bestFlavor': { en: 'Best flavor window', ko: '최적 풍미 구간', zh: '最佳风味' },
     'dash.lastEdible': { en: 'Over-sour — last good window', ko: '과숙 — 마지막 섭취 구간', zh: '过酸 · 最后宜食窗口' },
-    'dash.starterReady': { en: 'Use as starter brine (母水)', ko: '종균으로 사용 가능 (묵은지국물)', zh: '可作母水（老泡菜液）' },
+    'dash.starterReady': { en: 'Ready as starter brine for next batch', ko: '종균으로 사용 가능 (묵은지국물)', zh: '可作母水（老泡菜液）' },
     'dash.nextBatch': { en: 'Add 5-10% of this brine to your next batch for faster, more consistent fermentation.', ko: '다음 배치에 이 국물의 5-10%를 넣으면 더 빠르고 안정적인 발효가 가능합니다.', zh: '下次做泡菜时加入 5-10% 这坛老汤，发酵更快更稳定。' },
     'dash.title': { en: 'Batch Timeline', ko: '배치 타임라인', zh: '这坛时间线' },
     'dash.batchTitle': { en: 'This Batch', ko: '이 배치', zh: '这坛泡菜' },
@@ -914,6 +980,17 @@ window.KimchiSim.i18n = (function () {
     'ferment.elapsed': { en: 'Elapsed', ko: '경과', zh: '已经过' },
     'ferment.making': { en: 'Making Process', ko: '제조 과정', zh: '制作阶段' },
     'ferment.makingSub': { en: 'Expand for process & calculator', ko: '공정 및 계산기 펼치기', zh: '可展开详细流程与用量计算器' },
+
+    // Decision zone
+    'dz.developing': { en: 'Developing', ko: '발효 중', zh: '发酵中', de: 'In Entwicklung' },
+    'dz.canEat': { en: 'Safe to eat', ko: '먹어도 됩니다', zh: '可以食用', de: 'Essbar' },
+    'dz.bestNow': { en: 'Best flavor now', ko: '지금이 가장 맛있습니다', zh: '现在最好吃', de: 'Jetzt am besten' },
+    'dz.overSour': { en: 'Over-sour — cook with it', ko: '과숙 — 요리에 활용하세요', zh: '偏酸 — 适合做菜', de: '\u00dcbers\u00e4uert \u2014 zum Kochen' },
+    'dz.notSafe': { en: 'Not ready yet', ko: '아직 이릅니다', zh: '尚未准备好', de: 'Noch nicht bereit' },
+    'dz.elapsed': { en: '{d} since packed', ko: '장입 후 {d}', zh: '装坛后 {d}' },
+    'dz.nextBest': { en: '{d} until best flavor', ko: '최적 풍미까지 {d}', zh: '距最佳风味 {d}' },
+    'dz.pastBest': { en: '{d} past peak', ko: '최적기 이후 {d}', zh: '过了最佳期 {d}' },
+    'ez.toggle': { en: 'Scientific Details', ko: '과학적 세부 정보', zh: '查看详情', de: 'Wissenschaftliche Details' },
 
     // Scoring breakdown (L2)
     'score.title': {
@@ -982,10 +1059,38 @@ window.KimchiSim.i18n = (function () {
       en: 'Add a cold stage (4\u00B0C) after the warm start to stretch flavor development',
       ko: '따뜻한 시작 후 저온 단계(4\u00B0C)를 추가하면 풍미 발달이 길어집니다',
       zh: '在温暖启动后加一段冷藏（4\u00B0C）以延展风味'
-    }
+    },
+
+    // Recipe type selector
+    'recipe.type.kimchi': { en: 'Kimchi', ko: '김치', zh: '韩国泡菜', de: 'Kimchi' },
+    'recipe.type.sauerkraut': { en: 'Sauerkraut', ko: '사워크라우트', zh: '德国酸菜', de: 'Sauerkraut' },
+    'recipe.type.paocai': { en: 'Sichuan Paocai', ko: '쓰촨 파오차이', zh: '四川泡菜', de: 'Sichuan Paocai' },
+
+    // Sauerkraut calculator items
+    'calc.sk.salt': { en: 'Salt (non-iodized)', ko: '소금 (비요오드)', zh: '盐（不含碘）', de: 'Salz (nicht jodiert)' },
+    'calc.sk.juniper': { en: 'Juniper Berries', ko: '주니퍼 베리', zh: '杜松子', de: 'Wacholderbeeren' },
+    'calc.sk.caraway': { en: 'Caraway Seeds', ko: '캐러웨이 씨', zh: '葛缕子', de: 'K\u00fcmmel' },
+    'calc.sk.bay': { en: 'Bay Leaves', ko: '월계수 잎', zh: '月桂叶', de: 'Lorbeerbl\u00e4tter' },
+    'calc.sk.pepper': { en: 'Peppercorns', ko: '통후추', zh: '胡椒粒', de: 'Pfefferk\u00f6rner' },
+    'calc.sk.note': { en: 'Salt = 2% of cabbage weight. Only non-iodized salt.', ko: '소금 = 배추 무게의 2%. 비요오드 소금만 사용.', zh: '盐 = 白菜重量的2%，仅用无碘盐', de: 'Salz = 2% des Kohlgewichts. Nur nicht jodiertes Salz.' },
+
+    // Sichuan paocai calculator items
+    'calc.pc.salt': { en: 'Salt', ko: '소금', zh: '盐', de: 'Salz' },
+    'calc.pc.sichuan': { en: 'Sichuan Peppercorn', ko: '쓰촨 후추', zh: '花椒', de: 'Sichuan-Pfeffer' },
+    'calc.pc.chili': { en: 'Dried Chili', ko: '건고추', zh: '干辣椒', de: 'Trockene Chili' },
+    'calc.pc.ginger': { en: 'Ginger', ko: '생강', zh: '生姜', de: 'Ingwer' },
+    'calc.pc.garlic': { en: 'Garlic', ko: '마늘', zh: '大蒜', de: 'Knoblauch' },
+    'calc.pc.baijiu': { en: 'Baijiu (or rice wine)', ko: '바이주 (또는 미린)', zh: '白酒', de: 'Baijiu (oder Reiswein)' },
+    'calc.pc.sugar': { en: 'Brown Sugar', ko: '흑설탕', zh: '红糖', de: 'Brauner Zucker' },
+    'calc.pc.water': { en: 'Brine Water', ko: '소금물', zh: '泡菜水', de: 'Salzlake' },
+    'calc.pc.note': { en: 'Salt = 4% of vegetable weight. Brine covers all vegetables.', ko: '소금 = 채소 무게의 4%. 소금물이 모든 채소를 덮어야 함.', zh: '盐 = 蔬菜重量的4%，泡菜水须没过所有蔬菜', de: 'Salz = 4% des Gem\u00fcsegewichts. Lake muss alles bedecken.' },
+
+    // Unit toggle labels
+    'unit.metric': { en: 'Metric', ko: '미터법', zh: '公制', de: 'Metrisch' },
+    'unit.imperial': { en: 'Imperial', ko: '야드파운드', zh: '英制', de: 'Imperial' }
   };
 
-  var langOrder = ['en', 'ko', 'zh'];
+  var langOrder = ['en', 'ko', 'zh', 'de'];
   var currentLang = 'en';
 
   function t(key) {
