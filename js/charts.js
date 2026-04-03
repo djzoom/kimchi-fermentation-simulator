@@ -693,8 +693,12 @@ window.KimchiSim.charts = (function () {
 
       // Label style helper — opaque pill with readable text
       var dk = isDark();
-      var labelBg = dk ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.95)';
-      var labelBorder = dk ? 'rgba(148,163,184,0.3)' : 'rgba(148,163,184,0.25)';
+      var labelBg = dk ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)';
+      var labelBorder = dk ? 'rgba(148,163,184,0.35)' : 'rgba(148,163,184,0.25)';
+      // Brighter colors in dark mode for readability
+      var bestColor = dk ? '#4ADE80' : c.accent;
+      var safeColor = dk ? '#60A5FA' : c.blue;
+      var sourColor = dk ? '#FBBF24' : c.amber;
       var isMobile = window.innerWidth < 640;
       var msFont = isMobile ? 9 : 11;
       var msPad = isMobile ? { top: 2, bottom: 2, left: 4, right: 4 } : { top: 3, bottom: 3, left: 6, right: 6 };
@@ -703,32 +707,32 @@ window.KimchiSim.charts = (function () {
       var safeAndBestClose = (_milestones.safeDay > 0 && _milestones.bestDay > 0 &&
         Math.abs(_milestones.bestDay - _milestones.safeDay) < 2);
 
-      // Best milestone (top position)
+      // Best milestone — positioned in middle area, not covering curve peak
       if (_milestones.bestDay > 0 && labels.best) {
         fann['ms_best'] = {
           type: 'line', scaleID: 'x', value: _milestones.bestDay,
-          borderColor: c.accent + '88', borderWidth: 2, borderDash: [6, 3],
+          borderColor: (dk ? '#4ADE80' : c.accent) + '88', borderWidth: 2, borderDash: [6, 3],
           label: {
             display: true, content: labels.best,
             position: 'start',
-            backgroundColor: labelBg, color: c.accent,
+            backgroundColor: labelBg, color: bestColor,
             borderColor: labelBorder, borderWidth: 1,
             font: { size: msFont, weight: 'bold' }, padding: msPad,
-            borderRadius: 4, yAdjust: isMobile ? 18 : 28
+            borderRadius: 4, yAdjust: isMobile ? 36 : 48
           }
         };
       }
 
       // Safe milestone (below best)
       if (_milestones.safeDay > 0 && labels.safe) {
-        var safeYAdjust = safeAndBestClose ? (isMobile ? 52 : 68) : (isMobile ? 42 : 58);
+        var safeYAdjust = safeAndBestClose ? (isMobile ? 70 : 90) : (isMobile ? 56 : 76);
         fann['ms_safe'] = {
           type: 'line', scaleID: 'x', value: _milestones.safeDay,
-          borderColor: c.blue + '88', borderWidth: 1.2, borderDash: [3, 3],
+          borderColor: (dk ? '#60A5FA' : c.blue) + '88', borderWidth: 1.2, borderDash: [3, 3],
           label: {
             display: true, content: labels.safe,
             position: 'start',
-            backgroundColor: labelBg, color: c.blue,
+            backgroundColor: labelBg, color: safeColor,
             borderColor: labelBorder, borderWidth: 1,
             font: { size: msFont }, padding: msPad,
             borderRadius: 4, yAdjust: safeYAdjust
@@ -743,11 +747,11 @@ window.KimchiSim.charts = (function () {
           : labels.sour;
         fann['ms_sour'] = {
           type: 'line', scaleID: 'x', value: sourDay,
-          borderColor: c.amber + '88', borderWidth: 1.2, borderDash: [3, 3],
+          borderColor: (dk ? '#FBBF24' : c.amber) + '88', borderWidth: 1.2, borderDash: [3, 3],
           label: {
             display: true, content: sourContent,
             position: 'end',
-            backgroundColor: labelBg, color: c.amber,
+            backgroundColor: labelBg, color: sourColor,
             borderColor: labelBorder, borderWidth: 1,
             font: { size: msFont }, padding: msPad,
             borderRadius: 4, yAdjust: 4
