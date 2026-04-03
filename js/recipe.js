@@ -253,44 +253,45 @@ window.KimchiSim.recipe = (function () {
   function getSichuan() {
     return '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
 
-    '<h3>四川泡菜 Sichuan Paocai</h3>' +
+    '<h3>四川泡菜</h3>' +
 
     '<h4>国家标准：GB/T 24421-2009《泡菜》</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>项目</th><th>规格</th></tr>' +
     '<tr><td>定义</td><td>以新鲜蔬菜为原料，经食盐水浸泡自然发酵（乳酸发酵）而成的蔬菜制品</td></tr>' +
-    '<tr><td>食盐 (NaCl)</td><td>3.0 \u2013 8.0%（盐水浓度）</td></tr>' +
-    '<tr><td>总酸度（以乳酸计 lactic acid）</td><td>0.3 \u2013 1.0%</td></tr>' +
+    '<tr><td>食盐</td><td>3.0 \u2013 8.0%（盐水浓度）</td></tr>' +
+    '<tr><td>总酸度（以乳酸计）</td><td>0.3 \u2013 1.0%</td></tr>' +
     '<tr><td>pH</td><td>3.5 \u2013 4.5（成熟品）</td></tr>' +
-    '<tr><td>亚硝酸盐 (nitrite)</td><td>\u2264 4 mg/kg</td></tr>' +
+    '<tr><td>亚硝酸盐</td><td>\u2264 4 mg/kg</td></tr>' +
     '<tr><td>食品添加剂</td><td>不得使用人工防腐剂（传统工艺）</td></tr>' +
     '</table>' +
 
     '<h4>四川地方特色</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>特征</th><th>说明</th></tr>' +
-    '<tr><td>发酵容器</td><td>泡菜坛子（陶瓷坛）\u2014\u2014 坛口有凹槽（水槽/water seal），注水形成厌氧密封（anaerobic seal）</td></tr>' +
-    '<tr><td>水封发酵法</td><td>坛沿注入清水，盖上坛盖，利用水封隔绝空气，维持严格厌氧环境。水槽需每2-3天检查补水。</td></tr>' +
-    '<tr><td>花椒 (Sichuan peppercorn)</td><td>核心香料，提供独特麻味（hydroxy-alpha-sanshool），兼有抑菌作用</td></tr>' +
-    '<tr><td>干辣椒 (dried chili)</td><td>整根投入，增色增香，辣椒素（capsaicin）抑制杂菌</td></tr>' +
-    '<tr><td>老姜 (aged ginger)</td><td>切厚片投入，增香暖胃，姜辣素（gingerol）有抑菌功能</td></tr>' +
-    '<tr><td>大蒜 (garlic)</td><td>整瓣投入，大蒜素（allicin）抑制有害菌</td></tr>' +
-    '<tr><td>白酒 (baijiu)</td><td>加入少量高度白酒（\u226552\u00b0），乙醇抑菌、酯化增香</td></tr>' +
-    '<tr><td>母水/老卤</td><td>传统泡菜坛终年不换水，老卤含丰富乳酸菌（Lactobacillus），新菜入坛即可快速发酵</td></tr>' +
+    '<tr><td>发酵容器</td><td>泡菜坛子（陶瓷坛）\u2014\u2014 坛口有凹槽（水槽），注水形成厌氧密封</td></tr>' +
+    '<tr><td>水封发酵法</td><td>坛沿注入清水，盖上坛盖，利用水封隔绝空气，维持严格厌氧环境。水槽需每2\u20133天检查补水。</td></tr>' +
+    '<tr><td>花椒</td><td>核心香料，提供独特麻味，兼有抑菌作用</td></tr>' +
+    '<tr><td>干辣椒</td><td>整根投入，增色增香，辣椒素抑制杂菌</td></tr>' +
+    '<tr><td>老姜</td><td>切厚片投入，增香暖胃，姜辣素有抑菌功能</td></tr>' +
+    '<tr><td>大蒜</td><td>整瓣投入，大蒜素抑制有害菌</td></tr>' +
+    '<tr><td>白酒</td><td>加入少量高度白酒（\u226552\u00b0），乙醇抑菌、酯化增香</td></tr>' +
+    '<tr><td>母水/老卤</td><td>传统泡菜坛终年不换水，老卤含丰富乳酸菌，新菜入坛即可快速发酵。建议取上一坛老卤5\u201310%（约100\u2013250 mL/2.5 kg蔬菜）加入新坛。</td></tr>' +
     '</table>' +
 
     '<h4>传统配方（蔬菜约2.5公斤）</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
-    '<tr><td>混合蔬菜（萝卜、豇豆、白菜、芹菜、嫩姜等）</td><td>2.5 kg</td><td>主料基质（substrate）</td></tr>' +
-    '<tr><td>清水（凉白开或纯净水）</td><td>约2 L（没过蔬菜）</td><td>盐水介质（brine medium）</td></tr>' +
-    '<tr><td>食盐（不加碘 non-iodized）</td><td>120\u2013150 g（水重5\u20137%）</td><td>渗透压选择LAB（osmotic selection）</td></tr>' +
-    '<tr><td>花椒 (Sichuan peppercorn)</td><td>15\u201320 g（约2大匙）</td><td>麻味、抑菌</td></tr>' +
-    '<tr><td>干辣椒 (dried chili)</td><td>5\u20138 根（整根）</td><td>辣味、抑菌、增色</td></tr>' +
-    '<tr><td>老姜 (ginger)</td><td>50 g（切厚片）</td><td>增香、抑菌</td></tr>' +
-    '<tr><td>大蒜 (garlic)</td><td>1 整头（剥瓣）</td><td>大蒜素抑菌</td></tr>' +
-    '<tr><td>白酒 (baijiu, \u226552\u00b0)</td><td>20\u201330 mL（约2大匙）</td><td>乙醇抑菌、酯化增香</td></tr>' +
-    '<tr><td>冰糖 (rock sugar)（可选）</td><td>10\u201315 g</td><td>提供碳源促发酵、调和口味</td></tr>' +
+    '<tr><td>混合蔬菜（萝卜、豇豆、白菜、芹菜、嫩姜等）</td><td>2.5 kg</td><td>主料基质</td></tr>' +
+    '<tr><td>清水（凉白开或纯净水）</td><td>约2 L（没过蔬菜）</td><td>盐水介质</td></tr>' +
+    '<tr><td>食盐（不加碘）</td><td>120\u2013150 g（水重5\u20137%）</td><td>渗透压选择乳酸菌</td></tr>' +
+    '<tr><td>花椒</td><td>15\u201320 g（约2大匙）</td><td>麻味、抑菌</td></tr>' +
+    '<tr><td>干辣椒</td><td>5\u20138 根（整根）</td><td>辣味、抑菌、增色</td></tr>' +
+    '<tr><td>老姜</td><td>50 g（切厚片）</td><td>增香、抑菌</td></tr>' +
+    '<tr><td>大蒜</td><td>1 整头（剥瓣）</td><td>大蒜素抑菌</td></tr>' +
+    '<tr><td>白酒（\u226552\u00b0）</td><td>20\u201330 mL（约2大匙）</td><td>乙醇抑菌、酯化增香</td></tr>' +
+    '<tr><td>冰糖（可选）</td><td>10\u201315 g</td><td>提供碳源促发酵、调和口味</td></tr>' +
+    '<tr><td>母水/老卤（可选）</td><td>100\u2013250 mL</td><td>取上坛老泡菜水加速发酵、稳定风味</td></tr>' +
     '</table>' +
 
     '<h4>标准制作流程（5步）</h4>' +
@@ -305,24 +306,24 @@ window.KimchiSim.recipe = (function () {
     '<h4>品质指标</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>指标</th><th>合格标准</th><th>说明</th></tr>' +
-    '<tr><td>盐水澄清度 (brine clarity)</td><td>清亮透明，无浑浊</td><td>浑浊或起白膜（kahm yeast）表示杂菌污染，需捞除</td></tr>' +
-    '<tr><td>香气 (aroma)</td><td>酸香协调，有花椒和辣椒复合香</td><td>异味（腐臭、酒精过重）为异常</td></tr>' +
-    '<tr><td>脆度 (crunch)</td><td>咬感清脆爽口</td><td>发软或绵软表示过度发酵或蔬菜入坛前未充分沥干</td></tr>' +
-    '<tr><td>色泽 (color)</td><td>保持蔬菜原有色泽，略微半透明</td><td>发黄或发暗为异常</td></tr>' +
-    '<tr><td>亚硝酸盐安全期 (nitrite safety)</td><td>发酵第3\u20137天后食用</td><td>发酵初期（1\u20133天）亚硝酸盐峰值较高，之后被LAB降解至安全水平</td></tr>' +
+    '<tr><td>盐水澄清度</td><td>清亮透明，无浑浊</td><td>浑浊或起白膜表示杂菌污染，需捞除</td></tr>' +
+    '<tr><td>香气</td><td>酸香协调，有花椒和辣椒复合香</td><td>异味（腐臭、酒精过重）为异常</td></tr>' +
+    '<tr><td>脆度</td><td>咬感清脆爽口</td><td>发软或绵软表示过度发酵或蔬菜入坛前未充分沥干</td></tr>' +
+    '<tr><td>色泽</td><td>保持蔬菜原有色泽，略微半透明</td><td>发黄或发暗为异常</td></tr>' +
+    '<tr><td>亚硝酸盐安全期</td><td>发酵第3\u20137天后食用</td><td>发酵初期（1\u20133天）亚硝酸盐峰值较高，之后被乳酸菌降解至安全水平</td></tr>' +
     '</table>' +
 
     '<h4>对比：四川泡菜 vs 韩国泡菜 (Kimchi)</h4>' +
     '<table class="recipe-table">' +
-    '<tr><th>参数</th><th>四川泡菜 Sichuan Paocai</th><th>韩国泡菜 Kimchi</th></tr>' +
-    '<tr><td>腌制方式</td><td>盐水浸泡法（wet brine）</td><td>干腌法（dry salting）+ 调味酱涂抹</td></tr>' +
+    '<tr><th>参数</th><th>四川泡菜</th><th>韩国泡菜</th></tr>' +
+    '<tr><td>腌制方式</td><td>盐水浸泡法</td><td>干腌法 + 调味酱涂抹</td></tr>' +
     '<tr><td>盐浓度</td><td>5\u20137%（盐水浓度）</td><td>2\u20134%（成品含盐量）</td></tr>' +
-    '<tr><td>发酵温度</td><td>18\u201325\u00b0C（室温发酵）</td><td>2\u20135\u00b0C（低温慢发酵）或15\u201320\u00b0C（快速）</td></tr>' +
+    '<tr><td>发酵温度</td><td>18\u201325\u00b0C（室温发酵）</td><td>2\u20135\u00b0C（低温）或15\u201320\u00b0C（快速）</td></tr>' +
     '<tr><td>发酵时长</td><td>1\u20137天（跳水泡菜）；数月（老坛）</td><td>3\u201314天（低温）；2\u20133天（常温）</td></tr>' +
     '<tr><td>核心调料</td><td>花椒、干辣椒、老姜、白酒</td><td>辣椒粉、鱼露、虾酱、大蒜</td></tr>' +
-    '<tr><td>风味特征</td><td>酸爽、麻辣、清香</td><td>酸辣、鲜味（umami）、复合发酵香</td></tr>' +
-    '<tr><td>发酵容器</td><td>泡菜坛子（水封陶坛）</td><td>瓮器（옹기）或密封容器</td></tr>' +
-    '<tr><td>优势乳酸菌 (dominant LAB)</td><td>Lactobacillus plantarum, L. brevis</td><td>Leuconostoc mesenteroides \u2192 L. plantarum</td></tr>' +
+    '<tr><td>风味特征</td><td>酸爽、麻辣、清香</td><td>酸辣、鲜香、复合发酵香</td></tr>' +
+    '<tr><td>发酵容器</td><td>泡菜坛子（水封陶坛）</td><td>瓮器或密封容器</td></tr>' +
+    '<tr><td>优势乳酸菌</td><td>植物乳杆菌、短乳杆菌</td><td>肠膜明串珠菌 \u2192 植物乳杆菌</td></tr>' +
     '</table>' +
 
     '</div>';
@@ -357,6 +358,7 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>K\u00fcmmel</td><td>3 g (~1 TL)</td><td>Aroma, verdauungsf\u00f6rdernd</td></tr>' +
     '<tr><td>Lorbeerbl\u00e4tter</td><td>2\u20133 St\u00fcck</td><td>Aroma</td></tr>' +
     '<tr><td>Pfefferk\u00f6rner</td><td>5 St\u00fcck</td><td>Aroma</td></tr>' +
+    '<tr><td>Altlake (optional)</td><td>100\u2013250 mL</td><td>Lake aus einer fr\u00fcheren Charge \u2014 enth\u00e4lt aktive Milchs\u00e4urebakterien, beschleunigt die G\u00e4rung</td></tr>' +
     '</table>' +
     '<p><strong>Wichtig:</strong> Nur nicht jodiertes Salz verwenden \u2014 Jod hemmt die Milchs\u00e4urebakterien.</p>' +
 
