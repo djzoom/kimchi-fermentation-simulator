@@ -633,7 +633,7 @@ window.KimchiSim.i18n = (function () {
     'footer.scope': {
       en: 'Applicable to German Sauerkraut, Chinese 泡菜 (paocai), and Korean 김치 (kimchi) — same fermentation kinetics',
       ko: '독일 Sauerkraut, 중국 泡菜, 한국 김치에 모두 적용 — 동일한 발효 동역학 원리',
-      zh: '适用于德国 Sauerkraut、中国泡菜与韩国 김치，三者发酵动力学机制一致',
+      zh: '适用于德国泡菜 Sauerkraut、中国四川泡菜与韩国泡菜 김치',
       de: 'G\u00FCltig f\u00FCr deutsches Sauerkraut, chinesisches 泡菜 (Paocai) und koreanisches 김치 (Kimchi) — gleiche G\u00E4rungskinetik'
     },
 
