@@ -9,11 +9,12 @@ window.KimchiSim = window.KimchiSim || {};
 
   var sim = window.KimchiSim;
   var lastSimData = null;
+  var currentRecipeType = 'kimchi';
+  var useImperial = false; // kg vs lb
 
   function runAndUpdate(params, stages) {
     var data = sim.simulation.run(params, stages);
     lastSimData = data;
-    // Pass pickle date to charts for date x-axis
     var pickleVal = (document.getElementById('input-pickle-time') || {}).value;
     var pd = pickleVal ? new Date(pickleVal) : null;
     sim.charts.setPickleDate(pd && !isNaN(pd.getTime()) ? pd : null);
@@ -57,6 +58,7 @@ window.KimchiSim = window.KimchiSim || {};
   function initLang() {
     sim.i18n.loadSaved();
     var lang = sim.i18n.getLang();
+    applyLangDefaults(lang, false);
     sim.i18n.setLang(lang);
     updateLangButtons(lang);
 
@@ -66,6 +68,7 @@ window.KimchiSim = window.KimchiSim || {};
         var btn = e.target.closest('.lang-btn');
         if (!btn) return;
         var newLang = btn.getAttribute('data-lang');
+        applyLangDefaults(newLang, true);
         sim.i18n.setLang(newLang);
         sim.charts.updateLabels();
         sim.recipe.updateLang();
@@ -76,10 +79,108 @@ window.KimchiSim = window.KimchiSim || {};
     }
   }
 
+  function applyLangDefaults(lang, isSwitch) {
+    // German → default recipe to Sauerkraut
+    if (lang === 'de' && currentRecipeType === 'kimchi') {
+      setRecipeType('sauerkraut');
+    } else if (lang !== 'de' && currentRecipeType === 'sauerkraut') {
+      setRecipeType('kimchi');
+    }
+
+    // Only set unit defaults on explicit language switch (not on init)
+    if (!isSwitch) return;
+
+    var tempBtn = document.getElementById('btn-unit-temp');
+    var weightBtn = document.getElementById('btn-unit-weight');
+    if (lang === 'en') {
+      // English → imperial (°F, lb)
+      if (!sim.ui.getUseFahrenheit()) {
+        sim.ui.toggleUnit();
+        if (tempBtn) tempBtn.textContent = '°F';
+      }
+      if (!useImperial) {
+        useImperial = true;
+        if (weightBtn) weightBtn.textContent = 'lb';
+        convertWeightDisplay();
+        try { localStorage.setItem('kimchi-imperial', '1'); } catch (e) {}
+      }
+    } else {
+      // Non-English → metric (°C, kg)
+      if (sim.ui.getUseFahrenheit()) {
+        sim.ui.toggleUnit();
+        if (tempBtn) tempBtn.textContent = '°C';
+      }
+      if (useImperial) {
+        useImperial = false;
+        if (weightBtn) weightBtn.textContent = 'kg';
+        convertWeightDisplay();
+        try { localStorage.setItem('kimchi-imperial', '0'); } catch (e) {}
+      }
+    }
+  }
+
   function updateLangButtons(lang) {
     document.querySelectorAll('.lang-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
+  }
+
+  // ─── Unit Toggles (header) ───
+  function initUnitToggles() {
+    var tempBtn = document.getElementById('btn-unit-temp');
+    var weightBtn = document.getElementById('btn-unit-weight');
+
+    if (tempBtn) {
+      tempBtn.addEventListener('click', function () {
+        sim.ui.toggleUnit();
+        var useFahrenheit = sim.ui.getUseFahrenheit();
+        tempBtn.textContent = useFahrenheit ? '°F' : '°C';
+        runAndUpdate(sim.ui.getParams(), sim.ui.getStages());
+      });
+    }
+
+    if (weightBtn) {
+      weightBtn.addEventListener('click', function () {
+        useImperial = !useImperial;
+        weightBtn.textContent = useImperial ? 'lb' : 'kg';
+        convertWeightDisplay();
+        try { localStorage.setItem('kimchi-imperial', useImperial ? '1' : '0'); } catch (e) {}
+      });
+    }
+
+    // Restore saved unit preferences, or default by language
+    try {
+      var savedImperial = localStorage.getItem('kimchi-imperial');
+      if (savedImperial === '1') {
+        useImperial = true;
+        if (weightBtn) weightBtn.textContent = 'lb';
+        convertWeightDisplay();
+      } else if (savedImperial === null && sim.i18n.getLang() === 'en') {
+        // First visit, English → default to imperial
+        useImperial = true;
+        if (weightBtn) weightBtn.textContent = 'lb';
+        convertWeightDisplay();
+      }
+    } catch (e) {}
+
+    // Sync temp button label with ui state; default English to °F on first visit
+    try {
+      var savedState = localStorage.getItem('kimchi-sim-state');
+      if (!savedState && sim.i18n.getLang() === 'en' && !sim.ui.getUseFahrenheit()) {
+        sim.ui.toggleUnit();
+      }
+    } catch (e) {}
+    if (tempBtn) {
+      tempBtn.textContent = sim.ui.getUseFahrenheit() ? '°F' : '°C';
+    }
+  }
+
+  function convertWeightDisplay() {
+    var input = document.getElementById('calc-weight');
+    var unitSpan = input ? input.parentElement.querySelector('.field-unit') : null;
+    if (unitSpan) unitSpan.textContent = useImperial ? 'lb' : 'kg';
+    // Note: the actual value stays in kg internally; display conversion happens in updateCalcResults
+    updateCalcResults();
   }
 
   // ─── Layer Management (L1/L2/L3) ───
@@ -106,40 +207,146 @@ window.KimchiSim = window.KimchiSim || {};
     }
   }
 
-  // ─── Recipe Calculator ───
-  var RECIPE_PER_2_5KG = {
-    coarseSalt: 200, chili: 80, fish: 45, shrimp: 30,
-    garlic: 36, ginger: 8, ricePaste: 40, scallion: 50
+  // ─── Recipe Types ───
+  var RECIPES = {
+    kimchi: {
+      base: 2.5,  // per 2.5 kg cabbage
+      items: [
+        { key: 'calc.coarse.salt', amount: 200, unit: 'g' },
+        { key: 'calc.chili', amount: 80, unit: 'g' },
+        { key: 'calc.fish', amount: 45, unit: 'ml' },
+        { key: 'calc.shrimp', amount: 30, unit: 'g' },
+        { key: 'calc.garlic', amount: 36, unit: 'g' },
+        { key: 'calc.ginger', amount: 8, unit: 'g' },
+        { key: 'calc.rice', amount: 40, unit: 'ml' },
+        { key: 'calc.scallion', amount: 50, unit: 'g' }
+      ],
+      noteKey: 'calc.note'
+    },
+    sauerkraut: {
+      base: 2.5,
+      items: [
+        { key: 'calc.sk.salt', amount: 50, unit: 'g' },
+        { key: 'calc.sk.juniper', amount: 5, unit: 'g' },
+        { key: 'calc.sk.caraway', amount: 3, unit: 'g' },
+        { key: 'calc.sk.bay', amount: 3, unit: 'pcs' },
+        { key: 'calc.sk.pepper', amount: 5, unit: 'pcs' }
+      ],
+      noteKey: 'calc.sk.note'
+    },
+    paocai: {
+      base: 2.5,
+      items: [
+        { key: 'calc.pc.salt', amount: 100, unit: 'g' },
+        { key: 'calc.pc.sichuan', amount: 15, unit: 'g' },
+        { key: 'calc.pc.chili', amount: 20, unit: 'g' },
+        { key: 'calc.pc.ginger', amount: 30, unit: 'g' },
+        { key: 'calc.pc.garlic', amount: 20, unit: 'g' },
+        { key: 'calc.pc.baijiu', amount: 15, unit: 'ml' },
+        { key: 'calc.pc.sugar', amount: 20, unit: 'g' },
+        { key: 'calc.pc.water', amount: 1500, unit: 'ml' }
+      ],
+      noteKey: 'calc.pc.note'
+    }
   };
 
+  function initRecipeType() {
+    var switchEl = document.getElementById('recipe-type-switch');
+    if (!switchEl) return;
+
+    switchEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.recipe-type-btn');
+      if (!btn) return;
+      var type = btn.getAttribute('data-recipe');
+      setRecipeType(type);
+    });
+  }
+
+  function setRecipeType(type) {
+    if (!RECIPES[type]) return;
+    currentRecipeType = type;
+
+    document.querySelectorAll('.recipe-type-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-recipe') === type);
+    });
+
+    // Show/hide starter culture (only for kimchi)
+    var starterItem = document.querySelector('.field-item:has(#input-starter-weight)');
+    if (!starterItem) {
+      // Fallback: find by slider
+      var starterSlider = document.getElementById('slider-starter');
+      if (starterSlider) starterItem = starterSlider.previousElementSibling;
+    }
+
+    // Toggle visibility of kimchi-specific fields
+    var starterFields = document.querySelectorAll('.field-item');
+    if (starterFields.length >= 2) {
+      // Item 2 is starter culture — only show for kimchi
+      starterFields[1].style.display = type === 'kimchi' ? '' : 'none';
+    }
+
+    updateCalcResults();
+  }
+
+  // ─── Recipe Calculator ───
   function updateCalcResults() {
     var input = document.getElementById('calc-weight');
     var container = document.getElementById('calc-results');
     if (!input || !container) return;
 
     var weight = parseFloat(input.value) || 2.5;
-    var ratio = weight / 2.5;
+    var recipe = RECIPES[currentRecipeType] || RECIPES.kimchi;
+    var ratio = weight / recipe.base;
     var t = sim.i18n.t;
-
-    var items = [
-      { name: t('calc.coarse.salt'), amount: (RECIPE_PER_2_5KG.coarseSalt * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.chili'), amount: (RECIPE_PER_2_5KG.chili * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.fish'), amount: (RECIPE_PER_2_5KG.fish * ratio).toFixed(0), unit: 'ml' },
-      { name: t('calc.shrimp'), amount: (RECIPE_PER_2_5KG.shrimp * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.garlic'), amount: (RECIPE_PER_2_5KG.garlic * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.ginger'), amount: (RECIPE_PER_2_5KG.ginger * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.rice'), amount: (RECIPE_PER_2_5KG.ricePaste * ratio).toFixed(0), unit: 'ml' },
-      { name: t('calc.scallion'), amount: (RECIPE_PER_2_5KG.scallion * ratio).toFixed(0), unit: 'g' }
-    ];
+    var weightDisp = document.getElementById('fg-weight-display');
+    if (weightDisp) weightDisp.textContent = weight;
 
     var html = '';
-    for (var i = 0; i < items.length; i++) {
-      html += '<div class="calc-item"><div class="calc-item-name">' + items[i].name +
-        '</div><div class="calc-item-amount">' + items[i].amount +
-        '<span class="calc-item-unit"> ' + items[i].unit + '</span></div></div>';
+    for (var i = 0; i < recipe.items.length; i++) {
+      var item = recipe.items[i];
+      var amount = (item.amount * ratio).toFixed(0);
+      html += '<div class="calc-item"><div class="calc-item-name">' + t(item.key) +
+        '</div><div class="calc-item-amount">' + amount +
+        '<span class="calc-item-unit"> ' + item.unit + '</span></div></div>';
     }
-    html += '<div class="calc-note">' + t('calc.note') + '</div>';
+    html += '<div class="calc-note">' + t(recipe.noteKey) + '</div>';
     container.innerHTML = html;
+  }
+
+  // ─── Starter Culture Sync (weight ↔ percentage ↔ hidden slider) ───
+  function initStarter() {
+    var weightInput = document.getElementById('input-starter-weight');
+    var pctInput = document.getElementById('input-starter-pct');
+    var slider = document.getElementById('slider-starter');
+    var cabbageInput = document.getElementById('calc-weight');
+    if (!weightInput || !pctInput || !slider) return;
+
+    function getCabbageG() {
+      return (parseFloat(cabbageInput.value) || 2.5) * 1000;
+    }
+
+    weightInput.addEventListener('input', function () {
+      var g = parseFloat(weightInput.value) || 0;
+      var pct = (g / getCabbageG()) * 100;
+      pctInput.value = Math.min(15, pct).toFixed(1);
+      slider.value = Math.min(15, pct);
+      slider.dispatchEvent(new Event('input'));
+    });
+
+    pctInput.addEventListener('input', function () {
+      var pct = parseFloat(pctInput.value) || 0;
+      pct = Math.min(15, pct);
+      weightInput.value = Math.round(getCabbageG() * pct / 100);
+      slider.value = pct;
+      slider.dispatchEvent(new Event('input'));
+    });
+
+    if (cabbageInput) {
+      cabbageInput.addEventListener('input', function () {
+        var pct = parseFloat(pctInput.value) || 0;
+        weightInput.value = Math.round(getCabbageG() * pct / 100);
+      });
+    }
   }
 
   function initCalc() {
@@ -211,6 +418,9 @@ window.KimchiSim = window.KimchiSim || {};
     });
     sim.recipe.init();
     initCalc();
+    initStarter();
+    initRecipeType();
+    initUnitToggles();
 
     sim.ui.restoreSavedInputs();
     updateCalcResults();
@@ -235,12 +445,8 @@ window.KimchiSim = window.KimchiSim || {};
         var target = document.getElementById('section-recipe');
         if (!target) return;
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Auto-expand after scroll
         setTimeout(function () {
-          var content = document.getElementById('recipe-content');
-          if (content && !content.classList.contains('expanded')) {
-            content.classList.add('expanded');
-          }
+          if (target && !target.open) target.open = true;
         }, 400);
       });
     }
