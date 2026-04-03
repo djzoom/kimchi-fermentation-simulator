@@ -13,6 +13,10 @@ window.KimchiSim = window.KimchiSim || {};
   function runAndUpdate(params, stages) {
     var data = sim.simulation.run(params, stages);
     lastSimData = data;
+    // Pass pickle date to charts for date x-axis
+    var pickleVal = (document.getElementById('input-pickle-time') || {}).value;
+    var pd = pickleVal ? new Date(pickleVal) : null;
+    sim.charts.setPickleDate(pd && !isNaN(pd.getTime()) ? pd : null);
     sim.charts.update(data);
     sim.ui.updatePhaseIndicator(data);
     sim.ui.updateStats(data);
@@ -210,6 +214,36 @@ window.KimchiSim = window.KimchiSim || {};
 
     sim.ui.restoreSavedInputs();
     updateCalcResults();
+
+    // "Start Calculation" button
+    var calcBtn = document.getElementById('btn-calc-start');
+    if (calcBtn) {
+      calcBtn.addEventListener('click', function () {
+        sim.ui.saveState();
+        var p = sim.ui.getParams();
+        var s = sim.ui.getStages();
+        runAndUpdate(p, s);
+        updateCalcResults();
+      });
+    }
+
+    // Recipe link: scroll to recipe section + auto-expand
+    var recipeLink = document.getElementById('link-recipe');
+    if (recipeLink) {
+      recipeLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        var target = document.getElementById('section-recipe');
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Auto-expand after scroll
+        setTimeout(function () {
+          var content = document.getElementById('recipe-content');
+          if (content && !content.classList.contains('expanded')) {
+            content.classList.add('expanded');
+          }
+        }, 400);
+      });
+    }
 
     var params = sim.ui.getParams();
     var stg = sim.ui.getStages();

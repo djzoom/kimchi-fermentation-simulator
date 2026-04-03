@@ -417,8 +417,8 @@ window.KimchiSim.i18n = (function () {
     },
     'guide.step2.body': {
       en: 'The nitrite line is recalculated from nitrate reserve, sodium strength, temperature stages, and LAB cleanup. Read flavor and safety together before tasting early.',
-      ko: '아질산염 곡선은 질산염 저장량, Na+ 강도, 온도 단계, 유산균 정리 속도를 함께 반영해 다시 계산됩니다. 초기에 맛보기 전에는 풍미와 안전을 같이 읽어야 합니다.',
-      zh: '亚硝酸盐曲线会根据硝酸根储量、Na+ 强度、温度阶段和乳酸菌清除速度重新计算。想早尝时，风味和安全要一起看。'
+      ko: '아질산염 곡선은 질산염 저장량, Na\u207A 강도, 온도 단계, 유산균 정리 속도를 함께 반영해 다시 계산됩니다. 초기에 맛보기 전에는 풍미와 안전을 같이 읽어야 합니다.',
+      zh: '亚硝酸盐曲线会根据硝酸根储量、Na\u207A 强度、温度阶段和乳酸菌清除速度重新计算。想早尝时，风味和安全要一起看。'
     },
     'guide.step3.title': {
       en: 'Use the microbe story to understand taste',
@@ -431,9 +431,9 @@ window.KimchiSim.i18n = (function () {
       zh: '阶段带和菌群卡会解释为什么 Kimchi 在不同时间点会呈现清新、活泼或深沉偏酸的味道。'
     },
     'microbe.board.title': {
-      en: 'Who is leading the batch?',
-      ko: '지금 이 배치를 누가 이끌고 있을까?',
-      zh: '这一坛现在是谁在主导？'
+      en: 'Dominant bacteria at each stage',
+      ko: '각 단계의 우세 균종',
+      zh: '各阶段优势菌群'
     },
     'microbe.board.body': {
       en: 'These are the main friendly bacteria behind kimchi flavor. The highlighted card and percentages update with your parameters in real time.',
@@ -447,8 +447,8 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.sakei.name': {
       en: 'L. sakei',
-      ko: 'L. sakei',
-      zh: 'L. sakei'
+      ko: 'L. sakei (사케이 유산균)',
+      zh: 'L. sakei (清酒乳杆菌)'
     },
     'microbe.sakei.role': {
       en: 'Early stabilizer',
@@ -462,8 +462,8 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.mesenteroides.name': {
       en: 'Leuc. mesenteroides',
-      ko: 'Leuc. mesenteroides',
-      zh: 'Leuc. mesenteroides'
+      ko: 'Leuc. mesenteroides (메센테로이데스)',
+      zh: 'Leuc. mesenteroides (肠膜明串珠菌)'
     },
     'microbe.mesenteroides.role': {
       en: 'Peak flavor maker',
@@ -477,8 +477,8 @@ window.KimchiSim.i18n = (function () {
     },
     'microbe.plantarum.name': {
       en: 'L. plantarum',
-      ko: 'L. plantarum',
-      zh: 'L. plantarum'
+      ko: 'L. plantarum (플란타럼 유산균)',
+      zh: 'L. plantarum (植物乳杆菌)'
     },
     'microbe.plantarum.role': {
       en: 'Deep sour finisher',
@@ -571,7 +571,7 @@ window.KimchiSim.i18n = (function () {
 
     // Nitrite warning
     'nitrite.label': { en: 'Nitrite at best-eating point', ko: '최적 식미 시점 아질산염', zh: '最佳食用点亚硝酸盐' },
-    'chart.nitrite': { en: 'Nitrite NO2 (mg/kg)', ko: '아질산염 NO2 (mg/kg)', zh: '亚硝酸盐 NO2 (mg/kg)' },
+    'chart.nitrite': { en: 'Nitrite NO\u2082 (mg/kg)', ko: '아질산염 NO\u2082 (mg/kg)', zh: '亚硝酸盐 NO\u2082 (mg/kg)' },
     'nitrite.safe': { en: 'Safe', ko: '안전', zh: '安全' },
     'nitrite.caution': { en: 'Caution', ko: '주의', zh: '注意' },
     'nitrite.danger': { en: 'High Risk', ko: '위험', zh: '高风险' },
@@ -582,11 +582,11 @@ window.KimchiSim.i18n = (function () {
     },
     'nitrite.model.body': {
       en: 'The curve now comes from nitrate reserve, sodium strength, temperature stages, and the speed at which LAB acidify and clear nitrite.',
-      ko: '이 곡선은 이제 질산염 저장량, Na+ 강도, 온도 단계, 그리고 유산균의 산성화 및 아질산염 제거 속도에서 계산됩니다.',
-      zh: '这条曲线现在由硝酸根储量、Na+ 强度、温度阶段，以及乳酸菌的产酸和清除速度共同推演。'
+      ko: '이 곡선은 이제 질산염 저장량, Na\u207A 강도, 온도 단계, 그리고 유산균의 산성화 및 아질산염 제거 속도에서 계산됩니다.',
+      zh: '这条曲线现在由硝酸根储量、Na\u207A 强度、温度阶段，以及乳酸菌的产酸和清除速度共同推演。'
     },
-    'nitrite.no3': { en: 'NO3- reserve', ko: 'NO3- 저장량', zh: 'NO3- 储量' },
-    'nitrite.na': { en: 'Na+ strength', ko: 'Na+ 강도', zh: 'Na+ 强度' },
+    'nitrite.no3': { en: 'NO\u2083\u207B reserve', ko: 'NO\u2083\u207B 저장량', zh: 'NO\u2083\u207B 储量' },
+    'nitrite.na': { en: 'Na\u207A strength', ko: 'Na\u207A 강도', zh: 'Na\u207A 强도' },
     'nitrite.peak': { en: 'Predicted peak', ko: '예상 최고치', zh: '预计峰值' },
     'nitrite.window': { en: 'Risk window', ko: '위험 구간', zh: '风险窗口' },
     'nitrite.flux': { en: 'Dynamic balance', ko: '동역학 균형', zh: '动力学平衡' },
@@ -615,7 +615,7 @@ window.KimchiSim.i18n = (function () {
       zh: 'LAB=乳酸菌，发酵的功臣！它们保鲜食物、创造风味，还有益肠道健康。'
     },
     'tip.flavor': {
-      en: 'Flavor score combines pH (tangy), lactic acid (sour depth), and Leuconostoc bacteria (CO2 fizz + aroma). 70+ = Excellent! The green dashed line marks peak flavor.',
+      en: 'Flavor score combines pH (tangy), lactic acid (sour depth), and Leuconostoc bacteria (CO\u2082 fizz + aroma). 70+ = Excellent! The green dashed line marks peak flavor.',
       ko: '풍미 점수는 pH(신맛), 젖산(깊이), Leuconostoc 균(탄산+향)을 종합합니다. 70+ = 최고! 초록 점선이 최적 시점입니다.',
       zh: '风味评分综合了pH（酸爽）、乳酸（酸度深度）和明串珠菌（气泡+香气）。70分以上=优秀！绿色虚线标记最佳风味点。'
     },
@@ -640,9 +640,9 @@ window.KimchiSim.i18n = (function () {
       zh: '实际做泡菜分阶段：\n\n1. 室温(20-25°C)：几小时激活细菌\n2. 冷藏(4°C)：数天缓慢发展深层风味\n\n这就是韩国奶奶做好泡菜后先放室温一晚再放冰箱的原因！'
     },
     'tip.nitrite': {
-      en: 'Nitrite (NO2) is not assigned to a fixed day count here.\n\nThis simulator estimates a nitrate reservoir from the kimchi mix, converts salt into an equivalent Na+ brine strength, speeds or slows nitrate reduction with your temperature stages, and then lets LAB acidity and biomass clear nitrite back down.\n\nWarm starts usually compress the risk window into an earlier, sharper peak. Cold plans often spread it over more time. More starter usually shortens the window because LAB take control sooner.\n\nRead the predicted peak and risk window for your actual settings instead of assuming every batch peaks on the same day.',
-      ko: '여기서는 아질산염(NO2)을 고정된 날짜 규칙으로 처리하지 않습니다.\n\n이 시뮬레이터는 김치 혼합물의 질산염 저장량을 추정하고, 소금을 등가 Na+ 염수 강도로 바꾸며, 온도 단계에 따라 질산염 환원 속도를 조절한 뒤, 유산균의 산성화와 균수 증가로 아질산염이 다시 낮아지도록 계산합니다.\n\n따뜻한 시작은 위험 구간을 더 이르고 날카로운 최고치로 압축하는 경향이 있고, 차가운 계획은 그 구간을 더 길게 펼치는 경향이 있습니다. 종균이 많을수록 유산균이 더 빨리 주도권을 잡아 위험 구간이 짧아지는 경우가 많습니다.\n\n따라서 모든 배치가 같은 날 최고치를 찍는다고 가정하지 말고, 현재 설정에서 계산된 최고치와 위험 구간을 읽어야 합니다.',
-      zh: '这里不会把亚硝酸盐(NO2)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na+ 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。母水越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。'
+      en: 'Nitrite (NO\u2082) is not assigned to a fixed day count here.\n\nThis simulator estimates a nitrate reservoir from the kimchi mix, converts salt into an equivalent Na\u207A brine strength, speeds or slows nitrate reduction with your temperature stages, and then lets LAB acidity and biomass clear nitrite back down.\n\nWarm starts usually compress the risk window into an earlier, sharper peak. Cold plans often spread it over more time. More starter usually shortens the window because LAB take control sooner.\n\nRead the predicted peak and risk window for your actual settings instead of assuming every batch peaks on the same day.',
+      ko: '여기서는 아질산염(NO\u2082)을 고정된 날짜 규칙으로 처리하지 않습니다.\n\n이 시뮬레이터는 김치 혼합물의 질산염 저장량을 추정하고, 소금을 등가 Na\u207A 염수 강도로 바꾸며, 온도 단계에 따라 질산염 환원 속도를 조절한 뒤, 유산균의 산성화와 균수 증가로 아질산염이 다시 낮아지도록 계산합니다.\n\n따뜻한 시작은 위험 구간을 더 이르고 날카로운 최고치로 압축하는 경향이 있고, 차가운 계획은 그 구간을 더 길게 펼치는 경향이 있습니다. 종균이 많을수록 유산균이 더 빨리 주도권을 잡아 위험 구간이 짧아지는 경우가 많습니다.\n\n따라서 모든 배치가 같은 날 최고치를 찍는다고 가정하지 말고, 현재 설정에서 계산된 최고치와 위험 구간을 읽어야 합니다.',
+      zh: '这里不会把亚硝酸盐(NO\u2082)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na\u207A 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。母水越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。'
     },
     'tip.phase': {
       en: 'Fermentation has 3 phases:\n\n Blue = Initial: L. sakei grows first, mild taste\n Green = Optimal: Leuconostoc makes bubbles and great flavor\n Yellow = Over-ripened: L. plantarum takes over, very sour\n\nThe marker shows where your kimchi is now!',
@@ -763,7 +763,8 @@ window.KimchiSim.i18n = (function () {
     'unit.days': { en: 'days', ko: '일', zh: '天' },
     'unit.day': { en: 'day', ko: '일', zh: '天' },
     'unit.hours': { en: 'hours', ko: '시간', zh: '小时' },
-    'unit.h': { en: 'h', ko: '시간', zh: '时' },
+    'unit.h': { en: 'h', ko: '시간', zh: '小时' },
+    'unit.hourShort': { en: 'h', ko: '시', zh: '时' },
 
     // Navigator (L1)
     'nav.days': { en: 'days', ko: '일', zh: '天' },
@@ -855,8 +856,13 @@ window.KimchiSim.i18n = (function () {
     'explain.safety.risk.effect': { en: 'Wait for LAB to clear it', ko: '유산균이 제거할 때까지 기다리세요', zh: '等乳酸菌将其清除' },
 
     // Fermentation timeline
-    'ferment.title': { en: 'Fermentation Stages', ko: '발효 단계', zh: '发酵阶段' },
-    'ferment.pickle': { en: 'Pickling complete', ko: '절임 완료', zh: '腌渍完成' },
+    'ferment.title': { en: 'Making Process', ko: '제작 과정', zh: '制作过程' },
+    'ferment.prep': { en: 'Preparation', ko: '준비', zh: '装坛' },
+    'ferment.nav.calc': { en: 'Recipe Calculator', ko: '배합 계산기', zh: '配方计算器' },
+    'ferment.nav.recipe': { en: 'Standard Recipe', ko: '표준 레시피', zh: '标准配方与流程' },
+    'ferment.pickle': { en: 'Pickling complete', ko: '절임 완료', zh: '装坛完成' },
+    'ferment.completeTime': { en: 'Completion time:', ko: '완료 시간:', zh: '完成时间：' },
+    'ferment.ripenMethod': { en: 'Ripening method', ko: '숙성 방식', zh: '熟成方式' },
     'ferment.room': { en: 'Room temp rest', ko: '실온 숙성', zh: '室温静置' },
     'ferment.fridge': { en: 'Refrigerate', ko: '냉장 보관', zh: '冰箱冷藏' },
     'ferment.accel': { en: 'Room temp boost', ko: '실온 가속', zh: '室温加速' },
@@ -865,6 +871,33 @@ window.KimchiSim.i18n = (function () {
     'ferment.best': { en: 'Best flavor', ko: '최적 풍미', zh: '最佳风味' },
     'ferment.overSour': { en: 'Over-sour', ko: '과발효', zh: '过酸' },
     'ferment.end': { en: 'End (+7 days)', ko: '종료 (+7일)', zh: '终止（过酸+7天）' },
+    'ferment.calcBtn': { en: 'Start Calculation', ko: '계산 시작', zh: '开始计算' },
+    'dash.phAtBest': { en: 'pH at best flavor', ko: '최적 풍미 시 pH', zh: '최佳风味时 pH' },
+    'ferment.ph435': { en: 'pH reaches 4.35', ko: 'pH 4.35 도달', zh: 'pH 降至 4.35' },
+    'microbe.atNow': { en: 'Now', ko: '현재', zh: '当前' },
+    'dash.nitriteClear': { en: 'Nitrite clears — safe to eat', ko: '아질산염 소멸 — 안전 섭취 가능', zh: '亚硝酸盐消退 · 可以开始吃' },
+    'dash.bestFlavor': { en: 'Best flavor window', ko: '최적 풍미 구간', zh: '最佳风味' },
+    'dash.lastEdible': { en: 'Over-sour — last good window', ko: '과숙 — 마지막 섭취 구간', zh: '过酸 · 最后宜食窗口' },
+    'dash.starterReady': { en: 'Use as starter brine (母水)', ko: '종균으로 사용 가능 (묵은지국물)', zh: '可作母水（老泡菜液）' },
+    'dash.nextBatch': { en: 'Add 5-10% of this brine to your next batch for faster, more consistent fermentation.', ko: '다음 배치에 이 국물의 5-10%를 넣으면 더 빠르고 안정적인 발효가 가능합니다.', zh: '下次做泡菜时加入 5-10% 这坛老汤，发酵更快更稳定。' },
+    'dash.title': { en: 'Batch Timeline', ko: '배치 타임라인', zh: '这坛时间线' },
+    'dash.batchTitle': { en: 'This Batch', ko: '이 배치', zh: '这坛泡菜' },
+    'dash.currentDay': { en: 'Current', ko: '현재', zh: '当前' },
+    'dash.bestDay': { en: 'Best flavor at', ko: '최적 풍미', zh: '最佳风味' },
+    'dash.statusLabel': { en: 'Current status', ko: '현재 상태', zh: '当前状态' },
+    'insight.rising': { en: 'Flavor is rising — getting better every day', ko: '풍미 상승 중 — 매일 더 좋아지고 있어요', zh: '风味正在上升，一天比一天好' },
+    'insight.peak': { en: 'Peak flavor window — eat now for best taste!', ko: '최적 풍미 구간 — 지금 먹으면 가장 맛있어요!', zh: '最佳风味窗口 — 现在吃最好！' },
+    'insight.balanced': { en: 'Acidity is balanced — pleasant tanginess', ko: '산도 균형 — 적절한 새콤함', zh: '酸度适中，口感平衡' },
+    'insight.safe': { en: 'Already in the safe eating zone', ko: '이미 안전 섭취 구간입니다', zh: '已进入安全食用区间' },
+    'insight.notSafe': { en: 'Nitrite still elevated — wait a bit longer', ko: '아질산염 아직 높음 — 조금 더 기다리세요', zh: '亚硝酸盐尚未消退，再等等' },
+    'insight.overSoon': { en: 'Will become noticeably sour if left longer', ko: '더 두면 눈에 띄게 시어집니다', zh: '再发酵会明显变酸' },
+    'insight.over': { en: 'Over-sour — good for stews and fried rice now', ko: '과숙 — 지금은 찌개나 볶음밥에 좋아요', zh: '已过酸 — 适合做汤、炒饭' },
+    'insight.developing': { en: 'Still developing — mild flavor, needs more time', ko: '아직 발효 초기 — 순한 맛, 시간이 더 필요해요', zh: '仍在初期发酵，味道偏淡，需要更多时间' },
+    'status.developing': { en: 'Developing', ko: '발효 중', zh: '发酵中' },
+    'status.improving': { en: 'Improving', ko: '풍미 상승', zh: '风味上升' },
+    'status.optimal': { en: 'Optimal', ko: '최적', zh: '最佳' },
+    'status.declining': { en: 'Declining', ko: '풍미 하락', zh: '风味下降' },
+    'status.overSour': { en: 'Over-sour', ko: '과숙', zh: '过酸' },
     'ferment.moveToFridge': { en: 'Move to fridge', ko: '냉장고 이동', zh: '移入冰箱' },
     'ferment.afterHours': { en: 'after h in fridge', ko: '냉장 후', zh: '冷藏后' },
     'ferment.elapsed': { en: 'Elapsed', ko: '경과', zh: '已经过' },
