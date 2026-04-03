@@ -186,7 +186,7 @@ window.KimchiSim.charts = (function () {
         position: 'left', min: 0, max: 100,
         grid: { color: gridColor() },
         ticks: { color: c.muted, font: { size: 10 } },
-        title: { display: false }
+        title: { display: true, text: t('chart.flavor.yaxis'), color: c.muted, font: { size: 9, family: 'Inter' } }
       }
     }, {
       excellent: {
@@ -562,7 +562,8 @@ window.KimchiSim.charts = (function () {
       f.options.scales.y.ticks.color = c.muted;
       f.data.datasets[0].label = t('chart.score');
       f.data.datasets[0].borderColor = c.accent;
-      var fann = f.options.plugins.annotation.annotations;
+      f.options.scales.y.title.text = t('chart.flavor.yaxis');
+      f.options.scales.y.title.color = c.muted;
       f.update('none');
     }
 
@@ -748,9 +749,131 @@ window.KimchiSim.charts = (function () {
     }
   }
 
+  // ─── Animated update: progressively draw flavor curve ───
+  var _animFrame = null;
+
+  function animateUpdate(data) {
+    // Cancel any running animation
+    if (_animFrame) { cancelAnimationFrame(_animFrame); _animFrame = null; }
+
+    var tp = data.timePoints;
+    var fullData = toXY(tp, data.flavorScore);
+    var totalPts = fullData.length;
+    if (!charts.flavor || totalPts === 0) { update(data); return; }
+
+    // Update non-flavor charts immediately (no animation)
+    if (charts.phLab) {
+      charts.phLab.data.datasets[0].data = toXY(tp, data.pH);
+      charts.phLab.data.datasets[1].data = toXY(tp, data.lacticAcid);
+      charts.phLab.options.scales.x.max = data.tMax;
+      charts.phLab.update('none');
+    }
+    if (charts.microbes) {
+      charts.microbes.data.datasets[0].data = toXY(tp, data.microbial.sakei);
+      charts.microbes.data.datasets[1].data = toXY(tp, data.microbial.mesenteroides);
+      charts.microbes.data.datasets[2].data = toXY(tp, data.microbial.plantarum);
+      charts.microbes.options.scales.x.max = data.tMax;
+      charts.microbes.update('none');
+    }
+    if (charts.nitrite) {
+      charts.nitrite.data.datasets[0].data = toXY(tp, data.nitrite);
+      var nitriteMeta = data.nitriteMeta || {};
+      var nitritePeak = nitriteMeta.peak ? nitriteMeta.peak.value : 0;
+      var safeThreshold = nitriteMeta.safeThreshold || 3;
+      charts.nitrite.options.scales.y.max = Math.max(8, Math.ceil((Math.max(nitritePeak, safeThreshold) + 2) / 2) * 2);
+      charts.nitrite.options.scales.x.max = data.tMax;
+      charts.nitrite.update('none');
+    }
+
+    // Setup flavor chart scales/annotations but start with empty data
+    var f = charts.flavor;
+    var c = colors();
+    f.options.scales.x.max = data.tMax;
+    f._kimchiOptimalTime = data.optimalTime;
+    var ann = f.options.plugins.annotation.annotations;
+    ann.optLine.value = data.optimalTime;
+
+    // Phase zones
+    var p1End = data.phases.phase1End;
+    var p2End = data.phases.phase2End;
+    ann.zoneInitial = {
+      type: 'box', xMin: 0, xMax: p1End, yMin: 0, yMax: 100,
+      backgroundColor: c.blue + '08', borderWidth: 0,
+      label: { display: false, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 9 } }
+    };
+    ann.zoneOptimal = {
+      type: 'box', xMin: p1End, xMax: p2End, yMin: 0, yMax: 100,
+      backgroundColor: c.accent + '0A', borderWidth: 0,
+      label: { display: false, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 9, weight: 'bold' } }
+    };
+    ann.zoneOver = {
+      type: 'box', xMin: p2End, xMax: data.tMax, yMin: 0, yMax: 100,
+      backgroundColor: c.amber + '08', borderWidth: 0,
+      label: { display: false, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 9 } }
+    };
+    ann.p1Line = { type: 'line', scaleID: 'x', value: p1End, borderColor: c.blue + '33', borderWidth: 1, borderDash: [3, 3] };
+    ann.p2Line = { type: 'line', scaleID: 'x', value: p2End, borderColor: c.amber + '44', borderWidth: 1, borderDash: [3, 3] };
+
+    // Clear milestone labels initially
+    delete ann.ms_safe;
+    delete ann.ms_best;
+    delete ann.ms_sour;
+    delete ann.ms_starter;
+
+    // Animation parameters
+    var duration = 1200; // ms
+    var startTime = null;
+    var phase1Shown = false, phase2Shown = false, phase3Shown = false;
+
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min(1, (ts - startTime) / duration);
+      // Ease out cubic
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var count = Math.max(2, Math.round(eased * totalPts));
+      var slice = fullData.slice(0, count);
+
+      f.data.datasets[0].data = slice;
+
+      // Show phase labels as curve reaches them
+      var currentX = slice[slice.length - 1].x;
+      if (!phase1Shown && currentX >= 0) {
+        ann.zoneInitial.label.display = true;
+        phase1Shown = true;
+      }
+      if (!phase2Shown && currentX >= p1End) {
+        ann.zoneOptimal.label.display = true;
+        phase2Shown = true;
+      }
+      if (!phase3Shown && currentX >= p2End) {
+        ann.zoneOver.label.display = true;
+        phase3Shown = true;
+      }
+
+      f.update('none');
+
+      if (progress < 1) {
+        _animFrame = requestAnimationFrame(step);
+      } else {
+        _animFrame = null;
+        // Apply milestones after animation completes
+        applyMilestones();
+        f.update('none');
+        if (charts.phLab) charts.phLab.update('none');
+        if (charts.microbes) charts.microbes.update('none');
+        if (charts.nitrite) charts.nitrite.update('none');
+      }
+    }
+
+    f.data.datasets[0].data = [];
+    f.update('none');
+    _animFrame = requestAnimationFrame(step);
+  }
+
   return {
     init: init,
     update: update,
+    animateUpdate: animateUpdate,
     updateLabels: updateLabels,
     setNowMarker: setNowMarker,
     setPickleDate: setPickleDate,
