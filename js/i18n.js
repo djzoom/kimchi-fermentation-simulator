@@ -631,10 +631,10 @@ window.KimchiSim.i18n = (function () {
       de: 'Modelle: Modifiziertes Gompertz (LAB-Wachstum) · Arrhenius (Temperaturkinetik) · Sigmoid (mikrobielle Sukzession)'
     },
     'footer.scope': {
-      en: 'Applicable to Sauerkraut, Chinese paocai, and Korean Kimchi — same fermentation kinetics',
-      ko: 'Sauerkraut(독일 사워크라우트), 중국 파오차이, 한국 김치에 모두 적용 가능 — 동일한 발효 동역학 원리',
-      zh: '适用于 Sauerkraut（德国酸菜）、中国泡菜与韩国 Kimchi，三者发酵动力学机制一致',
-      de: 'G\u00fcltig f\u00fcr Sauerkraut, chinesisches Paocai und koreanisches Kimchi \u2014 gleiche G\u00e4rungskinetik'
+      en: 'Applicable to German Sauerkraut, Chinese 泡菜 (paocai), and Korean 김치 (kimchi) — same fermentation kinetics',
+      ko: '독일 Sauerkraut, 중국 泡菜, 한국 김치에 모두 적용 — 동일한 발효 동역학 원리',
+      zh: '适用于德国 Sauerkraut、中国泡菜与韩国 김치，三者发酵动力学机制一致',
+      de: 'G\u00FCltig f\u00FCr deutsches Sauerkraut, chinesisches 泡菜 (Paocai) und koreanisches 김치 (Kimchi) — gleiche G\u00E4rungskinetik'
     },
 
     // Column titles

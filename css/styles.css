@@ -112,14 +112,14 @@ body::before {
   position: absolute;
   bottom: -20px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04));
-  border: 1px solid rgba(34, 197, 94, 0.08);
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.15));
+  border: 1px solid rgba(255, 255, 255, 0.3);
   animation: bubble-rise linear infinite;
   will-change: transform, opacity;
 }
 [data-theme="dark"] .bubble {
-  background: radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.06), rgba(34, 197, 94, 0.01));
-  border-color: rgba(34, 197, 94, 0.03);
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.04));
+  border-color: rgba(255, 255, 255, 0.08);
 }
 @keyframes bubble-rise {
   0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
