@@ -71,7 +71,7 @@ window.KimchiSim.charts = (function () {
       type: 'linear', min: 0,
       grid: { color: gridColor() },
       ticks: {
-        color: c.muted, font: { size: 10, family: 'Inter' },
+        color: c.muted, font: { size: 12, family: 'Inter' },
         maxTicksLimit: 10,
         callback: function(v) {
           if (v !== Math.floor(v)) return '';
@@ -82,7 +82,7 @@ window.KimchiSim.charts = (function () {
     };
   }
 
-  var Y_AXIS_WIDTH = 38; // fixed width for all left Y-axes to ensure x-axis alignment
+  var Y_AXIS_WIDTH = 44; // fixed width for all left Y-axes to ensure x-axis alignment
 
   function sharedOpts(c, extraScales, extraAnnotations) {
     var scales = { x: sharedXScale(c) };
@@ -185,8 +185,8 @@ window.KimchiSim.charts = (function () {
       y: {
         position: 'left', min: 0, max: 100,
         grid: { color: gridColor() },
-        ticks: { color: c.muted, font: { size: 10 } },
-        title: { display: true, text: t('chart.flavor.yaxis'), color: c.muted, font: { size: 9, family: 'Inter' } }
+        ticks: { color: c.muted, font: { size: 12 } },
+        title: { display: true, text: t('chart.flavor.yaxis'), color: c.muted, font: { size: 12, family: 'Inter' } }
       }
     }, {
       excellent: {
@@ -243,13 +243,13 @@ window.KimchiSim.charts = (function () {
       yPH: {
         position: 'left', min: 3.0, max: 6.5, display: true,
         grid: { color: gridColor() },
-        ticks: { color: c.blue, font: { size: 9 } },
+        ticks: { color: c.blue, font: { size: 11 } },
         title: { display: false }
       },
       yAcid: {
         position: 'left', min: 0, max: 1.2, display: false,
         grid: { drawOnChartArea: false },
-        ticks: { color: c.redMuted, font: { size: 9 }, callback: function(v) { return v.toFixed(1) + '%'; } },
+        ticks: { color: c.redMuted, font: { size: 11 }, callback: function(v) { return v.toFixed(1) + '%'; } },
         title: { display: false }
       }
     }, {
@@ -260,7 +260,7 @@ window.KimchiSim.charts = (function () {
           display: true, content: 'pH 4.35',
           position: 'end',
           backgroundColor: c.blue + 'CC', color: '#fff',
-          font: { size: 9 }, padding: 3
+          font: { size: 11 }, padding: 3
         }
       },
       acidOptLine: {
@@ -270,7 +270,7 @@ window.KimchiSim.charts = (function () {
           display: true, content: '0.6%',
           position: 'start',
           backgroundColor: c.muted + 'CC', color: '#fff',
-          font: { size: 9 }, padding: 3
+          font: { size: 11 }, padding: 3
         }
       }
     });
@@ -324,7 +324,7 @@ window.KimchiSim.charts = (function () {
         position: 'left', min: 0, max: 100,
         grid: { color: gridColor() },
         ticks: {
-          color: c.muted, font: { size: 9 },
+          color: c.muted, font: { size: 11 },
           callback: function(v) { return v + '%'; }
         },
         title: { display: false }
@@ -337,7 +337,7 @@ window.KimchiSim.charts = (function () {
         label: {
           display: true, content: 'Leuc. dominant',
           position: { x: 'end', y: 'center' },
-          color: c.accent + '44', font: { size: 9 }
+          color: c.accent + '44', font: { size: 11 }
         }
       }
     });
@@ -375,11 +375,11 @@ window.KimchiSim.charts = (function () {
           {
             label: t('microbe.plantarum.name'),
             data: [],
-            borderColor: c.amber,
+            borderColor: c.purple,
             borderWidth: 1.8,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.amber + '12',
+            backgroundColor: c.purple + '12',
             tension: 0.4,
             yAxisID: 'y'
           }
@@ -399,7 +399,7 @@ window.KimchiSim.charts = (function () {
       y: {
         position: 'left', min: 0, max: 8,
         grid: { color: gridColor() },
-        ticks: { color: c.amber, font: { size: 9 } },
+        ticks: { color: c.amber, font: { size: 11 } },
         title: { display: false }
       }
     }, {
@@ -411,14 +411,14 @@ window.KimchiSim.charts = (function () {
           position: 'start',
           backgroundColor: c.amber + 'CC',
           color: '#fff',
-          font: { size: 9 },
+          font: { size: 11 },
           padding: 3
         }
       }
     });
 
     // x-axis needs label on the bottom chart
-    opts.scales.x.title = { display: true, text: t('chart.xaxis'), color: c.muted, font: { size: 10, family: 'Inter' } };
+    opts.scales.x.title = { display: true, text: t('chart.xaxis'), color: c.muted, font: { size: 12, family: 'Inter' } };
 
     opts.plugins.tooltip.callbacks.label = function(ctx) {
       return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + ' mg/kg';
@@ -473,17 +473,17 @@ window.KimchiSim.charts = (function () {
       ann.zoneInitial = {
         type: 'box', xMin: 0, xMax: p1End, yMin: 0, yMax: 100,
         backgroundColor: c.blue + '08', borderWidth: 0,
-        label: { display: true, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 9 } }
+        label: { display: true, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 11 } }
       };
       ann.zoneOptimal = {
         type: 'box', xMin: p1End, xMax: p2End, yMin: 0, yMax: 100,
         backgroundColor: c.accent + '0A', borderWidth: 0,
-        label: { display: true, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 9, weight: 'bold' } }
+        label: { display: true, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 11, weight: 'bold' } }
       };
       ann.zoneOver = {
         type: 'box', xMin: p2End, xMax: data.tMax, yMin: 0, yMax: 100,
         backgroundColor: c.amber + '08', borderWidth: 0,
-        label: { display: true, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 9 } }
+        label: { display: true, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 11 } }
       };
       // Phase boundary lines
       ann.p1Line = { type: 'line', scaleID: 'x', value: p1End, borderColor: c.blue + '33', borderWidth: 1, borderDash: [3, 3] };
@@ -630,7 +630,7 @@ window.KimchiSim.charts = (function () {
             position: 'end',
             backgroundColor: dk ? '#E2E8F0' : '#1E293B',
             color: dk ? '#0F172A' : '#F8FAFC',
-            font: { size: 10, weight: 'bold' }, padding: 4, borderRadius: 4
+            font: { size: 12, weight: 'bold' }, padding: 4, borderRadius: 4
           }
         };
       }
@@ -694,7 +694,7 @@ window.KimchiSim.charts = (function () {
       var labelBg = dk ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.95)';
       var labelBorder = dk ? 'rgba(148,163,184,0.3)' : 'rgba(148,163,184,0.25)';
       var isMobile = window.innerWidth < 640;
-      var msFont = isMobile ? 7 : 9;
+      var msFont = isMobile ? 9 : 11;
       var msPad = isMobile ? { top: 2, bottom: 2, left: 4, right: 4 } : { top: 3, bottom: 3, left: 6, right: 6 };
 
       // Check if safe and best are close (within 2 days)
@@ -805,17 +805,17 @@ window.KimchiSim.charts = (function () {
     ann.zoneInitial = {
       type: 'box', xMin: 0, xMax: p1End, yMin: 0, yMax: 100,
       backgroundColor: c.blue + '08', borderWidth: 0,
-      label: { display: false, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 9 } }
+      label: { display: false, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 11 } }
     };
     ann.zoneOptimal = {
       type: 'box', xMin: p1End, xMax: p2End, yMin: 0, yMax: 100,
       backgroundColor: c.accent + '0A', borderWidth: 0,
-      label: { display: false, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 9, weight: 'bold' } }
+      label: { display: false, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 11, weight: 'bold' } }
     };
     ann.zoneOver = {
       type: 'box', xMin: p2End, xMax: data.tMax, yMin: 0, yMax: 100,
       backgroundColor: c.amber + '08', borderWidth: 0,
-      label: { display: false, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 9 } }
+      label: { display: false, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 11 } }
     };
     ann.p1Line = { type: 'line', scaleID: 'x', value: p1End, borderColor: c.blue + '33', borderWidth: 1, borderDash: [3, 3] };
     ann.p2Line = { type: 'line', scaleID: 'x', value: p2End, borderColor: c.amber + '44', borderWidth: 1, borderDash: [3, 3] };
