@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=11">
+  <link rel="stylesheet" href="css/styles.css?v=12">
 </head>
 <body>
   <!-- ====== HEADER ====== -->
@@ -43,72 +43,210 @@
          ═══════════════════════════════════════════ -->
     <section class="layer layer-nav" id="layer-1">
 
-      <!-- Stage editor + batch tracker (top priority input) -->
-      <div class="controls-card glass-card">
-        <div class="controls-header">
-          <h3 class="explain-title">
-            <span>🌡️</span>
-            <span data-i18n="controls.stages">Stages</span>
-          </h3>
-          <div class="batch-inline">
-            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
-            <input type="date" id="batch-start-date" class="input-date">
-            <span class="batch-elapsed" id="batch-elapsed">--</span>
-          </div>
-        </div>
-        <!-- Hidden salt input for JS -->
-        <input type="hidden" id="slider-salt" value="2.5">
-        <!-- Hidden temp slider for single-stage mode -->
-        <div id="temp-single-wrap" style="display:none">
-          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
-        </div>
-        <div id="stages-container">
-          <div class="stages-grid">
-            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
-            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
-            <span class="sg-head"></span>
-          </div>
-          <div id="stages-list"></div>
-          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
-        </div>
-      </div>
+      <!-- ═══ HERO SPLIT: Timeline (left) + Dashboard (right) ═══ -->
+      <div class="hero-split">
 
-      <!-- Dashboard gauge -->
-      <div class="dash" id="dash">
-        <div class="dash-main">
-          <div class="dash-ring" id="dash-ring">
-            <svg viewBox="0 0 120 120" class="dash-svg">
-              <circle cx="60" cy="60" r="52" class="dash-track"/>
-              <circle cx="60" cy="60" r="52" class="dash-fill" id="dash-arc"/>
-            </svg>
-            <div class="dash-center">
-              <div class="dash-day" id="dash-day">--</div>
-              <div class="dash-unit" data-i18n="nav.days">days</div>
+        <!-- LEFT: Fermentation Timeline -->
+        <div class="hero-left glass-card">
+          <div class="tl-header">
+            <h3 class="section-title">
+              <span>🌡️</span>
+              <span data-i18n="ferment.title">Fermentation Stages</span>
+            </h3>
+            <button class="btn-unit-toggle" id="btn-unit-toggle" type="button" title="°C ↔ °F">°F</button>
+          </div>
+
+          <div class="timeline" id="timeline">
+
+            <!-- 1. Pickling complete -->
+            <div class="tl-step">
+              <div class="tl-dot tl-dot-done"></div>
+              <div class="tl-line"></div>
+              <div class="tl-body">
+                <div class="tl-label" data-i18n="ferment.pickle">Pickling complete</div>
+                <input type="datetime-local" id="input-pickle-time" class="input-datetime">
+                <div class="tl-elapsed" id="tl-elapsed"></div>
+              </div>
+            </div>
+
+            <!-- 2. Room temp rest -->
+            <div class="tl-step">
+              <div class="tl-dot tl-dot-warm"></div>
+              <div class="tl-line"></div>
+              <div class="tl-body">
+                <div class="tl-label" data-i18n="ferment.room">Room temp rest</div>
+                <div class="tl-input-row">
+                  <input type="number" id="input-room-temp" value="28" min="15" max="40" step="0.5" class="tl-input">
+                  <span class="tl-unit-lbl" id="unit-room">°C</span>
+                  <input type="number" id="input-room-hours" value="7" min="0" max="72" step="1" class="tl-input">
+                  <span class="tl-unit-lbl" data-i18n="unit.h">h</span>
+                </div>
+                <div class="tl-note" id="tl-room-end"></div>
+              </div>
+            </div>
+
+            <!-- 3. Fridge -->
+            <div class="tl-step">
+              <div class="tl-dot tl-dot-cold"></div>
+              <div class="tl-line"></div>
+              <div class="tl-body">
+                <div class="tl-label" data-i18n="ferment.fridge">Refrigerate</div>
+                <div class="tl-input-row">
+                  <input type="number" id="input-fridge-temp" value="4" min="-2" max="10" step="0.5" class="tl-input">
+                  <span class="tl-unit-lbl" id="unit-fridge">°C</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Acceleration stages (dynamic) -->
+            <div id="accel-container"></div>
+            <button class="tl-btn-add" id="btn-add-accel" type="button">
+              <span>+</span> <span data-i18n="ferment.addAccel">Room temp boost</span>
+            </button>
+
+            <!-- ── Auto-calculated milestones ── -->
+            <div class="tl-divider"></div>
+
+            <div class="tl-step tl-step-result">
+              <div class="tl-dot tl-dot-peak"></div>
+              <div class="tl-line"></div>
+              <div class="tl-body">
+                <div class="tl-label tl-label-auto" data-i18n="ferment.best">Best flavor</div>
+                <span class="tl-result" id="tl-best-val">--</span>
+                <span class="tl-result-date" id="tl-best-date"></span>
+              </div>
+            </div>
+
+            <div class="tl-step tl-step-result">
+              <div class="tl-dot tl-dot-warn"></div>
+              <div class="tl-line"></div>
+              <div class="tl-body">
+                <div class="tl-label tl-label-auto" data-i18n="ferment.overSour">Over-sour</div>
+                <span class="tl-result" id="tl-sour-val">--</span>
+                <span class="tl-result-date" id="tl-sour-date"></span>
+              </div>
+            </div>
+
+            <div class="tl-step tl-step-result tl-step-last">
+              <div class="tl-dot tl-dot-end"></div>
+              <div class="tl-body">
+                <div class="tl-label tl-label-auto" data-i18n="ferment.end">End (+7 days)</div>
+                <span class="tl-result" id="tl-end-val">--</span>
+                <span class="tl-result-date" id="tl-end-date"></span>
+              </div>
             </div>
           </div>
-          <div class="dash-status" id="dash-status" data-i18n="nav.calculating">Calculating…</div>
-        </div>
-        <div class="dash-meta">
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="nav.best">Best</span>
-            <span class="dash-value" id="dash-best">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="stat.flavor">Flavor</span>
-            <span class="dash-value dash-accent" id="dash-flavor">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label">pH</span>
-            <span class="dash-value" id="dash-ph">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="nav.safety">Safety</span>
-            <span class="dash-value" id="dash-safety">--</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Flavor curve (hero chart — simplified spline) -->
+          <!-- Presets + starter -->
+          <div class="quick-bar">
+            <div class="quick-presets" id="preset-row">
+              <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
+              <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
+              <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
+            </div>
+            <div class="quick-starter">
+              <span class="quick-label" data-i18n="mixer.starter">Starter</span>
+              <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" class="slider-flat">
+              <span class="quick-val" id="val-starter">0%</span>
+            </div>
+          </div>
+
+          <!-- Hidden compat inputs -->
+          <input type="hidden" id="slider-salt" value="2.5">
+          <div style="display:none"><input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10"></div>
+        </div>
+
+        <!-- RIGHT: Dashboard + Scoring -->
+        <div class="hero-right">
+          <!-- Dashboard gauge -->
+          <div class="dash-card glass-card" id="dash">
+            <div class="dash-main">
+              <div class="dash-ring" id="dash-ring">
+                <svg viewBox="0 0 120 120" class="dash-svg">
+                  <circle cx="60" cy="60" r="52" class="dash-track"/>
+                  <circle cx="60" cy="60" r="52" class="dash-fill" id="dash-arc"/>
+                </svg>
+                <div class="dash-center">
+                  <div class="dash-day" id="dash-day">--</div>
+                  <div class="dash-unit" data-i18n="nav.days">days</div>
+                </div>
+              </div>
+              <div class="dash-status" id="dash-status" data-i18n="nav.calculating">Calculating…</div>
+            </div>
+            <div class="dash-meta">
+              <div class="dash-kv">
+                <span class="dash-label" data-i18n="nav.best">Best</span>
+                <span class="dash-value" id="dash-best">--</span>
+              </div>
+              <div class="dash-kv">
+                <span class="dash-label" data-i18n="stat.flavor">Flavor</span>
+                <span class="dash-value dash-accent" id="dash-flavor">--</span>
+              </div>
+              <div class="dash-kv">
+                <span class="dash-label">pH</span>
+                <span class="dash-value" id="dash-ph">--</span>
+              </div>
+              <div class="dash-kv">
+                <span class="dash-label" data-i18n="nav.safety">Safety</span>
+                <span class="dash-value" id="dash-safety">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scoring breakdown -->
+          <div class="glass-card">
+            <h3 class="explain-title">
+              <span>📊</span>
+              <span data-i18n="score.title">How the score is calculated</span>
+            </h3>
+            <div class="score-breakdown" id="score-breakdown">
+              <div class="score-bar-row">
+                <span class="score-bar-label" data-i18n="score.ph.label">pH proximity to 4.35</span>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill score-bar-blue" id="score-bar-ph" style="width:0%"></div>
+                </div>
+                <span class="score-bar-val" id="score-val-ph">--</span>
+                <span class="score-bar-weight">50%</span>
+              </div>
+              <div class="score-bar-row">
+                <span class="score-bar-label" data-i18n="score.acid.label">Lactic acid near 0.6%</span>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill score-bar-orange" id="score-bar-acid" style="width:0%"></div>
+                </div>
+                <span class="score-bar-val" id="score-val-acid">--</span>
+                <span class="score-bar-weight">30%</span>
+              </div>
+              <div class="score-bar-row">
+                <span class="score-bar-label" data-i18n="score.microbe.label">Leuconostoc proportion</span>
+                <div class="score-bar-track">
+                  <div class="score-bar-fill score-bar-green" id="score-bar-microbe" style="width:0%"></div>
+                </div>
+                <span class="score-bar-val" id="score-val-microbe">--</span>
+                <span class="score-bar-weight">20%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status sentences -->
+          <div class="glass-card" id="status-panel">
+            <div class="status-line" id="status-flavor">
+              <span class="status-dot dot-green"></span>
+              <span class="status-text" data-i18n="nav.calculating">--</span>
+            </div>
+            <div class="status-line" id="status-acidity">
+              <span class="status-dot dot-blue"></span>
+              <span class="status-text">--</span>
+            </div>
+            <div class="status-line" id="status-safety">
+              <span class="status-dot dot-amber"></span>
+              <span class="status-text">--</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /hero-split -->
+
+      <!-- Flavor curve (full width below hero) -->
       <div class="nav-chart-card">
         <div class="nav-chart-canvas" id="nav-chart-canvas">
           <canvas id="flavor-chart"></canvas>
@@ -127,36 +265,6 @@
           <span class="phase-label" data-i18n="phase.over">Over</span>
         </div>
         <div class="phase-marker" id="phase-marker"></div>
-      </div>
-
-      <!-- Status sentences (judgment-based) -->
-      <div class="status-panel" id="status-panel">
-        <div class="status-line" id="status-flavor">
-          <span class="status-dot dot-green"></span>
-          <span class="status-text" data-i18n="nav.calculating">--</span>
-        </div>
-        <div class="status-line" id="status-acidity">
-          <span class="status-dot dot-blue"></span>
-          <span class="status-text">--</span>
-        </div>
-        <div class="status-line" id="status-safety">
-          <span class="status-dot dot-amber"></span>
-          <span class="status-text">--</span>
-        </div>
-      </div>
-
-      <!-- Quick controls (presets + starter inline) -->
-      <div class="quick-bar">
-        <div class="quick-presets" id="preset-row">
-          <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
-          <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
-          <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
-        </div>
-        <div class="quick-starter">
-          <span class="quick-label" data-i18n="mixer.starter">Starter</span>
-          <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" class="slider-flat">
-          <span class="quick-val" id="val-starter">0%</span>
-        </div>
       </div>
 
       <!-- Expand: "Why?" -->
@@ -192,40 +300,6 @@
             <span class="explain-cause" id="explain-safety-cause">--</span>
             <span class="explain-arrow">→</span>
             <span class="explain-effect" id="explain-safety-effect">--</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scoring breakdown -->
-      <div class="explain-card glass-card">
-        <h3 class="explain-title">
-          <span>📊</span>
-          <span data-i18n="score.title">How the score is calculated</span>
-        </h3>
-        <div class="score-breakdown" id="score-breakdown">
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.ph.label">pH proximity to 4.35</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-blue" id="score-bar-ph" style="width:0%"></div>
-            </div>
-            <span class="score-bar-val" id="score-val-ph">--</span>
-            <span class="score-bar-weight">50%</span>
-          </div>
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.acid.label">Lactic acid near 0.6%</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-orange" id="score-bar-acid" style="width:0%"></div>
-            </div>
-            <span class="score-bar-val" id="score-val-acid">--</span>
-            <span class="score-bar-weight">30%</span>
-          </div>
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.microbe.label">Leuconostoc proportion</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-green" id="score-bar-microbe" style="width:0%"></div>
-            </div>
-            <span class="score-bar-val" id="score-val-microbe">--</span>
-            <span class="score-bar-weight">20%</span>
           </div>
         </div>
       </div>
@@ -427,12 +501,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=11"></script>
-  <script src="js/models.js?v=11"></script>
-  <script src="js/simulation.js?v=11"></script>
-  <script src="js/charts.js?v=11"></script>
-  <script src="js/ui.js?v=11"></script>
-  <script src="js/recipe.js?v=11"></script>
-  <script src="js/app.js?v=11"></script>
+  <script src="js/i18n.js?v=12"></script>
+  <script src="js/models.js?v=12"></script>
+  <script src="js/simulation.js?v=12"></script>
+  <script src="js/charts.js?v=12"></script>
+  <script src="js/ui.js?v=12"></script>
+  <script src="js/recipe.js?v=12"></script>
+  <script src="js/app.js?v=12"></script>
 </body>
 </html>
