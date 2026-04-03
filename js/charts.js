@@ -353,11 +353,11 @@ window.KimchiSim.charts = (function () {
           {
             label: t('microbe.sakei.name'),
             data: [],
-            borderColor: c.muted,
-            borderWidth: 1.4,
+            borderColor: c.blue,
+            borderWidth: 1.8,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.muted + '10',
+            backgroundColor: c.blue + '12',
             tension: 0.4,
             yAxisID: 'y'
           },
@@ -375,11 +375,11 @@ window.KimchiSim.charts = (function () {
           {
             label: t('microbe.plantarum.name'),
             data: [],
-            borderColor: c.muted,
-            borderWidth: 1.4,
+            borderColor: c.amber,
+            borderWidth: 1.8,
             pointRadius: 0,
             fill: true,
-            backgroundColor: c.muted + '10',
+            backgroundColor: c.amber + '12',
             tension: 0.4,
             yAxisID: 'y'
           }
@@ -693,6 +693,9 @@ window.KimchiSim.charts = (function () {
       var dk = isDark();
       var labelBg = dk ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.95)';
       var labelBorder = dk ? 'rgba(148,163,184,0.3)' : 'rgba(148,163,184,0.25)';
+      var isMobile = window.innerWidth < 640;
+      var msFont = isMobile ? 7 : 9;
+      var msPad = isMobile ? { top: 2, bottom: 2, left: 4, right: 4 } : { top: 3, bottom: 3, left: 6, right: 6 };
 
       // Safe milestone
       if (_milestones.safeDay > 0 && labels.safe) {
@@ -704,7 +707,7 @@ window.KimchiSim.charts = (function () {
             position: 'start',
             backgroundColor: labelBg, color: c.blue,
             borderColor: labelBorder, borderWidth: 1,
-            font: { size: 9 }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
+            font: { size: msFont }, padding: msPad,
             borderRadius: 4, yAdjust: 4
           }
         };
@@ -720,8 +723,8 @@ window.KimchiSim.charts = (function () {
             position: 'start',
             backgroundColor: labelBg, color: c.accent,
             borderColor: labelBorder, borderWidth: 1,
-            font: { size: 9, weight: 'bold' }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
-            borderRadius: 4, yAdjust: 28
+            font: { size: msFont, weight: 'bold' }, padding: msPad,
+            borderRadius: 4, yAdjust: isMobile ? 18 : 28
           }
         };
       }
@@ -739,11 +742,10 @@ window.KimchiSim.charts = (function () {
             position: 'end',
             backgroundColor: labelBg, color: c.amber,
             borderColor: labelBorder, borderWidth: 1,
-            font: { size: 9 }, padding: { top: 3, bottom: 3, left: 6, right: 6 },
+            font: { size: msFont }, padding: msPad,
             borderRadius: 4, yAdjust: 4
           }
         };
-        // Remove separate starter line if merged
         if (sourAndStarter) delete fann['ms_starter'];
       }
     }

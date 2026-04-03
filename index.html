@@ -245,7 +245,7 @@
               <div class="sub-chart-canvas"><canvas id="chart-microbes"></canvas></div>
               <div class="microbe-legend" id="microbe-legend">
                 <div class="ml-item ml-sakei" id="microbe-card-sakei">
-                  <span class="ml-dot" style="background:var(--text-muted)"></span>
+                  <span class="ml-dot" style="background:var(--blue)"></span>
                   <div class="ml-info">
                     <span class="ml-name" data-i18n="microbe.sakei.name">L. sakei</span>
                     <span class="ml-role" data-i18n="microbe.sakei.role">Early stabilizer</span>
@@ -267,7 +267,7 @@
                   <span class="ml-pct ml-pct-now"><span class="ml-pct-l" data-i18n="microbe.atNow">Now</span> <span id="microbe-now-mesenteroides">--%</span></span>
                 </div>
                 <div class="ml-item ml-plant" id="microbe-card-plantarum">
-                  <span class="ml-dot" style="background:var(--text-muted)"></span>
+                  <span class="ml-dot" style="background:var(--amber)"></span>
                   <div class="ml-info">
                     <span class="ml-name" data-i18n="microbe.plantarum.name">L. plantarum</span>
                     <span class="ml-role" data-i18n="microbe.plantarum.role">Deep sour finisher</span>
@@ -394,12 +394,12 @@
     var g=document.getElementById('geo-layer');
     if(g){
       var seed=42;function rng(){seed=(seed*16807+0)%2147483647;return(seed-1)/2147483646;}
-      for(var i=0;i<64;i++){
+      for(var i=0;i<32;i++){
         var el=document.createElement('div');
         var isCircle=rng()>0.45;
         var isRO=rng()>0.5;
         el.className='geo '+(isCircle?'geo--circle':'geo--square')+' '+(isRO?'geo--ro':'geo--yg');
-        var sz=100+rng()*300;
+        var sz=150+rng()*450;
         el.style.width=sz+'px';el.style.height=sz+'px';
         el.style.left=(rng()*98)+'%';
         el.style.top=(rng()*98)+'%';
