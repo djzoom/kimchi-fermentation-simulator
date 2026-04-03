@@ -1129,10 +1129,16 @@ window.KimchiSim.ui = (function () {
       var safeThreshold = meta.safeThreshold || 3;
       var cls = currentNitrite < safeThreshold * 0.5 ? 'safe' : currentNitrite < safeThreshold ? 'warning' : 'danger';
       niBar.className = 'ni-bar ' + cls;
-      setVal('ni-level', (peak.value || 0).toFixed(1) + ' mg/kg');
+      setVal('ni-level', currentNitrite.toFixed(1) + ' mg/kg');
       var niStatus = document.getElementById('ni-status');
       if (niStatus) {
-        niStatus.textContent = cls === 'safe' ? t('nitrite.safe') : cls === 'warning' ? t('nitrite.caution') : t('nitrite.danger');
+        var statusText = cls === 'safe' ? t('nitrite.safe') : cls === 'warning' ? t('nitrite.caution') : t('nitrite.danger');
+        // Append safe-after date for danger/warning
+        if (cls !== 'safe' && meta.riskWindow && meta.riskWindow.end != null && pickleDate) {
+          var safeDate = new Date(pickleDate.getTime() + meta.riskWindow.end * 86400000);
+          statusText += '  ' + t('nitrite.safeAfter') + ' ' + formatDateLocale(safeDate);
+        }
+        niStatus.textContent = statusText;
       }
     }
     if (peak.value != null && peak.time != null) {

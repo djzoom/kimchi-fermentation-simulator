@@ -122,10 +122,12 @@ body::before {
   border-color: rgba(255, 255, 255, 0.15);
 }
 @keyframes bubble-rise {
-  0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-  10% { opacity: 0.7; }
-  50% { transform: translateY(-50vh) translateX(20px) scale(1.1); opacity: 0.55; }
-  100% { transform: translateY(-110vh) translateX(-15px) scale(0.85); opacity: 0; }
+  0% { transform: translateY(0) translateX(0) scale(0.3); opacity: 0; }
+  5% { transform: translateY(0) translateX(0) scale(0.3); opacity: 0.5; }
+  15% { transform: translateY(-5vh) translateX(3px) scale(1); opacity: 0.7; }
+  25% { transform: translateY(-15vh) translateX(8px) scale(1.15); opacity: 0.65; }
+  60% { transform: translateY(-55vh) translateX(18px) scale(1.1); opacity: 0.5; }
+  100% { transform: translateY(-110vh) translateX(-10px) scale(0.9); opacity: 0; }
 }
 
 /* ═══ FROSTED GEOMETRY DECOR ═══ */
