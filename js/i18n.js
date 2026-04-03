@@ -710,6 +710,7 @@ window.KimchiSim.i18n = (function () {
     'nitrite.safe': { en: 'Safe', ko: '안전', zh: '安全', de: 'Sicher' },
     'nitrite.caution': { en: 'Caution', ko: '주의', zh: '注意', de: 'Vorsicht' },
     'nitrite.danger': { en: 'High Risk', ko: '위험', zh: '高风险', de: 'Hohes Risiko' },
+    'nitrite.safeAfter': { en: 'Safe after', ko: '안전 예상:', zh: '预计安全食用：', de: 'Sicher ab' },
     'nitrite.model.title': {
       en: 'Nitrite kinetics for this batch',
       ko: '이 배치의 아질산염 동역학',
