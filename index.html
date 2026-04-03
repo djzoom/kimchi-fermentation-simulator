@@ -226,6 +226,7 @@
         <div class="dz-next" id="dz-next"></div>
       </div>
       <div class="sub-chart sub-chart-hero" id="sub-chart-flavor">
+        <div class="flavor-score-label" data-i18n="chart.flavor.yaxis"></div>
         <div class="sub-chart-canvas dz-chart"><canvas id="chart-flavor"></canvas></div>
       </div>
 
@@ -380,13 +381,13 @@
   (function(){
     // Bubbles
     var c=document.getElementById('bubbles');
-    if(c){for(var i=0;i<15;i++){
+    if(c){for(var i=0;i<35;i++){
       var b=document.createElement('div');b.className='bubble';
-      var s=3+Math.random()*6;
+      var s=4+Math.random()*8;
       b.style.width=s+'px';b.style.height=s+'px';
       b.style.left=Math.random()*100+'%';
-      b.style.animationDuration=(12+Math.random()*18)+'s';
-      b.style.animationDelay=(Math.random()*20)+'s';
+      b.style.animationDuration=(10+Math.random()*16)+'s';
+      b.style.animationDelay=(Math.random()*15)+'s';
       c.appendChild(b);
     }}
     // Geometry

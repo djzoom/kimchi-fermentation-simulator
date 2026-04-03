@@ -369,10 +369,10 @@ window.KimchiSim.i18n = (function () {
       de: 'Bewertung'
     },
     'chart.flavor.yaxis': {
-      en: 'Flavor Activity Index',
-      ko: '풍미 활성 지수',
-      zh: '风味物质活跃指数',
-      de: 'Geschmacksaktivitätsindex'
+      en: 'Flavor Score: 50% pH proximity to 4.35 + 30% lactic acid balance + 20% Leuconostoc ratio',
+      ko: '풍미 점수: pH 4.35 근접도 50% + 젖산 균형 30% + Leuconostoc 비율 20%',
+      zh: '风味评分：pH 接近 4.35（50%）+ 乳酸平衡度（30%）+ 肠膜明串珠菌占比（20%）',
+      de: 'Geschmackswert: pH-Nähe zu 4,35 (50%) + Milchsäure-Balance (30%) + Leuconostoc-Anteil (20%)'
     },
     'chart.optimal': {
       en: 'Optimal',
