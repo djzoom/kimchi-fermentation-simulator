@@ -368,6 +368,12 @@ window.KimchiSim.i18n = (function () {
       zh: '评分',
       de: 'Bewertung'
     },
+    'chart.flavor.yaxis': {
+      en: 'Flavor Activity Index',
+      ko: '풍미 활성 지수',
+      zh: '风味物质活跃指数',
+      de: 'Geschmacksaktivitätsindex'
+    },
     'chart.optimal': {
       en: 'Optimal',
       ko: '최적',
