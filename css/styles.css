@@ -168,11 +168,6 @@ a:hover { text-decoration: underline; }
 .header-brand {
   display: flex; align-items: center; gap: 8px;
 }
-.logo-mark {
-  font-size: var(--fs-xl);
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-}
 .logo-icon {
   width: 28px; height: 28px;
   flex-shrink: 0;
@@ -1121,15 +1116,9 @@ a:hover { text-decoration: underline; }
   margin-top: 16px;
   padding: 0;
 }
-.collapse-inline .collapse-toggle {
-  padding: 14px 4px;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-}
 .collapse-inline .collapse-body {
   padding: 0 0 8px;
 }
-.collapse-inline .collapse-toggle::-webkit-details-marker { display: none; }
 
 /* ═══ ZONE 1: DECISION (legacy compat) ═══ */
 .decision-zone {
@@ -1247,39 +1236,33 @@ a:hover { text-decoration: underline; }
 }
 .collapse-toggle {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 14px 20px;
+  padding: 14px 20px 8px;
   cursor: pointer;
-  font-family: var(--font);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
   list-style: none;
   transition: color var(--transition);
 }
 .collapse-toggle::-webkit-details-marker { display: none; }
-.collapse-toggle:hover { color: var(--text); }
-.collapse-chevron {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: var(--fs-base);
-  font-weight: 700;
-  transition: transform var(--transition), background var(--transition);
-  flex-shrink: 0;
+.collapse-label {
+  font-family: var(--font);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color var(--transition);
 }
-.collapse-toggle:hover .collapse-chevron {
-  background: var(--accent);
-  color: #fff;
+.collapse-toggle:hover .collapse-label { color: var(--text); }
+.collapse-arrow {
+  display: block;
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-muted);
+  transition: transform var(--transition), color var(--transition);
 }
-.collapse-section[open] .collapse-chevron,
-.collapse-inline[open] .collapse-chevron {
+.collapse-toggle:hover .collapse-arrow { color: var(--accent); }
+.collapse-section[open] .collapse-arrow,
+.collapse-inline[open] .collapse-arrow {
   transform: rotate(180deg);
 }
 .collapse-body {
@@ -1309,8 +1292,7 @@ a:hover { text-decoration: underline; }
   height: 140px;
 }
 .sub-chart-canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
+  display: block;
 }
 
 /* Nitrite inline summary */
@@ -1381,7 +1363,7 @@ a:hover { text-decoration: underline; }
 .ml-name { font-weight: 600; color: var(--text); white-space: nowrap; }
 .ml-sakei .ml-name { color: var(--blue); }
 .ml-mesen .ml-name { color: var(--accent); }
-.ml-plant .ml-name { color: var(--amber); }
+.ml-plant .ml-name { color: var(--purple); }
 .ml-role { font-size: var(--fs-2xs); color: var(--text-muted); }
 .ml-time { color: var(--text-muted); font-family: var(--mono); font-size: var(--fs-2xs); }
 .ml-note { color: var(--text-secondary); font-size: var(--fs-2xs); flex: 1; }
