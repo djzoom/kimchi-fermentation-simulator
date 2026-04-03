@@ -369,10 +369,10 @@ window.KimchiSim.i18n = (function () {
       de: 'Bewertung'
     },
     'chart.flavor.yaxis': {
-      en: 'Flavor Score: 50% pH proximity to 4.35 + 30% lactic acid balance + 20% Leuconostoc ratio',
-      ko: '풍미 점수: pH 4.35 근접도 50% + 젖산 균형 30% + Leuconostoc 비율 20%',
-      zh: '风味评分：pH 接近 4.35（50%）+ 乳酸平衡度（30%）+ 肠膜明串珠菌占比（20%）',
-      de: 'Geschmackswert: pH-Nähe zu 4,35 (50%) + Milchsäure-Balance (30%) + Leuconostoc-Anteil (20%)'
+      en: 'Flavor score (0–100): how close pH is to the ideal 4.35 (50%) + whether lactic acid is at its sweet spot (30%) + proportion of aroma-producing Leuconostoc bacteria (20%)',
+      ko: '풍미 점수 (0–100): pH가 이상적인 4.35에 얼마나 가까운지 (50%) + 젖산이 적정 수준인지 (30%) + 향미를 내는 Leuconostoc 균의 비율 (20%)',
+      zh: '风味评分（0–100）：pH 与最佳值 4.35 的接近程度（占 50%）+ 乳酸是否处于最佳浓度（占 30%）+ 产香菌肠膜明串珠菌的占比（占 20%）',
+      de: 'Geschmackswert (0–100): Nähe des pH zum Idealwert 4,35 (50%) + ob die Milchsäure im optimalen Bereich liegt (30%) + Anteil der aromabildenden Leuconostoc-Bakterien (20%)'
     },
     'chart.optimal': {
       en: 'Optimal',
@@ -873,10 +873,10 @@ window.KimchiSim.i18n = (function () {
       de: '{d} Tage vergangen'
     },
     'batch.now': {
-      en: 'Current status',
-      ko: '현재 상태',
-      zh: '当前状态',
-      de: 'Aktueller Status'
+      en: 'Now',
+      ko: '현재',
+      zh: '当前',
+      de: 'Jetzt'
     },
     'batch.phase': {
       en: 'Phase',
