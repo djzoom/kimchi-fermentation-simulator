@@ -627,17 +627,27 @@ window.KimchiSim.charts = (function () {
 
   // ─── Milestone markers across all charts ───
   var _milestones = null;
-  function setMilestones(m) { _milestones = m; }
+  function setMilestones(m) {
+    _milestones = m;
+    applyMilestones();
+    if (charts.flavor) charts.flavor.update('none');
+    if (charts.phLab) charts.phLab.update('none');
+    if (charts.microbes) charts.microbes.update('none');
+    if (charts.nitrite) charts.nitrite.update('none');
+  }
 
   function applyMilestones() {
     if (!_milestones) return;
     var c = colors();
     var chartList = [charts.flavor, charts.phLab, charts.microbes, charts.nitrite];
     var markers = [
-      { key: 'safe', day: _milestones.safeDay, color: c.blue + '55', dash: [3, 3], width: 1.2 },
-      { key: 'best', day: _milestones.bestDay, color: c.accent + '99', dash: [6, 3], width: 2 },
-      { key: 'sour', day: _milestones.sourDay, color: c.amber + '66', dash: [3, 3], width: 1.2 }
+      { key: 'safe', day: _milestones.safeDay, color: c.blue, dash: [3, 3], width: 1.2 },
+      { key: 'best', day: _milestones.bestDay, color: c.accent, dash: [6, 3], width: 2 },
+      { key: 'sour', day: _milestones.sourDay, color: c.amber, dash: [3, 3], width: 1.2 },
+      { key: 'starter', day: _milestones.starterDay, color: '#8B5CF6', dash: [2, 4], width: 1 }
     ];
+
+    // Draw vertical lines on all charts
     for (var ci = 0; ci < chartList.length; ci++) {
       var ch = chartList[ci];
       if (!ch) continue;
@@ -647,9 +657,69 @@ window.KimchiSim.charts = (function () {
         if (mk.day != null && mk.day > 0) {
           ann['ms_' + mk.key] = {
             type: 'line', scaleID: 'x', value: mk.day,
-            borderColor: mk.color, borderWidth: mk.width, borderDash: mk.dash
+            borderColor: mk.color + '55', borderWidth: mk.width, borderDash: mk.dash
           };
         }
+      }
+    }
+
+    // Flavor chart: add labeled milestone annotations with descriptions
+    if (charts.flavor) {
+      var fann = charts.flavor.options.plugins.annotation.annotations;
+      var labels = _milestones.labels || {};
+      // Merge sour+starter into one label if same day
+      var sourDay = _milestones.sourDay;
+      var starterDay = _milestones.starterDay;
+      var sourAndStarter = (sourDay && starterDay && Math.abs(sourDay - starterDay) < 0.5);
+
+      // Safe milestone
+      if (_milestones.safeDay > 0 && labels.safe) {
+        fann['ms_safe'] = {
+          type: 'line', scaleID: 'x', value: _milestones.safeDay,
+          borderColor: c.blue + '88', borderWidth: 1.2, borderDash: [3, 3],
+          label: {
+            display: true, content: labels.safe,
+            position: 'start',
+            backgroundColor: c.blue + '12', color: c.blue,
+            font: { size: 9 }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
+            borderRadius: 3, yAdjust: 16
+          }
+        };
+      }
+
+      // Best milestone
+      if (_milestones.bestDay > 0 && labels.best) {
+        fann['ms_best'] = {
+          type: 'line', scaleID: 'x', value: _milestones.bestDay,
+          borderColor: c.accent + '88', borderWidth: 2, borderDash: [6, 3],
+          label: {
+            display: true, content: labels.best,
+            position: 'start',
+            backgroundColor: c.accent + '12', color: c.accent,
+            font: { size: 9, weight: 'bold' }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
+            borderRadius: 3, yAdjust: 8
+          }
+        };
+      }
+
+      // Sour + starter (combined or separate)
+      if (sourDay > 0 && labels.sour) {
+        var sourContent = sourAndStarter && labels.starter
+          ? [labels.sour[0], labels.starter[0], labels.sour[1]]
+          : labels.sour;
+        fann['ms_sour'] = {
+          type: 'line', scaleID: 'x', value: sourDay,
+          borderColor: c.amber + '88', borderWidth: 1.2, borderDash: [3, 3],
+          label: {
+            display: true, content: sourContent,
+            position: 'end',
+            backgroundColor: c.amber + '12', color: c.amber,
+            font: { size: 9 }, padding: { top: 2, bottom: 2, left: 4, right: 4 },
+            borderRadius: 3, yAdjust: 16
+          }
+        };
+        // Remove separate starter line if merged
+        if (sourAndStarter) delete fann['ms_starter'];
       }
     }
   }
