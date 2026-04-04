@@ -274,6 +274,12 @@ window.KimchiSim = window.KimchiSim || {};
       btn.classList.toggle('active', btn.getAttribute('data-recipe') === type);
     });
 
+    // Map recipe type to ferment model type
+    var modelType = type === 'paocai' ? 'sichuan' : type;
+    if (sim.models.setFermentType) {
+      sim.models.setFermentType(modelType);
+    }
+
     // Show/hide starter culture (only for kimchi)
     var starterItem = document.querySelector('.field-item:has(#input-starter-weight)');
     if (!starterItem) {
@@ -290,6 +296,11 @@ window.KimchiSim = window.KimchiSim || {};
     }
 
     updateCalcResults();
+
+    // Re-run simulation with new ferment type parameters
+    var params = sim.ui.getParams();
+    var stg = sim.ui.getStages();
+    runAndUpdate(params, stg, true);
   }
 
   // ─── Recipe Calculator ───
