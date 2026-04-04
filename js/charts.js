@@ -9,6 +9,7 @@ window.KimchiSim.charts = (function () {
   'use strict';
 
   var charts = {};  // { flavor, phLab, microbes, nitrite }
+  var _speciesKeys = ['mesenteroides', 'sakei', 'plantarum']; // current species (updated on each data refresh)
 
   function t(key) { return window.KimchiSim.i18n.t(key); }
 
@@ -352,7 +353,7 @@ window.KimchiSim.charts = (function () {
       data: {
         datasets: [
           {
-            label: t('microbe.sakei.name'),
+            label: t('microbe.' + _speciesKeys[0] + '.name'),
             data: [],
             borderColor: c.blue,
             borderWidth: 1.8,
@@ -363,7 +364,7 @@ window.KimchiSim.charts = (function () {
             yAxisID: 'y'
           },
           {
-            label: t('microbe.mesenteroides.name'),
+            label: t('microbe.' + _speciesKeys[1] + '.name'),
             data: [],
             borderColor: c.accent,
             borderWidth: 2,
@@ -374,7 +375,7 @@ window.KimchiSim.charts = (function () {
             yAxisID: 'y'
           },
           {
-            label: t('microbe.plantarum.name'),
+            label: t('microbe.' + _speciesKeys[2] + '.name'),
             data: [],
             borderColor: c.purple,
             borderWidth: 1.8,
@@ -516,12 +517,15 @@ window.KimchiSim.charts = (function () {
       pl.update('none');
     }
 
-    // Chart 3: Microbes
+    // Chart 3: Microbes (dynamic species keys)
     if (charts.microbes) {
       var mb = charts.microbes;
-      mb.data.datasets[0].data = toXY(tp, data.microbial.sakei);
-      mb.data.datasets[1].data = toXY(tp, data.microbial.mesenteroides);
-      mb.data.datasets[2].data = toXY(tp, data.microbial.plantarum);
+      var sk = data.speciesKeys || _speciesKeys;
+      if (sk[0] !== _speciesKeys[0] || sk[1] !== _speciesKeys[1] || sk[2] !== _speciesKeys[2]) {
+        _speciesKeys = sk;
+        for (var si = 0; si < 3; si++) mb.data.datasets[si].label = t('microbe.' + sk[si] + '.name');
+      }
+      for (var si = 0; si < 3; si++) mb.data.datasets[si].data = toXY(tp, data.microbial[sk[si]]);
       mb.options.scales.x.max = data.tMax;
       mb.update('none');
     }
@@ -588,9 +592,9 @@ window.KimchiSim.charts = (function () {
       mb.options.scales.y.grid.color = gc;
       mb.options.scales.x.ticks.color = c.muted;
       mb.options.scales.y.ticks.color = c.muted;
-      mb.data.datasets[0].label = t('microbe.sakei.name');
-      mb.data.datasets[1].label = t('microbe.mesenteroides.name');
-      mb.data.datasets[2].label = t('microbe.plantarum.name');
+      mb.data.datasets[0].label = t('microbe.' + _speciesKeys[0] + '.name');
+      mb.data.datasets[1].label = t('microbe.' + _speciesKeys[1] + '.name');
+      mb.data.datasets[2].label = t('microbe.' + _speciesKeys[2] + '.name');
       mb.update('none');
     }
 
@@ -782,9 +786,12 @@ window.KimchiSim.charts = (function () {
       charts.phLab.update('none');
     }
     if (charts.microbes) {
-      charts.microbes.data.datasets[0].data = toXY(tp, data.microbial.sakei);
-      charts.microbes.data.datasets[1].data = toXY(tp, data.microbial.mesenteroides);
-      charts.microbes.data.datasets[2].data = toXY(tp, data.microbial.plantarum);
+      var sk = data.speciesKeys || _speciesKeys;
+      if (sk[0] !== _speciesKeys[0] || sk[1] !== _speciesKeys[1] || sk[2] !== _speciesKeys[2]) {
+        _speciesKeys = sk;
+        for (var si = 0; si < 3; si++) charts.microbes.data.datasets[si].label = t('microbe.' + sk[si] + '.name');
+      }
+      for (var si = 0; si < 3; si++) charts.microbes.data.datasets[si].data = toXY(tp, data.microbial[sk[si]]);
       charts.microbes.options.scales.x.max = data.tMax;
       charts.microbes.update('none');
     }

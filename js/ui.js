@@ -847,21 +847,23 @@ window.KimchiSim.ui = (function () {
     var pH = data.atOptimal.pH;
     var acid = data.atOptimal.acid;
     var comp = data.atOptimal.composition || {};
-    var meso = comp.mesenteroides || 0;
+    var P = window.KimchiSim.models.PARAMS;
+    var keySpecies = comp[P.flavor_key_species] || 0;
 
-    var phFactor = gaussian(pH, 4.35, 0.3);
-    var acidFactor = gaussian(acid, 0.6, 0.2);
+    var phFactor = gaussian(pH, P.flavor_pH_center, P.flavor_pH_sigma);
+    var acidFactor = gaussian(acid, P.flavor_acid_center, P.flavor_acid_sigma);
 
-    var phScore = Math.round(phFactor * 50);
-    var acidScore = Math.round(acidFactor * 30);
-    var microbeScore = Math.round(meso * 20);
+    var w = P.flavor_weights;
+    var phScore = Math.round(phFactor * w[0] * 100);
+    var acidScore = Math.round(acidFactor * w[1] * 100);
+    var microbeScore = Math.round(keySpecies * w[2] * 100);
 
     var barPh = document.getElementById('score-bar-ph');
     var barAcid = document.getElementById('score-bar-acid');
     var barMicrobe = document.getElementById('score-bar-microbe');
     if (barPh) barPh.style.width = (phFactor * 100) + '%';
     if (barAcid) barAcid.style.width = (acidFactor * 100) + '%';
-    if (barMicrobe) barMicrobe.style.width = (meso * 100) + '%';
+    if (barMicrobe) barMicrobe.style.width = (keySpecies * 100) + '%';
 
     setVal('score-val-ph', phScore + 'pt');
     setVal('score-val-acid', acidScore + 'pt');
@@ -1179,25 +1181,61 @@ window.KimchiSim.ui = (function () {
       if (tp[i] <= elapsedDays) idx = i;
       else break;
     }
-    return {
-      sakei: data.microbial.sakei[idx],
-      mesenteroides: data.microbial.mesenteroides[idx],
-      plantarum: data.microbial.plantarum[idx],
-      elapsed: elapsedDays
-    };
+    var sk = data.speciesKeys || ['mesenteroides', 'sakei', 'plantarum'];
+    var result = { elapsed: elapsedDays };
+    for (var i = 0; i < sk.length; i++) {
+      result[sk[i]] = data.microbial[sk[i]] ? data.microbial[sk[i]][idx] : 0;
+    }
+    return result;
+  }
+
+  var _lastMicrobeKeys = null;
+  var _microbeColors = ['var(--blue)', 'var(--accent)', 'var(--purple)'];
+  var _microbeCssClasses = ['ml-sakei', 'ml-mesen', 'ml-plant'];
+
+  function rebuildMicrobeLegend(sk) {
+    var legend = document.getElementById('microbe-legend');
+    if (!legend) return;
+    var t = window.KimchiSim.i18n.t;
+    var domNotes = [
+      t('dominance.initial.note') || 'Builds a clean, fresh start.',
+      t('dominance.optimal.note') || 'Brings sparkle, aroma, and balance.',
+      t('dominance.over.note') || 'Pushes the batch into deeper sourness.'
+    ];
+    var html = '';
+    for (var i = 0; i < sk.length; i++) {
+      html += '<div class="ml-item ' + _microbeCssClasses[i] + '" id="microbe-card-' + sk[i] + '">' +
+        '<span class="ml-dot" style="background:' + _microbeColors[i] + '"></span>' +
+        '<div class="ml-info">' +
+          '<span class="ml-name">' + t('microbe.' + sk[i] + '.name') + '</span>' +
+          '<span class="ml-role">' + t('microbe.' + sk[i] + '.role') + '</span>' +
+        '</div>' +
+        '<span class="ml-time" id="dominance-time-' + (i + 1) + '">--</span>' +
+        '<span class="ml-note">' + domNotes[i] + '</span>' +
+        '<span class="ml-pct"><span class="ml-pct-l">' + t('microbe.atPeak') + '</span> <span id="microbe-val-' + sk[i] + '">--%</span></span>' +
+        '<span class="ml-pct ml-pct-now"><span class="ml-pct-l">' + t('microbe.atNow') + '</span> <span id="microbe-now-' + sk[i] + '">--%</span></span>' +
+      '</div>';
+    }
+    legend.innerHTML = html;
+    _lastMicrobeKeys = sk.slice();
   }
 
   function updateMicrobeCards(data) {
     var comp = data.atOptimal.composition || {};
     var nowComp = getNowComposition(data);
+    var sk = data.speciesKeys || ['mesenteroides', 'sakei', 'plantarum'];
+    // Rebuild HTML if species changed
+    if (!_lastMicrobeKeys || _lastMicrobeKeys[0] !== sk[0] || _lastMicrobeKeys[1] !== sk[1] || _lastMicrobeKeys[2] !== sk[2]) {
+      rebuildMicrobeLegend(sk);
+    }
     var nowDominant = null;
     if (nowComp) {
       var maxVal = 0;
-      ['sakei', 'mesenteroides', 'plantarum'].forEach(function(key) {
+      sk.forEach(function(key) {
         if (nowComp[key] > maxVal) { maxVal = nowComp[key]; nowDominant = key; }
       });
     }
-    ['sakei', 'mesenteroides', 'plantarum'].forEach(function(key) {
+    sk.forEach(function(key) {
       var val = comp[key];
       var card = document.getElementById('microbe-card-' + key);
       if (card) {
@@ -1206,7 +1244,7 @@ window.KimchiSim.ui = (function () {
       }
       setVal('microbe-val-' + key, val == null ? '--%' : Math.round(val * 100) + '%');
       if (nowComp) {
-        setVal('microbe-now-' + key, Math.round(nowComp[key]) + '%');
+        setVal('microbe-now-' + key, Math.round((nowComp[key] || 0)) + '%');
       } else {
         setVal('microbe-now-' + key, '--%');
       }
@@ -1253,6 +1291,7 @@ window.KimchiSim.ui = (function () {
     restoreSavedInputs: restoreSavedInputs,
     saveState: saveState,
     updateTimelineMilestones: updateTimelineMilestones,
+    resetMicrobeKeys: function() { _lastMicrobeKeys = null; },
     toggleUnit: function() { toggleUnit(); },
     getUseFahrenheit: function() { return useFahrenheit; },
     stages: [] // compat

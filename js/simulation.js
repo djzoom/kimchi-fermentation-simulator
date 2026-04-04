@@ -219,15 +219,11 @@ window.KimchiSim.simulation = (function () {
       speciesTrends[speciesKeys[sk]] = trend(speciesArrays[speciesKeys[sk]]);
     }
 
-    // Build backward-compatible microbial object + generic species data
+    // Build microbial data keyed by actual species
     var microbialData = {};
     for (var sk = 0; sk < speciesKeys.length; sk++) {
       microbialData[speciesKeys[sk]] = speciesArrays[speciesKeys[sk]];
     }
-    // Backward compat aliases for kimchi
-    if (!microbialData.sakei) microbialData.sakei = speciesArrays[speciesKeys[0]];
-    if (!microbialData.mesenteroides) microbialData.mesenteroides = speciesArrays[speciesKeys[1]];
-    if (!microbialData.plantarum) microbialData.plantarum = speciesArrays[speciesKeys[2]];
 
     return {
       fermentType: m.getFermentType(),
