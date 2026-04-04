@@ -233,22 +233,22 @@ window.KimchiSim.i18n = (function () {
       de: '\u00dcberreif'
     },
     'phase.initial.sub': {
-      en: 'L. sakei dominant',
-      ko: 'L. sakei 우세',
-      zh: 'L. sakei 主导',
-      de: 'L. sakei dominant'
+      en: 'Early species dominant',
+      ko: '초기 균종 우세',
+      zh: '早期菌种主导',
+      de: 'Frühe Arten dominant'
     },
     'phase.optimal.sub': {
-      en: 'Leuc. mesenteroides',
-      ko: 'Leuc. mesenteroides',
-      zh: 'Leuc. mesenteroides 主导',
-      de: 'Leuc. mesenteroides'
+      en: 'Peak flavor species',
+      ko: '최적 풍미 균종',
+      zh: '最佳风味菌种',
+      de: 'Spitzengeschmack-Arten'
     },
     'phase.over.sub': {
-      en: 'L. plantarum dominant',
-      ko: 'L. plantarum 우세',
-      zh: 'L. plantarum 主导',
-      de: 'L. plantarum dominant'
+      en: 'Acid-tolerant species',
+      ko: '내산성 균종 우세',
+      zh: '耐酸菌种主导',
+      de: 'Säuretolerante Arten'
     },
     'phase.title': {
       en: 'Fermentation story at a glance',
@@ -369,10 +369,10 @@ window.KimchiSim.i18n = (function () {
       de: 'Bewertung'
     },
     'chart.flavor.yaxis': {
-      en: 'Flavor score (0–100): how close pH is to the ideal 4.35 (50%) + whether lactic acid is at its sweet spot (30%) + proportion of aroma-producing Leuconostoc bacteria (20%)',
-      ko: '풍미 점수 (0–100): pH가 이상적인 4.35에 얼마나 가까운지 (50%) + 젖산이 적정 수준인지 (30%) + 향미를 내는 Leuconostoc 균의 비율 (20%)',
-      zh: '风味评分（0–100）：pH 与最佳值 4.35 的接近程度（占 50%）+ 乳酸是否处于最佳浓度（占 30%）+ 产香菌肠膜明串珠菌的占比（占 20%）',
-      de: 'Geschmackswert (0–100): Nähe des pH zum Idealwert 4,35 (50%) + ob die Milchsäure im optimalen Bereich liegt (30%) + Anteil der aromabildenden Leuconostoc-Bakterien (20%)'
+      en: 'Flavor score (0–100): pH proximity to ideal + lactic acid sweet spot + key species proportion',
+      ko: '풍미 점수 (0–100): pH 최적치 접근도 + 젖산 적정 수준 + 핵심 균종 비율',
+      zh: '风味评分（0–100）：pH 接近最佳值 + 乳酸处于最佳浓度 + 关键菌种占比',
+      de: 'Geschmackswert (0–100): pH-Nähe zum Ideal + Milchsäure im Optimalbereich + Schlüsselarten-Anteil'
     },
     'chart.optimal': {
       en: 'Optimal',
@@ -593,8 +593,64 @@ window.KimchiSim.i18n = (function () {
     'microbe.plantarum.body': {
       en: 'Takes over later, deepens acidity, and moves the batch toward cooking kimchi territory.',
       ko: '후반에 우세해지며 산미를 깊게 만들고, 배치를 요리용 김치 쪽으로 이끕니다.',
-      zh: '后期逐渐占优，进一步加深酸度，让这一坛更接近适合做菜的老 Kimchi。',
-      de: 'Übernimmt später, vertieft die Säure und bewegt die Charge in Richtung Koch-Kimchi.'
+      zh: '后期逐渐占优，进一步加深酸度，让这一坛更接近适合做菜的老泡菜。',
+      de: 'Übernimmt später, vertieft die Säure und bewegt die Charge in Richtung Kochsauerkraut.'
+    },
+    // Sichuan paocai species
+    'microbe.weissella.name': {
+      en: 'W. confusa',
+      ko: 'W. confusa (바이셀라)',
+      zh: 'W. confusa (混淆魏斯氏菌)',
+      de: 'W. confusa'
+    },
+    'microbe.weissella.role': {
+      en: 'Early initiator',
+      ko: '초기 개시자',
+      zh: '早期启动者',
+      de: 'Früher Initiator'
+    },
+    'microbe.weissella.body': {
+      en: 'Common in Chinese vegetable ferments. Kicks off acidification and creates the initial anaerobic environment.',
+      ko: '중국 채소 발효에서 흔한 균주. 초기 산성화를 시작하고 혐기 환경을 조성합니다.',
+      zh: '中国蔬菜发酵中常见的早期优势菌，率先启动产酸并建立厌氧环境。',
+      de: 'Häufig in chinesischen Gemüsefermentationen. Startet die Ansäuerung und schafft die anfängliche anaerobe Umgebung.'
+    },
+    'microbe.pediococcus.name': {
+      en: 'P. pentosaceus',
+      ko: 'P. pentosaceus (페디오코커스)',
+      zh: 'P. pentosaceus (戊糖片球菌)',
+      de: 'P. pentosaceus'
+    },
+    'microbe.pediococcus.role': {
+      en: 'Salt-tolerant finisher',
+      ko: '내염성 마무리균',
+      zh: '耐盐收尾者',
+      de: 'Salztoleranter Abschluss'
+    },
+    'microbe.pediococcus.body': {
+      en: 'Thrives in high-salt brine, produces even lactic acid, and contributes to the clean sour finish of paocai.',
+      ko: '고농도 염수에서 잘 자라며, 균일한 젖산을 생성하여 파오차이의 깔끔한 신맛을 완성합니다.',
+      zh: '在高盐老卤中表现出色，均匀产酸，赋予泡菜干净利落的酸味收尾。',
+      de: 'Gedeiht in salzreicher Lake, produziert gleichmäßig Milchsäure und trägt zum sauberen sauren Abgang von Paocai bei.'
+    },
+    // Sauerkraut mid-phase species
+    'microbe.brevis.name': {
+      en: 'L. brevis',
+      ko: 'L. brevis (브레비스균)',
+      zh: 'L. brevis (短乳杆菌)',
+      de: 'L. brevis'
+    },
+    'microbe.brevis.role': {
+      en: 'Flavor builder',
+      ko: '풍미 형성균',
+      zh: '风味构建者',
+      de: 'Geschmacksbildner'
+    },
+    'microbe.brevis.body': {
+      en: 'Heterofermentative — produces lactic acid plus CO₂ and acetic acid, adding complexity to sauerkraut flavor.',
+      ko: '이종발효균 — 젖산과 함께 CO₂, 초산을 생성하여 사우어크라우트의 풍미에 깊이를 더합니다.',
+      zh: '异型发酵菌——在产乳酸的同时生成 CO₂ 和醋酸，为酸菜风味增添层次感。',
+      de: 'Heterofermentativ — produziert neben Milchsäure auch CO₂ und Essigsäure, was dem Sauerkraut Komplexität verleiht.'
     },
 
     // Recipe
@@ -853,10 +909,28 @@ window.KimchiSim.i18n = (function () {
       de: 'Leuconostoc ist der Publikumsliebling.\n\nEs hilft, Aroma, leichte Säure und ein lebhaftes Profil zu erzeugen, das viele mit perfektem Ess-Kimchi verbinden.'
     },
     'tip.plantarum': {
-      en: 'L. plantarum is powerful late in fermentation.\n\nIt deepens acidity and is useful when kimchi is heading toward soups, stews, fried rice, or other cooked dishes.',
-      ko: 'L. plantarum은 발효 후반에 강해집니다.\n\n산미를 깊게 만들며, 김치찌개나 볶음밥 같은 요리용 김치로 갈 때 특히 의미가 큽니다.',
-      zh: 'L. plantarum 在发酵后期会更强势。\n\n它会进一步加深酸味，因此当 Kimchi 逐渐转向适合做汤、炒饭、炖菜时，它就很关键。',
-      de: 'L. plantarum ist in der späten Fermentation stark.\n\nEs vertieft die Säure und ist nützlich, wenn Kimchi in Richtung Suppen, Eintöpfe, Bratreis oder andere gekochte Gerichte geht.'
+      en: 'L. plantarum is powerful late in fermentation.\n\nIt deepens acidity and is useful when the batch is heading toward soups, stews, fried rice, or other cooked dishes.',
+      ko: 'L. plantarum은 발효 후반에 강해집니다.\n\n산미를 깊게 만들며, 김치찌개나 볶음밥 같은 요리용으로 갈 때 특히 의미가 큽니다.',
+      zh: 'L. plantarum 在发酵后期会更强势。\n\n它会进一步加深酸味，适合做汤、炒饭、炖菜等烹饪用途。',
+      de: 'L. plantarum ist in der späten Fermentation stark.\n\nEs vertieft die Säure und eignet sich für Suppen, Eintöpfe, Bratreis oder andere gekochte Gerichte.'
+    },
+    'tip.weissella': {
+      en: 'Weissella is an early colonizer in Sichuan paocai.\n\nIt kicks off fermentation quickly but fades as acid builds. Its brief dominance helps establish the right conditions for Lactobacillus species.',
+      ko: 'Weissella는 사천 파오차이에서 초기 정착균입니다.\n\n빠르게 발효를 시작하지만 산도가 올라가면 줄어듭니다. 이 짧은 우세기가 유산균이 자라기 좋은 환경을 만듭니다.',
+      zh: 'Weissella 是四川泡菜中的早期定殖菌。\n\n它迅速启动发酵，但随着酸度升高会逐渐退出。这段短暂的优势期为后续乳杆菌的生长创造了条件。',
+      de: 'Weissella ist ein früher Kolonisierer in Sichuan-Paocai.\n\nSie startet die Fermentation schnell, nimmt aber ab, wenn die Säure steigt. Ihre kurze Dominanz schafft die richtigen Bedingungen für Lactobacillus-Arten.'
+    },
+    'tip.pediococcus': {
+      en: 'Pediococcus thrives in high-salt environments.\n\nIn old-brine paocai, it becomes prominent late and produces clean lactic acid. It is one reason aged paocai brine becomes more stable over time.',
+      ko: 'Pediococcus는 고염 환경에서 잘 자랍니다.\n\n묵은 염수 파오차이에서 후반에 두드러지며 깨끗한 젖산을 생성합니다. 오래된 염수가 점점 안정되는 이유 중 하나입니다.',
+      zh: 'Pediococcus 在高盐环境中表现出色。\n\n在老盐水泡菜中后期逐渐突出，产酸干净。这也是老卤泡菜风味越来越稳定的原因之一。',
+      de: 'Pediococcus gedeiht in salzreicher Umgebung.\n\nIn altem Paocai-Lake wird er spät prominent und produziert saubere Milchsäure. Er ist ein Grund, warum gereifte Paocai-Lake mit der Zeit stabiler wird.'
+    },
+    'tip.brevis': {
+      en: 'L. brevis is heterofermentative — it produces CO₂ and acetic acid alongside lactic acid.\n\nIn sauerkraut, this adds flavor complexity beyond pure sourness. It bridges the gap between early Leuconostoc and late Lactobacillus plantarum.',
+      ko: 'L. brevis는 이종발효균으로 젖산 외에 CO₂와 초산도 생성합니다.\n\n사우어크라우트에서 단순한 신맛 너머의 풍미 복잡성을 더합니다. 초기 Leuconostoc과 후기 L. plantarum 사이를 이어주는 역할을 합니다.',
+      zh: 'L. brevis 是异型发酵菌——除乳酸外还产生 CO₂ 和醋酸。\n\n在酸菜中，它让风味不只是单纯的酸，而是更有层次。它衔接了早期的明串珠菌和后期的植物乳杆菌。',
+      de: 'L. brevis ist heterofermentativ — es produziert neben Milchsäure auch CO₂ und Essigsäure.\n\nBeim Sauerkraut fügt dies Geschmackskomplexität jenseits reiner Säure hinzu. Es überbrückt die Lücke zwischen frühem Leuconostoc und spätem L. plantarum.'
     },
 
     // Batch tracker

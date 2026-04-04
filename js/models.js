@@ -33,19 +33,20 @@ window.KimchiSim.models = (function () {
       starter_pH_drop: 0.25, starter_speed_factor: 0.5,
       // Microbial succession
       sigmoid_k: 6.0,
-      // Species: 3 species, pH-driven sigmoid switchover
+      // Species: pH-driven sigmoid succession (literature: PMC7465714, Jung et al. 2011)
+      // Leu. mesenteroides initiates, Lb. sakei dominates mid (psychrotrophic, kimchi signature), Lb. plantarum finishes
       species: [
-        { key: 'sakei',        phCenter: 5.0, direction: 'high' },  // dominates at high pH
-        { key: 'mesenteroides', phCenter: 4.6, sigma: 0.5 },        // Gaussian peak
-        { key: 'plantarum',    phCenter: 4.2, direction: 'low' }    // dominates at low pH
+        { key: 'mesenteroides', phCenter: 5.0, direction: 'high' },  // early — heterofermentative, CO₂ + aroma
+        { key: 'sakei',          phCenter: 4.6, sigma: 0.5 },        // mid — psychrotrophic, kimchi signature species
+        { key: 'plantarum',     phCenter: 4.2, direction: 'low' }    // late — acid-tolerant, deepens sourness
       ],
-      starterBoost: { mesenteroides: 0.5, sakei: -0.4 },
+      starterBoost: { sakei: 0.5, mesenteroides: -0.4 },
       // Flavor scoring
       flavor_pH_center: 4.35, flavor_pH_sigma: 0.3,
       flavor_acid_center: 0.6, flavor_acid_sigma: 0.2,
       // Flavor weights: [pH, acid, keySpeciesFraction]
       flavor_weights: [0.5, 0.3, 0.2],
-      flavor_key_species: 'mesenteroides',
+      flavor_key_species: 'sakei',
       // Nitrite kinetics
       water_fraction: 0.88,
       nitrate_base: 34, nitrate_adi_flux: 1.8,
@@ -53,7 +54,7 @@ window.KimchiSim.models = (function () {
       nitrite_form_base: 0.16, nitrite_yield: 0.78, nitrite_clear_base: 1.40,
       nitrite_safe: 3, nitrite_caution: 8,
       // Nitrite species weighting
-      nitrite_reducer_weights: { sakei: 0.30, mesenteroides: 0.15 },
+      nitrite_reducer_weights: { mesenteroides: 0.30, sakei: 0.15 },
       nitrite_scavenger_key: 'plantarum', nitrite_scavenger_weight: 0.90,
       // Recipe
       recipe_base_weight: 2.5,
@@ -80,14 +81,15 @@ window.KimchiSim.models = (function () {
       // Starter (老盐水)
       starter_lambda_factor: 0.7, starter_N0_boost: 2.0,
       starter_pH_drop: 0.30, starter_speed_factor: 0.6,
-      // Microbial succession
+      // Microbial succession (literature: Xiao et al. 2018, Rao et al. 2020)
+      // Weissella confusa initiates, Lb. plantarum dominates, Pediococcus pentosaceus in late brine
       sigmoid_k: 5.5,
       species: [
-        { key: 'leuconostoc', phCenter: 5.0, direction: 'high' },
-        { key: 'plantarum',   phCenter: 4.3, sigma: 0.45 },
-        { key: 'pentosus',    phCenter: 3.9, direction: 'low' }
+        { key: 'weissella',    phCenter: 5.0, direction: 'high' },  // early — common in Chinese vegetable ferments
+        { key: 'plantarum',    phCenter: 4.3, sigma: 0.45 },        // mid — dominant, acid-tolerant
+        { key: 'pediococcus',  phCenter: 3.9, direction: 'low' }    // late — salt-tolerant, homofermentative
       ],
-      starterBoost: { plantarum: 0.5, leuconostoc: -0.3 },
+      starterBoost: { plantarum: 0.5, weissella: -0.3 },
       // Flavor — optimal at deeper acidity, plantarum-driven crunch
       flavor_pH_center: 4.0, flavor_pH_sigma: 0.35,
       flavor_acid_center: 0.7, flavor_acid_sigma: 0.25,
@@ -99,8 +101,8 @@ window.KimchiSim.models = (function () {
       sodium_ref_molar: 0.72,
       nitrite_form_base: 0.18, nitrite_yield: 0.75, nitrite_clear_base: 1.30,
       nitrite_safe: 3, nitrite_caution: 8,
-      nitrite_reducer_weights: { leuconostoc: 0.25, plantarum: 0.20 },
-      nitrite_scavenger_key: 'pentosus', nitrite_scavenger_weight: 0.85,
+      nitrite_reducer_weights: { weissella: 0.25, plantarum: 0.20 },
+      nitrite_scavenger_key: 'pediococcus', nitrite_scavenger_weight: 0.85,
       // Recipe (per 1kg vegetables)
       recipe_base_weight: 1.0,
       recipe_items: {
@@ -126,27 +128,28 @@ window.KimchiSim.models = (function () {
       // Starter (rarely used but supported)
       starter_lambda_factor: 0.5, starter_N0_boost: 1.5,
       starter_pH_drop: 0.20, starter_speed_factor: 0.4,
-      // Microbial succession
+      // Microbial succession (Pederson & Albury 1969, Plengvidhya et al. 2007)
+      // Classic 3-phase: Leu. mesenteroides → Lb. brevis → Lb. plantarum
       sigmoid_k: 5.0,
       species: [
-        { key: 'mesenteroides', phCenter: 5.5, direction: 'high' },
-        { key: 'plantarum',     phCenter: 4.5, sigma: 0.5 },
-        { key: 'brevis',        phCenter: 4.0, direction: 'low' }
+        { key: 'mesenteroides', phCenter: 5.5, direction: 'high' },  // early — initiator, CO₂ + ethanol
+        { key: 'brevis',        phCenter: 4.5, sigma: 0.5 },         // mid — heterofermentative, flavor complexity
+        { key: 'plantarum',     phCenter: 4.0, direction: 'low' }    // late — homofermentative, final acidifier
       ],
-      starterBoost: { plantarum: 0.4, mesenteroides: -0.3 },
+      starterBoost: { brevis: 0.4, mesenteroides: -0.3 },
       // Flavor — classic sauerkraut tang
       flavor_pH_center: 4.1, flavor_pH_sigma: 0.35,
       flavor_acid_center: 0.8, flavor_acid_sigma: 0.25,
       flavor_weights: [0.45, 0.35, 0.20],
-      flavor_key_species: 'plantarum',
+      flavor_key_species: 'brevis',
       // Nitrite — cabbage has moderate nitrate
       water_fraction: 0.92,
       nitrate_base: 28, nitrate_adi_flux: 1.5,
       sodium_ref_molar: 0.38,
       nitrite_form_base: 0.14, nitrite_yield: 0.80, nitrite_clear_base: 1.50,
       nitrite_safe: 3, nitrite_caution: 8,
-      nitrite_reducer_weights: { mesenteroides: 0.28, plantarum: 0.22 },
-      nitrite_scavenger_key: 'brevis', nitrite_scavenger_weight: 0.80,
+      nitrite_reducer_weights: { mesenteroides: 0.28, brevis: 0.22 },
+      nitrite_scavenger_key: 'plantarum', nitrite_scavenger_weight: 0.80,
       // Recipe (per 1kg cabbage)
       recipe_base_weight: 1.0,
       recipe_items: {
