@@ -76,6 +76,7 @@ window.KimchiSim = window.KimchiSim || {};
         sim.i18n.setLang(newLang);
         sim.charts.updateLabels();
         sim.recipe.updateLang();
+        if (sim.ui.resetMicrobeKeys) sim.ui.resetMicrobeKeys();
         updateCalcResults();
         updateLangButtons(newLang);
         runAndUpdate(sim.ui.getParams(), sim.ui.getStages());
@@ -84,10 +85,12 @@ window.KimchiSim = window.KimchiSim || {};
   }
 
   function applyLangDefaults(lang, isSwitch) {
-    // German → default recipe to Sauerkraut
+    // German → default recipe to Sauerkraut; Chinese → default to Kimchi
     if (lang === 'de' && currentRecipeType === 'kimchi') {
       setRecipeType('sauerkraut');
-    } else if (lang !== 'de' && currentRecipeType === 'sauerkraut') {
+    } else if (lang === 'zh' && currentRecipeType === 'sauerkraut') {
+      setRecipeType('kimchi');
+    } else if (lang === 'ko' && currentRecipeType !== 'kimchi' && isSwitch) {
       setRecipeType('kimchi');
     }
 
@@ -274,7 +277,7 @@ window.KimchiSim = window.KimchiSim || {};
       btn.classList.toggle('active', btn.getAttribute('data-recipe') === type);
     });
 
-    // Map recipe type to ferment model type
+    // Map recipe type to ferment model type and switch model
     var modelType = type === 'paocai' ? 'sichuan' : type;
     if (sim.models.setFermentType) {
       sim.models.setFermentType(modelType);
