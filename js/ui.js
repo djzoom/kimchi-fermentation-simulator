@@ -570,7 +570,7 @@ window.KimchiSim.ui = (function () {
     // 4. Starter brine
     var starterDays = overSourDays;
     setVal('tl-starter-when', msWhen(starterDays, '+'));
-    var starterNote = lang === 'zh' ? '可作母水（老泡菜液）· 下次加入 5–10% 提升发酵稳定性'
+    var starterNote = lang === 'zh' ? '可作酵种（老泡菜液）· 下次加入 5–10% 提升发酵稳定性'
                     : lang === 'ko' ? '종균으로 사용 가능 · 다음 배치에 5-10% 추가'
                     : 'Use as starter brine · Add 5–10% to next batch';
     setVal('tl-starter-desc', starterNote);

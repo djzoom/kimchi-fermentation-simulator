@@ -2369,6 +2369,8 @@ a:hover { text-decoration: underline; }
 .footer p { font-size: var(--fs-2xs); color: var(--text-muted); margin-bottom: 2px; }
 .footer-models { font-style: italic; }
 .footer-refs a { font-size: var(--fs-3xs); color: var(--text-secondary); }
+.footer-links { margin-top: 4px; }
+.footer-links a { font-size: var(--fs-3xs); color: var(--text-secondary); }
 
 /* ═══ LAYER VISIBILITY ═══ */
 .layer[style*="display:none"],
