@@ -1,7 +1,5 @@
 # Kimchi Fermentation Simulator | 김치 발효 시뮬레이터 | 辣白菜发酵模拟器
 
-**[Live Demo | 在线演示 | 라이브 데모](https://kimchi.0xgarfield.com/)**
-
 Interactive web-based simulation of Korean kimchi (김치) fermentation, built on peer-reviewed food science models.
 
 ## Features

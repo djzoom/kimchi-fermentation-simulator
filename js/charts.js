@@ -1,37 +1,16 @@
 /**
- * Kimchi Fermentation Navigator — Unified Chart
- * Soft Scientific UI: smooth spline, gradient fill, glowing optimal point
+ * Kimchi Fermentation Navigator — Multi-Chart Stack
+ * 4 independent Chart.js instances sharing the same x-axis (days)
+ * 1. Flavor Score  2. pH + LAB  3. Microbe Succession  4. Nitrite
  */
 window.KimchiSim = window.KimchiSim || {};
 
 window.KimchiSim.charts = (function () {
   'use strict';
 
-  var chart = null;
+  var charts = {};  // { flavor, phLab, microbes, nitrite }
 
-  var DS = {
-    FLAVOR: 0,
-    NITRITE: 1,
-    PH: 2,
-    ACID: 3,
-    LAB: 4,
-    SAKEI: 5,
-    MESEN: 6,
-    PLANT: 7
-  };
-
-  var GROUPS = {
-    flavor: [DS.FLAVOR],
-    nitrite: [DS.NITRITE],
-    ph: [DS.PH],
-    acid: [DS.ACID],
-    lab: [DS.LAB],
-    microbes: [DS.SAKEI, DS.MESEN, DS.PLANT]
-  };
-
-  function t(key) {
-    return window.KimchiSim.i18n.t(key);
-  }
+  function t(key) { return window.KimchiSim.i18n.t(key); }
 
   function css(v) {
     return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#888';
@@ -54,397 +33,15 @@ window.KimchiSim.charts = (function () {
     };
   }
 
-  function groupVisible(name) {
-    var indices = GROUPS[name] || [];
-    if (!chart || indices.length === 0) return false;
-    return indices.every(function(idx) {
-      return chart.isDatasetVisible(idx);
-    });
+  function isDark() {
+    return document.documentElement.getAttribute('data-theme') === 'dark';
   }
 
-  function setGroupVisibility(name, visible) {
-    var indices = GROUPS[name] || [];
-    indices.forEach(function(idx) {
-      chart.setDatasetVisibility(idx, visible);
-    });
+  function gridColor() {
+    return isDark() ? 'rgba(148,163,184,0.08)' : 'rgba(148,163,184,0.12)';
   }
 
-  function formatCompact(days) {
-    if (days < 1) return Math.round(days * 24) + 'h';
-    return days < 10 ? days.toFixed(1) + 'd' : Math.round(days) + 'd';
-  }
-
-  function phaseLabelText(microbeKey, startDays, endDays) {
-    return t('microbe.' + microbeKey + '.name') + '  ' + formatCompact(startDays) + '-' + formatCompact(endDays);
-  }
-
-  function applyAnnotationLabels() {
-    if (!chart) return;
-    var c = colors();
-    var ann = chart.options.plugins.annotation.annotations;
-    if (ann.excellent) ann.excellent.label.content = t('chart.excellent');
-    if (ann.nitriteSafe) ann.nitriteSafe.label.content = t('chart.nitrite.safeLine');
-    // Phase labels are set in update() with actual time values
-  }
-
-  function syncControlButtons() {
-    if (!chart) return;
-    var buttons = document.querySelectorAll('.chart-toggle');
-    buttons.forEach(function(btn) {
-      var key = btn.getAttribute('data-series');
-      var active = groupVisible(key);
-      btn.classList.toggle('active', active);
-      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-  }
-
-  function syncAxisVisibility() {
-    if (!chart) return;
-    chart.options.scales.yPH.display = chart.isDatasetVisible(DS.PH) || chart.isDatasetVisible(DS.ACID);
-    chart.options.scales.yLAB.display = chart.isDatasetVisible(DS.LAB);
-    chart.options.scales.yNO2.display = chart.isDatasetVisible(DS.NITRITE);
-
-    var ann = chart.options.plugins.annotation.annotations;
-    if (ann.nitriteSafe) ann.nitriteSafe.display = chart.isDatasetVisible(DS.NITRITE);
-  }
-
-  function bindControls() {
-    var buttons = document.querySelectorAll('.chart-toggle');
-    buttons.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var key = btn.getAttribute('data-series');
-        if (!key || key === 'flavor' || !chart) return;
-        setGroupVisibility(key, !groupVisible(key));
-        syncAxisVisibility();
-        syncControlButtons();
-        chart.update('none');
-      });
-    });
-  }
-
-  // Glowing point plugin
-  var glowPointPlugin = {
-    id: 'glowPoint',
-    afterDatasetsDraw: function(chart) {
-      var meta = chart.getDatasetMeta(DS.FLAVOR);
-      if (!meta || meta.hidden) return;
-      var optTime = chart._kimchiOptimalTime;
-      if (optTime == null) return;
-      var xScale = chart.scales.x;
-      var yScale = chart.scales.y;
-      if (!xScale || !yScale) return;
-
-      // Find closest data point to optimal time
-      var data = meta.data;
-      var closest = null;
-      var minDist = Infinity;
-      for (var i = 0; i < data.length; i++) {
-        var pt = data[i];
-        var raw = meta._parsed ? meta._parsed[i] : null;
-        if (!raw) continue;
-        var dist = Math.abs(raw.x - optTime);
-        if (dist < minDist) { minDist = dist; closest = pt; }
-      }
-      if (!closest) return;
-
-      var ctx = chart.ctx;
-      var x = closest.x;
-      var y = closest.y;
-      var c = colors();
-
-      // Outer glow
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(x, y, 14, 0, Math.PI * 2);
-      ctx.fillStyle = c.accent + '20';
-      ctx.fill();
-
-      // Mid glow
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = c.accent + '40';
-      ctx.fill();
-
-      // Inner dot
-      ctx.beginPath();
-      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = c.accent;
-      ctx.fill();
-
-      // White center
-      ctx.beginPath();
-      ctx.arc(x, y, 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#fff';
-      ctx.fill();
-      ctx.restore();
-    }
-  };
-
-  function init() {
-    var c = colors();
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var gridColor = isDark ? 'rgba(148,163,184,0.08)' : 'rgba(148,163,184,0.12)';
-
-    Chart.register(glowPointPlugin);
-
-    chart = new Chart(document.getElementById('flavor-chart').getContext('2d'), {
-      type: 'line',
-      data: {
-        datasets: [
-          /* 0: Flavor Score */
-          {
-            label: t('chart.score'),
-            data: [],
-            borderColor: c.accent,
-            borderWidth: 2.5,
-            pointRadius: 0,
-            tension: 0.4,
-            yAxisID: 'y',
-            fill: 'origin',
-            backgroundColor: function(ctx) {
-              var ch = ctx.chart;
-              var area = ch.chartArea;
-              if (!area) return c.accent + '15';
-              var g = ch.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-              g.addColorStop(0, c.accent + '30');
-              g.addColorStop(0.7, c.accent + '08');
-              g.addColorStop(1, c.accent + '00');
-              return g;
-            }
-          },
-          /* 1: Nitrite */
-          {
-            label: t('chart.nitrite'),
-            data: [],
-            borderColor: c.orange,
-            borderWidth: 1.8,
-            pointRadius: 0,
-            tension: 0.4,
-            borderDash: [5, 3],
-            fill: false,
-            yAxisID: 'yNO2'
-          },
-          /* 2: pH */
-          {
-            label: t('chart.ph'),
-            data: [],
-            borderColor: c.blue,
-            borderWidth: 2,
-            pointRadius: 0,
-            tension: 0.4,
-            fill: false,
-            yAxisID: 'yPH',
-            hidden: true
-          },
-          /* 3: Lactic Acid */
-          {
-            label: t('chart.acid'),
-            data: [],
-            borderColor: c.redMuted,
-            borderWidth: 1.5,
-            pointRadius: 0,
-            tension: 0.4,
-            borderDash: [5, 3],
-            fill: false,
-            yAxisID: 'yPH',
-            hidden: true
-          },
-          /* 4: LAB count */
-          {
-            label: t('chart.lab'),
-            data: [],
-            borderColor: c.green,
-            borderWidth: 2,
-            pointRadius: 0,
-            tension: 0.4,
-            fill: false,
-            yAxisID: 'yLAB',
-            hidden: true
-          },
-          /* 5-7: Microbe species */
-          {
-            label: t('microbe.sakei.name'),
-            data: [],
-            borderColor: c.orange,
-            borderWidth: 1.6,
-            pointRadius: 0,
-            fill: false,
-            tension: 0.4,
-            yAxisID: 'y',
-            hidden: true
-          },
-          {
-            label: t('microbe.mesenteroides.name'),
-            data: [],
-            borderColor: c.teal,
-            borderWidth: 1.6,
-            pointRadius: 0,
-            fill: false,
-            tension: 0.4,
-            yAxisID: 'y',
-            hidden: true
-          },
-          {
-            label: t('microbe.plantarum.name'),
-            data: [],
-            borderColor: c.purple,
-            borderWidth: 1.6,
-            pointRadius: 0,
-            fill: false,
-            tension: 0.4,
-            yAxisID: 'y',
-            hidden: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(15,23,42,0.9)',
-            titleColor: '#E2E8F0',
-            bodyColor: '#CBD5E1',
-            borderColor: 'rgba(148,163,184,0.2)',
-            borderWidth: 1,
-            cornerRadius: 10,
-            padding: 10,
-            titleFont: { family: 'Inter', size: 11, weight: '600' },
-            bodyFont: { family: 'JetBrains Mono', size: 11 },
-            callbacks: {
-              title: function(items) {
-                return items[0].parsed.x.toFixed(1) + ' ' + t('unit.days');
-              },
-              label: function(ctx) {
-                var v = ctx.parsed.y;
-                var lbl = ctx.dataset.label;
-                if (ctx.datasetIndex === DS.PH) return lbl + ': ' + v.toFixed(2);
-                if (ctx.datasetIndex === DS.ACID) return lbl + ': ' + v.toFixed(2) + '%';
-                if (ctx.datasetIndex === DS.LAB) return lbl + ': ' + v.toFixed(1) + ' log CFU/g';
-                if (ctx.datasetIndex === DS.NITRITE) return lbl + ': ' + v.toFixed(1) + ' mg/kg';
-                if (ctx.datasetIndex >= DS.SAKEI) return lbl + ': ' + v.toFixed(1) + '%';
-                return lbl + ': ' + v.toFixed(1);
-              }
-            }
-          },
-          annotation: {
-            annotations: {
-              excellent: {
-                type: 'box',
-                yMin: 70, yMax: 100,
-                backgroundColor: c.accent + '08',
-                borderColor: c.accent + '18',
-                borderWidth: 1,
-                label: {
-                  display: true, content: '',
-                  position: { x: 'end', y: 'center' },
-                  color: c.accent, font: { size: 10 }
-                }
-              },
-              optLine: {
-                type: 'line', scaleID: 'x', value: 0,
-                borderColor: c.accent + 'AA',
-                borderWidth: 2,
-                borderDash: [6, 4]
-              },
-              nitriteSafe: {
-                type: 'line', scaleID: 'yNO2', value: 3,
-                borderColor: c.orange + '88',
-                borderWidth: 1.5,
-                borderDash: [4, 4],
-                label: {
-                  display: true, content: '',
-                  position: 'start',
-                  backgroundColor: c.orange + 'CC',
-                  color: '#fff',
-                  font: { size: 9 },
-                  padding: 3
-                }
-              },
-              phaseInitial: {
-                type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
-                backgroundColor: 'rgba(59,130,246,0.08)',
-                borderWidth: 0,
-                label: {
-                  display: true, content: '',
-                  position: { x: 'center', y: 'center' },
-                  color: 'rgba(59,130,246,0.7)',
-                  font: { size: 9, weight: 'bold', family: 'Inter' }
-                }
-              },
-              phaseOptimal: {
-                type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
-                backgroundColor: 'rgba(34,197,94,0.08)',
-                borderWidth: 0,
-                label: {
-                  display: true, content: '',
-                  position: { x: 'center', y: 'center' },
-                  color: 'rgba(34,197,94,0.7)',
-                  font: { size: 9, weight: 'bold', family: 'Inter' }
-                }
-              },
-              phaseOver: {
-                type: 'box', xMin: 0, xMax: 0, yMin: 0, yMax: 8,
-                backgroundColor: 'rgba(245,158,11,0.08)',
-                borderWidth: 0,
-                label: {
-                  display: true, content: '',
-                  position: { x: 'center', y: 'center' },
-                  color: 'rgba(180,120,0,0.7)',
-                  font: { size: 9, weight: 'bold', family: 'Inter' }
-                }
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            type: 'linear', min: 0,
-            grid: { color: gridColor },
-            ticks: {
-              color: c.muted, font: { size: 10, family: 'Inter' },
-              maxTicksLimit: 10,
-              callback: function(v) { return v !== Math.floor(v) ? '' : v.toFixed(0); }
-            },
-            title: { display: true, text: t('chart.xaxis'), color: c.muted, font: { size: 10, family: 'Inter' } }
-          },
-          y: {
-            position: 'left', min: 0, max: 100,
-            grid: { color: gridColor },
-            ticks: { color: c.muted, font: { size: 10 } },
-            title: { display: false }
-          },
-          yNO2: {
-            position: 'right', min: 0, max: 20, display: true,
-            grid: { drawOnChartArea: false },
-            ticks: { color: c.orange, font: { size: 9 } },
-            title: { display: true, text: t('chart.axis.no2'), color: c.orange, font: { size: 9 } }
-          },
-          yPH: {
-            position: 'left', min: 3.0, max: 6.5, display: false,
-            grid: { drawOnChartArea: false },
-            ticks: { color: c.blue, font: { size: 9 } },
-            title: { display: true, text: t('chart.axis.ph'), color: c.blue, font: { size: 9 } }
-          },
-          yLAB: {
-            position: 'right', min: 3, max: 10, display: false,
-            grid: { drawOnChartArea: false },
-            ticks: { color: c.green, font: { size: 9 } },
-            title: { display: true, text: t('chart.lab'), color: c.green, font: { size: 9 } }
-          }
-        }
-      }
-    });
-
-    applyAnnotationLabels();
-    bindControls();
-    syncAxisVisibility();
-    syncControlButtons();
-    chart.update('none');
-  }
+  // ─── Shared helpers ───
 
   function toXY(timePoints, values) {
     var pts = [];
@@ -459,121 +56,840 @@ window.KimchiSim.charts = (function () {
     return pts;
   }
 
+  var _pickleDate = null;
+
+  function formatDateTick(dayValue) {
+    if (!_pickleDate) return dayValue.toFixed(0);
+    var d = new Date(_pickleDate.getTime() + dayValue * 86400000);
+    var m = d.getMonth() + 1;
+    var day = d.getDate();
+    return m + '/' + day;
+  }
+
+  function sharedXScale(c) {
+    return {
+      type: 'linear', min: 0,
+      grid: { color: gridColor() },
+      ticks: {
+        color: c.muted, font: { size: 12, family: 'Inter' },
+        maxTicksLimit: 10,
+        callback: function(v) {
+          if (v !== Math.floor(v)) return '';
+          return formatDateTick(v);
+        }
+      },
+      title: { display: false }
+    };
+  }
+
+  var Y_AXIS_WIDTH = 44; // fixed width for all left Y-axes to ensure x-axis alignment
+
+  function sharedOpts(c, extraScales, extraAnnotations) {
+    var scales = { x: sharedXScale(c) };
+    if (extraScales) {
+      for (var k in extraScales) {
+        var s = extraScales[k];
+        // Force consistent left Y-axis width (only for visible axes)
+        if (s.position === 'left' && s.display !== false) {
+          s.afterFit = function(axis) { axis.width = Y_AXIS_WIDTH; };
+        }
+        scales[k] = s;
+      }
+    }
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      layout: { padding: { top: 20, left: 4 } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(15,23,42,0.9)',
+          titleColor: '#E2E8F0',
+          bodyColor: '#CBD5E1',
+          borderColor: 'rgba(148,163,184,0.2)',
+          borderWidth: 1,
+          cornerRadius: 10,
+          padding: 10,
+          titleFont: { family: 'Inter', size: 11, weight: '600' },
+          bodyFont: { family: 'JetBrains Mono', size: 11 },
+          callbacks: {
+            title: function(items) {
+              var dayVal = items[0].parsed.x;
+              var line1 = dayVal.toFixed(1) + ' ' + t('unit.days');
+              if (!_pickleDate) return line1;
+              var d = new Date(_pickleDate.getTime() + dayVal * 86400000);
+              var lang = (window.KimchiSim.i18n && window.KimchiSim.i18n.getLang) ? window.KimchiSim.i18n.getLang() : 'en';
+              var dateStr;
+              if (lang === 'zh') {
+                dateStr = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '时';
+              } else if (lang === 'ko') {
+                dateStr = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + d.getHours() + '시';
+              } else if (lang === 'de') {
+                dateStr = d.getDate() + '. ' + d.toLocaleString('de', { month: 'short' }) + ' ' + d.getHours() + ':00';
+              } else {
+                var mon = d.toLocaleString('en', { month: 'short' });
+                dateStr = mon + ' ' + d.getDate() + ', ' + d.getHours() + ':00';
+              }
+              return [line1, dateStr];
+            }
+          }
+        },
+        annotation: { clip: false, annotations: extraAnnotations || {} }
+      },
+      scales: scales
+    };
+  }
+
+  // ─── Glow point plugin (for flavor chart) ───
+  var glowPointPlugin = {
+    id: 'glowPoint',
+    afterDatasetsDraw: function(chart) {
+      if (!chart._isFlavorChart) return;
+      var meta = chart.getDatasetMeta(0);
+      if (!meta || meta.hidden) return;
+      var optTime = chart._kimchiOptimalTime;
+      if (optTime == null) return;
+      var data = meta.data;
+      var closest = null, minDist = Infinity;
+      for (var i = 0; i < data.length; i++) {
+        var raw = meta._parsed ? meta._parsed[i] : null;
+        if (!raw) continue;
+        var dist = Math.abs(raw.x - optTime);
+        if (dist < minDist) { minDist = dist; closest = data[i]; }
+      }
+      if (!closest) return;
+      var ctx = chart.ctx;
+      var x = closest.x, y = closest.y;
+      var c = colors();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(x, y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = c.accent + '20'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = c.accent + '40'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = c.accent; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.restore();
+    }
+  };
+
+  // ─── Chart 1: Flavor Score ───
+  function initFlavor() {
+    var c = colors();
+    var canvas = document.getElementById('chart-flavor');
+    if (!canvas) return null;
+
+    var opts = sharedOpts(c, {
+      y: {
+        position: 'left', min: 0, max: 100,
+        grid: { color: gridColor() },
+        ticks: { color: c.muted, font: { size: 12 } },
+        title: { display: false }
+      }
+    }, {
+      excellent: {
+        type: 'box', yMin: 70, yMax: 100,
+        backgroundColor: c.accent + '08',
+        borderColor: c.accent + '18', borderWidth: 1
+      },
+      optLine: {
+        type: 'line', scaleID: 'x', value: 0,
+        borderColor: c.accent + 'AA', borderWidth: 2, borderDash: [6, 4]
+      }
+    });
+
+    opts.plugins.tooltip.callbacks.label = function(ctx) {
+      return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1);
+    };
+
+    var ch = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: t('chart.score'),
+          data: [],
+          borderColor: c.accent,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.4,
+          yAxisID: 'y',
+          fill: 'origin',
+          backgroundColor: function(ctx2) {
+            var area = ctx2.chart.chartArea;
+            if (!area) return c.accent + '15';
+            var g = ctx2.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+            g.addColorStop(0, c.accent + '30');
+            g.addColorStop(0.7, c.accent + '08');
+            g.addColorStop(1, c.accent + '00');
+            return g;
+          }
+        }]
+      },
+      options: opts
+    });
+    ch._isFlavorChart = true;
+    return ch;
+  }
+
+  // ─── Chart 2: pH + Lactic Acid ───
+  function initPhLab() {
+    var c = colors();
+    var canvas = document.getElementById('chart-ph-lab');
+    if (!canvas) return null;
+
+    var opts = sharedOpts(c, {
+      yPH: {
+        position: 'left', min: 3.0, max: 6.5, display: true,
+        grid: { color: gridColor() },
+        ticks: { color: c.blue, font: { size: 11 } },
+        title: { display: false }
+      },
+      yAcid: {
+        position: 'left', min: 0, max: 1.2, display: false,
+        grid: { drawOnChartArea: false },
+        ticks: { color: c.redMuted, font: { size: 11 }, callback: function(v) { return v.toFixed(1) + '%'; } },
+        title: { display: false }
+      }
+    }, {
+      phOptLine: {
+        type: 'line', scaleID: 'yPH', value: 4.35,
+        borderColor: c.blue + '66', borderWidth: 1.5, borderDash: [4, 4],
+        label: {
+          display: true, content: 'pH 4.35',
+          position: 'end',
+          backgroundColor: c.blue + 'CC', color: '#fff',
+          font: { size: 11 }, padding: 3
+        }
+      },
+      acidOptLine: {
+        type: 'line', scaleID: 'yAcid', value: 0.6,
+        borderColor: c.muted + '66', borderWidth: 1.5, borderDash: [4, 4],
+        label: {
+          display: true, content: '0.6%',
+          position: 'start',
+          backgroundColor: c.muted + 'CC', color: '#fff',
+          font: { size: 11 }, padding: 3
+        }
+      }
+    });
+
+    opts.plugins.tooltip.callbacks.label = function(ctx) {
+      var v = ctx.parsed.y;
+      if (ctx.datasetIndex === 0) return ctx.dataset.label + ': ' + v.toFixed(2);
+      if (ctx.datasetIndex === 1) return ctx.dataset.label + ': ' + v.toFixed(2) + '%';
+      return ctx.dataset.label + ': ' + v.toFixed(2);
+    };
+
+    return new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: t('chart.ph'),
+            data: [],
+            borderColor: c.blue,
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.4,
+            fill: false,
+            yAxisID: 'yPH'
+          },
+          {
+            label: t('chart.acid'),
+            data: [],
+            borderColor: c.muted,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            tension: 0.4,
+            borderDash: [5, 3],
+            fill: false,
+            yAxisID: 'yAcid'
+          }
+        ]
+      },
+      options: opts
+    });
+  }
+
+  // ─── Chart 3: Microbial Succession ───
+  function initMicrobes() {
+    var c = colors();
+    var canvas = document.getElementById('chart-microbes');
+    if (!canvas) return null;
+
+    var opts = sharedOpts(c, {
+      y: {
+        position: 'left', min: 0, max: 100,
+        grid: { color: gridColor() },
+        ticks: {
+          color: c.muted, font: { size: 11 },
+          callback: function(v) { return v + '%'; }
+        },
+        title: { display: false }
+      }
+    }, {
+      mesoPeak: {
+        type: 'box', yMin: 40, yMax: 100,
+        backgroundColor: c.accent + '06',
+        borderColor: c.accent + '12', borderWidth: 1,
+        label: {
+          display: true, content: 'Leuc. dominant',
+          position: { x: 'end', y: 'center' },
+          color: c.accent + '44', font: { size: 11 }
+        }
+      }
+    });
+
+    opts.plugins.tooltip.callbacks.label = function(ctx) {
+      return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%';
+    };
+
+    return new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: t('microbe.sakei.name'),
+            data: [],
+            borderColor: c.blue,
+            borderWidth: 1.8,
+            pointRadius: 0,
+            fill: true,
+            backgroundColor: c.blue + '12',
+            tension: 0.4,
+            yAxisID: 'y'
+          },
+          {
+            label: t('microbe.mesenteroides.name'),
+            data: [],
+            borderColor: c.accent,
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: true,
+            backgroundColor: c.accent + '12',
+            tension: 0.4,
+            yAxisID: 'y'
+          },
+          {
+            label: t('microbe.plantarum.name'),
+            data: [],
+            borderColor: c.purple,
+            borderWidth: 1.8,
+            pointRadius: 0,
+            fill: true,
+            backgroundColor: c.purple + '12',
+            tension: 0.4,
+            yAxisID: 'y'
+          }
+        ]
+      },
+      options: opts
+    });
+  }
+
+  // ─── Chart 4: Nitrite ───
+  function initNitrite() {
+    var c = colors();
+    var canvas = document.getElementById('chart-nitrite');
+    if (!canvas) return null;
+
+    var opts = sharedOpts(c, {
+      y: {
+        position: 'left', min: 0, max: 8,
+        grid: { color: gridColor() },
+        ticks: { color: c.amber, font: { size: 11 } },
+        title: { display: false }
+      }
+    }, {
+      safeLine: {
+        type: 'line', scaleID: 'y', value: 3,
+        borderColor: c.amber + '88', borderWidth: 1.5, borderDash: [4, 4],
+        label: {
+          display: true, content: t('chart.nitrite.safeLine'),
+          position: 'start',
+          backgroundColor: c.amber + 'CC',
+          color: '#fff',
+          font: { size: 11 },
+          padding: 3
+        }
+      }
+    });
+
+    // x-axis needs label on the bottom chart
+    opts.scales.x.title = { display: true, text: t('chart.xaxis'), color: c.muted, font: { size: 12, family: 'Inter' } };
+
+    opts.plugins.tooltip.callbacks.label = function(ctx) {
+      return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + ' mg/kg';
+    };
+
+    return new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: t('chart.nitrite'),
+          data: [],
+          borderColor: c.amber,
+          borderWidth: 1.8,
+          pointRadius: 0,
+          tension: 0.4,
+          borderDash: [5, 3],
+          fill: 'origin',
+          backgroundColor: c.amber + '10',
+          yAxisID: 'y'
+        }]
+      },
+      options: opts
+    });
+  }
+
+  // ─── Init all 4 charts ───
+  function init() {
+    Chart.register(glowPointPlugin);
+    charts.flavor = initFlavor();
+    charts.phLab = initPhLab();
+    charts.microbes = initMicrobes();
+    charts.nitrite = initNitrite();
+  }
+
+  // ─── Update all charts with simulation data ───
   function update(data) {
-    if (!chart) return;
+    var tp = data.timePoints;
 
-    var ds = chart.data.datasets;
-    ds[DS.FLAVOR].data = toXY(data.timePoints, data.flavorScore);
-    ds[DS.NITRITE].data = toXY(data.timePoints, data.nitrite);
-    ds[DS.PH].data = toXY(data.timePoints, data.pH);
-    ds[DS.ACID].data = toXY(data.timePoints, data.lacticAcid);
-    ds[DS.LAB].data = toXY(data.timePoints, data.labCounts);
-    // Species data — uses backward-compat aliases from simulation
-    var speciesKeys = data.speciesKeys || ['sakei', 'mesenteroides', 'plantarum'];
-    ds[DS.SAKEI].data = toXY(data.timePoints, data.microbial[speciesKeys[0]] || []);
-    ds[DS.MESEN].data = toXY(data.timePoints, data.microbial[speciesKeys[1]] || []);
-    ds[DS.PLANT].data = toXY(data.timePoints, data.microbial[speciesKeys[2]] || []);
-    // Update species labels
-    ds[DS.SAKEI].label = t('microbe.' + speciesKeys[0] + '.name');
-    ds[DS.MESEN].label = t('microbe.' + speciesKeys[1] + '.name');
-    ds[DS.PLANT].label = t('microbe.' + speciesKeys[2] + '.name');
+    // Chart 1: Flavor with phase color zones
+    if (charts.flavor) {
+      var f = charts.flavor;
+      var c = colors();
+      f.data.datasets[0].data = toXY(tp, data.flavorScore);
+      f.options.scales.x.max = data.tMax;
+      var ann = f.options.plugins.annotation.annotations;
+      ann.optLine.value = data.optimalTime;
+      f._kimchiOptimalTime = data.optimalTime;
 
-    chart.options.scales.x.max = data.tMax;
-    var nitriteMeta = data.nitriteMeta || {};
-    var nitritePeak = nitriteMeta.peak ? nitriteMeta.peak.value : 0;
-    var safeThreshold = nitriteMeta.safeThreshold || 3;
-    chart.options.scales.yNO2.max = Math.max(8, Math.ceil((Math.max(nitritePeak, safeThreshold) + 2) / 2) * 2);
+      // Phase zones
+      var p1End = data.phases.phase1End;
+      var p2End = data.phases.phase2End;
+      ann.zoneInitial = {
+        type: 'box', xMin: 0, xMax: p1End, yMin: 0, yMax: 100,
+        backgroundColor: c.blue + '08', borderWidth: 0,
+        label: { display: true, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 11 } }
+      };
+      ann.zoneOptimal = {
+        type: 'box', xMin: p1End, xMax: p2End, yMin: 0, yMax: 100,
+        backgroundColor: c.accent + '0A', borderWidth: 0,
+        label: { display: true, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 11, weight: 'bold' } }
+      };
+      ann.zoneOver = {
+        type: 'box', xMin: p2End, xMax: data.tMax, yMin: 0, yMax: 100,
+        backgroundColor: c.amber + '08', borderWidth: 0,
+        label: { display: true, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 11 } }
+      };
+      // Phase boundary lines
+      ann.p1Line = { type: 'line', scaleID: 'x', value: p1End, borderColor: c.blue + '33', borderWidth: 1, borderDash: [3, 3] };
+      ann.p2Line = { type: 'line', scaleID: 'x', value: p2End, borderColor: c.amber + '44', borderWidth: 1, borderDash: [3, 3] };
 
-    var ann = chart.options.plugins.annotation.annotations;
+      f.update('none');
+    }
+
+    // Chart 2: pH + Lactic Acid
+    if (charts.phLab) {
+      var pl = charts.phLab;
+      pl.data.datasets[0].data = toXY(tp, data.pH);
+      pl.data.datasets[1].data = toXY(tp, data.lacticAcid);
+      pl.options.scales.x.max = data.tMax;
+      // pH 4.35 crossing vertical line
+      var ph435t = null;
+      for (var pi = 0; pi < tp.length; pi++) {
+        if (data.pH[pi] <= 4.35) { ph435t = tp[pi]; break; }
+      }
+      var plAnn = pl.options.plugins.annotation.annotations;
+      if (ph435t != null) {
+        plAnn.ph435Line = {
+          type: 'line', scaleID: 'x', value: ph435t,
+          borderColor: colors().blue + '88', borderWidth: 1.5, borderDash: [4, 3]
+        };
+      } else {
+        delete plAnn.ph435Line;
+      }
+      pl.update('none');
+    }
+
+    // Chart 3: Microbes
+    if (charts.microbes) {
+      var mb = charts.microbes;
+      mb.data.datasets[0].data = toXY(tp, data.microbial.sakei);
+      mb.data.datasets[1].data = toXY(tp, data.microbial.mesenteroides);
+      mb.data.datasets[2].data = toXY(tp, data.microbial.plantarum);
+      mb.options.scales.x.max = data.tMax;
+      mb.update('none');
+    }
+
+    // Chart 4: Nitrite
+    if (charts.nitrite) {
+      var nr = charts.nitrite;
+      nr.data.datasets[0].data = toXY(tp, data.nitrite);
+      var nitriteMeta = data.nitriteMeta || {};
+      var nitritePeak = nitriteMeta.peak ? nitriteMeta.peak.value : 0;
+      var safeThreshold = nitriteMeta.safeThreshold || 3;
+      nr.options.scales.y.max = Math.max(8, Math.ceil((Math.max(nitritePeak, safeThreshold) + 2) / 2) * 2);
+      nr.options.scales.x.max = data.tMax;
+      var nann = nr.options.plugins.annotation.annotations;
+      nann.safeLine.value = safeThreshold;
+      nr.update('none');
+    }
+
+    // Apply milestone markers across all charts
+    applyMilestones();
+    // Re-update all to render milestone lines
+    if (charts.flavor) charts.flavor.update('none');
+    if (charts.phLab) charts.phLab.update('none');
+    if (charts.microbes) charts.microbes.update('none');
+    if (charts.nitrite) charts.nitrite.update('none');
+  }
+
+  // ─── Update labels (language / theme switch) ───
+  function updateLabels() {
+    var c = colors();
+    var gc = gridColor();
+
+    // Flavor
+    if (charts.flavor) {
+      var f = charts.flavor;
+      f.options.scales.x.grid.color = gc;
+      f.options.scales.y.grid.color = gc;
+      f.options.scales.x.ticks.color = c.muted;
+      f.options.scales.y.ticks.color = c.muted;
+      f.data.datasets[0].label = t('chart.score');
+      f.data.datasets[0].borderColor = c.accent;
+      f.options.scales.y.title.text = t('chart.flavor.yaxis');
+      f.options.scales.y.title.color = c.muted;
+      f.update('none');
+    }
+
+    // pH + Acid
+    if (charts.phLab) {
+      var pl = charts.phLab;
+      pl.options.scales.x.grid.color = gc;
+      pl.options.scales.yPH.grid.color = gc;
+      pl.options.scales.x.ticks.color = c.muted;
+      pl.options.scales.yPH.ticks.color = c.blue;
+      pl.options.scales.yAcid.ticks.color = c.muted;
+      pl.data.datasets[0].label = t('chart.ph');
+      pl.data.datasets[1].label = t('chart.acid');
+      pl.update('none');
+    }
+
+    // Microbes
+    if (charts.microbes) {
+      var mb = charts.microbes;
+      mb.options.scales.x.grid.color = gc;
+      mb.options.scales.y.grid.color = gc;
+      mb.options.scales.x.ticks.color = c.muted;
+      mb.options.scales.y.ticks.color = c.muted;
+      mb.data.datasets[0].label = t('microbe.sakei.name');
+      mb.data.datasets[1].label = t('microbe.mesenteroides.name');
+      mb.data.datasets[2].label = t('microbe.plantarum.name');
+      mb.update('none');
+    }
+
+    // Nitrite
+    if (charts.nitrite) {
+      var nr = charts.nitrite;
+      nr.options.scales.x.grid.color = gc;
+      nr.options.scales.y.grid.color = gc;
+      nr.options.scales.x.ticks.color = c.muted;
+      nr.options.scales.y.ticks.color = c.amber;
+      nr.options.scales.x.title.text = t('chart.xaxis');
+      nr.options.scales.x.title.color = c.muted;
+      nr.data.datasets[0].label = t('chart.nitrite');
+      var nann = nr.options.plugins.annotation.annotations;
+      if (nann.safeLine) nann.safeLine.label.content = t('chart.nitrite.safeLine');
+      nr.update('none');
+    }
+  }
+
+  // ─── NOW marker (vertical line on all charts) ───
+  function setNowMarker(day) {
+    var chartList = [charts.flavor, charts.phLab, charts.microbes, charts.nitrite];
+    for (var i = 0; i < chartList.length; i++) {
+      var ch = chartList[i];
+      if (!ch) continue;
+      var ann = ch.options.plugins.annotation.annotations;
+      if (day === null || day === undefined) {
+        if (ann.nowLine) ann.nowLine.display = false;
+      } else {
+        var dk = isDark();
+        ann.nowLine = {
+          type: 'line', scaleID: 'x', value: day,
+          borderColor: dk ? '#94A3B8' : '#334155', borderWidth: 2.5, borderDash: [2, 2],
+          display: true,
+          label: {
+            display: i === 0, // only show label on top chart
+            content: t('batch.now') || 'Now',
+            position: 'start',
+            backgroundColor: dk ? '#E2E8F0' : '#1E293B',
+            color: dk ? '#0F172A' : '#F8FAFC',
+            font: { size: 10, weight: 'bold' }, padding: { top: 2, bottom: 2, left: 5, right: 5 }, borderRadius: 3,
+            yAdjust: -14
+          }
+        };
+      }
+      ch.update('none');
+    }
+  }
+
+  function setPickleDate(date) {
+    _pickleDate = date;
+  }
+
+  // ─── Milestone markers across all charts ───
+  var _milestones = null;
+  function setMilestones(m) {
+    _milestones = m;
+    applyMilestones();
+    if (charts.flavor) charts.flavor.update('none');
+    if (charts.phLab) charts.phLab.update('none');
+    if (charts.microbes) charts.microbes.update('none');
+    if (charts.nitrite) charts.nitrite.update('none');
+  }
+
+  function applyMilestones() {
+    if (!_milestones) return;
+    var c = colors();
+    var chartList = [charts.flavor, charts.phLab, charts.microbes, charts.nitrite];
+    var markers = [
+      { key: 'safe', day: _milestones.safeDay, color: c.blue, dash: [3, 3], width: 1.2 },
+      { key: 'best', day: _milestones.bestDay, color: c.accent, dash: [6, 3], width: 2 },
+      { key: 'sour', day: _milestones.sourDay, color: c.amber, dash: [3, 3], width: 1.2 },
+      { key: 'starter', day: _milestones.starterDay, color: '#8B5CF6', dash: [2, 4], width: 1 }
+    ];
+
+    // Draw vertical lines on all charts
+    for (var ci = 0; ci < chartList.length; ci++) {
+      var ch = chartList[ci];
+      if (!ch) continue;
+      var ann = ch.options.plugins.annotation.annotations;
+      for (var mi = 0; mi < markers.length; mi++) {
+        var mk = markers[mi];
+        if (mk.day != null && mk.day > 0) {
+          ann['ms_' + mk.key] = {
+            type: 'line', scaleID: 'x', value: mk.day,
+            borderColor: mk.color + '55', borderWidth: mk.width, borderDash: mk.dash
+          };
+        }
+      }
+    }
+
+    // Flavor chart: add labeled milestone annotations with descriptions
+    if (charts.flavor) {
+      var fann = charts.flavor.options.plugins.annotation.annotations;
+      var labels = _milestones.labels || {};
+      // Merge sour+starter into one label if same day
+      var sourDay = _milestones.sourDay;
+      var starterDay = _milestones.starterDay;
+      var sourAndStarter = (sourDay && starterDay && Math.abs(sourDay - starterDay) < 0.5);
+
+      // Label style helper — opaque pill with readable text
+      var dk = isDark();
+      var labelBg = dk ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)';
+      var labelBorder = dk ? 'rgba(148,163,184,0.35)' : 'rgba(148,163,184,0.25)';
+      // Brighter colors in dark mode for readability
+      var bestColor = dk ? '#4ADE80' : c.accent;
+      var safeColor = dk ? '#60A5FA' : c.blue;
+      var sourColor = dk ? '#FBBF24' : c.amber;
+      var isMobile = window.innerWidth < 640;
+      var msFont = isMobile ? 9 : 11;
+      var msPad = isMobile ? { top: 2, bottom: 2, left: 4, right: 4 } : { top: 3, bottom: 3, left: 6, right: 6 };
+
+      // Check if safe and best are close (within 2 days)
+      var safeAndBestClose = (_milestones.safeDay > 0 && _milestones.bestDay > 0 &&
+        Math.abs(_milestones.bestDay - _milestones.safeDay) < 2);
+
+      // Best milestone — positioned in middle area, not covering curve peak
+      if (_milestones.bestDay > 0 && labels.best) {
+        fann['ms_best'] = {
+          type: 'line', scaleID: 'x', value: _milestones.bestDay,
+          borderColor: (dk ? '#4ADE80' : c.accent) + '88', borderWidth: 2, borderDash: [6, 3],
+          label: {
+            display: true, content: labels.best,
+            position: 'start',
+            backgroundColor: labelBg, color: bestColor,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: msFont, weight: 'bold' }, padding: msPad,
+            borderRadius: 4, yAdjust: isMobile ? 36 : 48
+          }
+        };
+      }
+
+      // Safe milestone (below best)
+      if (_milestones.safeDay > 0 && labels.safe) {
+        var safeYAdjust = safeAndBestClose ? (isMobile ? 70 : 90) : (isMobile ? 56 : 76);
+        fann['ms_safe'] = {
+          type: 'line', scaleID: 'x', value: _milestones.safeDay,
+          borderColor: (dk ? '#60A5FA' : c.blue) + '88', borderWidth: 1.2, borderDash: [3, 3],
+          label: {
+            display: true, content: labels.safe,
+            position: 'start',
+            backgroundColor: labelBg, color: safeColor,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: msFont }, padding: msPad,
+            borderRadius: 4, yAdjust: safeYAdjust
+          }
+        };
+      }
+
+      // Sour + starter (combined or separate)
+      if (sourDay > 0 && labels.sour) {
+        var sourContent = sourAndStarter && labels.starter
+          ? [labels.sour[0], labels.starter[0], labels.sour[1]]
+          : labels.sour;
+        fann['ms_sour'] = {
+          type: 'line', scaleID: 'x', value: sourDay,
+          borderColor: (dk ? '#FBBF24' : c.amber) + '88', borderWidth: 1.2, borderDash: [3, 3],
+          label: {
+            display: true, content: sourContent,
+            position: 'end',
+            backgroundColor: labelBg, color: sourColor,
+            borderColor: labelBorder, borderWidth: 1,
+            font: { size: msFont }, padding: msPad,
+            borderRadius: 4, yAdjust: 4
+          }
+        };
+        if (sourAndStarter) delete fann['ms_starter'];
+      }
+    }
+  }
+
+  // ─── Animated update: progressively draw flavor curve ───
+  var _animFrame = null;
+
+  function animateUpdate(data) {
+    // Cancel any running animation
+    if (_animFrame) { cancelAnimationFrame(_animFrame); _animFrame = null; }
+
+    var tp = data.timePoints;
+    var fullData = toXY(tp, data.flavorScore);
+    var totalPts = fullData.length;
+    if (!charts.flavor || totalPts === 0) { update(data); return; }
+
+    // Update non-flavor charts immediately (no animation)
+    if (charts.phLab) {
+      charts.phLab.data.datasets[0].data = toXY(tp, data.pH);
+      charts.phLab.data.datasets[1].data = toXY(tp, data.lacticAcid);
+      charts.phLab.options.scales.x.max = data.tMax;
+      charts.phLab.update('none');
+    }
+    if (charts.microbes) {
+      charts.microbes.data.datasets[0].data = toXY(tp, data.microbial.sakei);
+      charts.microbes.data.datasets[1].data = toXY(tp, data.microbial.mesenteroides);
+      charts.microbes.data.datasets[2].data = toXY(tp, data.microbial.plantarum);
+      charts.microbes.options.scales.x.max = data.tMax;
+      charts.microbes.update('none');
+    }
+    if (charts.nitrite) {
+      charts.nitrite.data.datasets[0].data = toXY(tp, data.nitrite);
+      var nitriteMeta = data.nitriteMeta || {};
+      var nitritePeak = nitriteMeta.peak ? nitriteMeta.peak.value : 0;
+      var safeThreshold = nitriteMeta.safeThreshold || 3;
+      charts.nitrite.options.scales.y.max = Math.max(8, Math.ceil((Math.max(nitritePeak, safeThreshold) + 2) / 2) * 2);
+      charts.nitrite.options.scales.x.max = data.tMax;
+      charts.nitrite.update('none');
+    }
+
+    // Setup flavor chart scales/annotations but start with empty data
+    var f = charts.flavor;
+    var c = colors();
+    f.options.scales.x.max = data.tMax;
+    f._kimchiOptimalTime = data.optimalTime;
+    var ann = f.options.plugins.annotation.annotations;
     ann.optLine.value = data.optimalTime;
-    ann.nitriteSafe.value = safeThreshold;
 
-    // Phase bands with microbe names + time ranges directly on chart
+    // Phase zones
     var p1End = data.phases.phase1End;
     var p2End = data.phases.phase2End;
-    ann.phaseInitial.xMin = 0;
-    ann.phaseInitial.xMax = p1End;
-    var speciesKeys = data.speciesKeys || ['sakei', 'mesenteroides', 'plantarum'];
-    ann.phaseInitial.label.content = phaseLabelText(speciesKeys[0], 0, p1End);
-    ann.phaseOptimal.xMin = p1End;
-    ann.phaseOptimal.xMax = p2End;
-    ann.phaseOptimal.label.content = phaseLabelText(speciesKeys[1], p1End, p2End);
-    ann.phaseOver.xMin = p2End;
-    ann.phaseOver.xMax = data.tMax;
-    ann.phaseOver.label.content = phaseLabelText(speciesKeys[2], p2End, data.tMax);
-
-    // Store optimal time for glow point plugin
-    chart._kimchiOptimalTime = data.optimalTime;
-
-    syncAxisVisibility();
-    syncControlButtons();
-    chart.update('none');
-  }
-
-  function updateLabels() {
-    if (!chart) return;
-    var c = colors();
-
-    var isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-    var gColor = isDarkNow ? 'rgba(148,163,184,0.08)' : 'rgba(148,163,184,0.12)';
-    chart.options.scales.x.grid.color = gColor;
-    chart.options.scales.y.grid.color = gColor;
-    chart.options.scales.x.ticks.color = c.muted;
-    chart.options.scales.y.ticks.color = c.muted;
-    chart.options.scales.x.title.text = t('chart.xaxis');
-    chart.options.scales.x.title.color = c.muted;
-    chart.options.scales.yPH.title.text = t('chart.axis.ph');
-    chart.options.scales.yNO2.title.text = t('chart.axis.no2');
-    chart.options.scales.yLAB.title.text = t('chart.lab');
-
-    chart.data.datasets[DS.FLAVOR].label = t('chart.score');
-    chart.data.datasets[DS.FLAVOR].borderColor = c.accent;
-    chart.data.datasets[DS.NITRITE].label = t('chart.nitrite');
-    chart.data.datasets[DS.PH].label = t('chart.ph');
-    chart.data.datasets[DS.ACID].label = t('chart.acid');
-    chart.data.datasets[DS.LAB].label = t('chart.lab');
-    // Species labels updated dynamically in update() — use current profile
-    var profile = window.KimchiSim.models.PARAMS;
-    var species = profile.species || [];
-    if (species[0]) chart.data.datasets[DS.SAKEI].label = t('microbe.' + species[0].key + '.name');
-    if (species[1]) chart.data.datasets[DS.MESEN].label = t('microbe.' + species[1].key + '.name');
-    if (species[2]) chart.data.datasets[DS.PLANT].label = t('microbe.' + species[2].key + '.name');
-
-    applyAnnotationLabels();
-    syncControlButtons();
-    chart.update('none');
-  }
-
-  function setNowMarker(day) {
-    if (!chart) return;
-    var ann = chart.options.plugins.annotation.annotations;
-    if (day === null || day === undefined) {
-      if (ann.nowLine) ann.nowLine.display = false;
-      chart.update('none');
-      return;
-    }
-    var c = colors();
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    ann.nowLine = {
-      type: 'line', scaleID: 'x', value: day,
-      borderColor: isDark ? '#94A3B8' : '#334155', borderWidth: 2.5, borderDash: [2, 2],
-      display: true,
-      label: {
-        display: true, content: t('batch.now') || 'NOW',
-        position: 'end',
-        backgroundColor: isDark ? '#E2E8F0' : '#1E293B',
-        color: isDark ? '#0F172A' : '#F8FAFC',
-        font: { size: 10, weight: 'bold' }, padding: 4,
-        borderRadius: 4
-      }
+    ann.zoneInitial = {
+      type: 'box', xMin: 0, xMax: p1End, yMin: 0, yMax: 100,
+      backgroundColor: c.blue + '08', borderWidth: 0,
+      label: { display: false, content: t('phase.initial'), position: { x: 'center', y: 'start' }, color: c.blue + '66', font: { size: 11 } }
     };
-    chart.update('none');
+    ann.zoneOptimal = {
+      type: 'box', xMin: p1End, xMax: p2End, yMin: 0, yMax: 100,
+      backgroundColor: c.accent + '0A', borderWidth: 0,
+      label: { display: false, content: t('phase.optimal'), position: { x: 'center', y: 'start' }, color: c.accent + '88', font: { size: 11, weight: 'bold' } }
+    };
+    ann.zoneOver = {
+      type: 'box', xMin: p2End, xMax: data.tMax, yMin: 0, yMax: 100,
+      backgroundColor: c.amber + '08', borderWidth: 0,
+      label: { display: false, content: t('phase.over'), position: { x: 'center', y: 'start' }, color: c.amber + '66', font: { size: 11 } }
+    };
+    ann.p1Line = { type: 'line', scaleID: 'x', value: p1End, borderColor: c.blue + '33', borderWidth: 1, borderDash: [3, 3] };
+    ann.p2Line = { type: 'line', scaleID: 'x', value: p2End, borderColor: c.amber + '44', borderWidth: 1, borderDash: [3, 3] };
+
+    // Clear milestone labels initially
+    delete ann.ms_safe;
+    delete ann.ms_best;
+    delete ann.ms_sour;
+    delete ann.ms_starter;
+
+    // Animation parameters
+    var duration = 1200; // ms
+    var startTime = null;
+    var phase1Shown = false, phase2Shown = false, phase3Shown = false;
+
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min(1, (ts - startTime) / duration);
+      // Ease out cubic
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var count = Math.max(2, Math.round(eased * totalPts));
+      var slice = fullData.slice(0, count);
+
+      f.data.datasets[0].data = slice;
+
+      // Show phase labels as curve reaches them
+      var currentX = slice[slice.length - 1].x;
+      if (!phase1Shown && currentX >= 0) {
+        ann.zoneInitial.label.display = true;
+        phase1Shown = true;
+      }
+      if (!phase2Shown && currentX >= p1End) {
+        ann.zoneOptimal.label.display = true;
+        phase2Shown = true;
+      }
+      if (!phase3Shown && currentX >= p2End) {
+        ann.zoneOver.label.display = true;
+        phase3Shown = true;
+      }
+
+      f.update('none');
+
+      if (progress < 1) {
+        _animFrame = requestAnimationFrame(step);
+      } else {
+        _animFrame = null;
+        // Apply milestones after animation completes
+        applyMilestones();
+        f.update('none');
+        if (charts.phLab) charts.phLab.update('none');
+        if (charts.microbes) charts.microbes.update('none');
+        if (charts.nitrite) charts.nitrite.update('none');
+      }
+    }
+
+    f.data.datasets[0].data = [];
+    f.update('none');
+    _animFrame = requestAnimationFrame(step);
   }
 
   return {
     init: init,
     update: update,
+    animateUpdate: animateUpdate,
     updateLabels: updateLabels,
-    setNowMarker: setNowMarker
+    setNowMarker: setNowMarker,
+    setPickleDate: setPickleDate,
+    setMilestones: setMilestones
   };
 })();
