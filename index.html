@@ -3,42 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kimchi Fermentation Simulator</title>
+  <title>泡菜动力学 — Kimchi Dynamics</title>
+  <meta name="description" content="Interactive kimchi fermentation simulator based on Modified Gompertz model and Arrhenius kinetics. Predict LAB growth, pH changes, lactic acid production, microbial succession, nitrite safety, and flavor development in real time. 基于发酵动力学的泡菜过程预测与风味评估。">
+  <meta name="keywords" content="kimchi, fermentation, simulator, 泡菜, 김치, 发酵, 动力学, LAB, lactic acid bacteria, Gompertz, Arrhenius, pH, food science, 乳酸菌, 亚硝酸盐, nitrite">
+  <meta name="author" content="@djwz">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://kimchi.0xgarfield.com/">
+  <!-- Open Graph -->
+  <meta property="og:title" content="泡菜动力学 — Kimchi Dynamics">
+  <meta property="og:description" content="Interactive kimchi fermentation simulator. Predict LAB growth, pH, lactic acid, microbial succession and flavor score in real time.">
+  <meta property="og:url" content="https://kimchi.0xgarfield.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="ko_KR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="泡菜动力学 — Kimchi Dynamics">
+  <meta name="twitter:description" content="Interactive kimchi fermentation simulator based on fermentation kinetics.">
+  <meta name="twitter:creator" content="@djwz">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=12">
+  <link rel="stylesheet" href="css/styles.css?v=29">
 </head>
 <body>
   <!-- ====== HEADER ====== -->
   <header class="header">
     <div class="header-inner">
       <div class="header-brand">
-        <div class="logo-mark">🥬</div>
-        <span class="brand-name" data-i18n="app.title">Kimchi Simulator</span>
+        <img src="assets/favicon.svg" alt="" class="logo-icon">
+        <div class="brand-text">
+          <span class="brand-name" data-i18n="app.title">Kimchi Dynamics</span>
+          <span class="brand-sub" data-i18n="app.subtitleShort">Process prediction & flavor assessment based on fermentation kinetics</span>
+        </div>
       </div>
       <div class="header-controls">
         <div class="lang-switch" id="lang-switch">
-          <button class="lang-btn active" data-lang="en">EN</button>
-          <button class="lang-btn" data-lang="ko">한</button>
           <button class="lang-btn" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="ko">한</button>
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+        <div class="unit-switch">
+          <button class="unit-btn" id="btn-unit-temp" type="button" title="°C ↔ °F">°C</button>
+          <button class="unit-btn" id="btn-unit-weight" type="button" title="kg ↔ lb">kg</button>
         </div>
         <button id="theme-toggle" class="btn-icon" aria-label="Toggle dark mode">
           <span class="theme-icon-light">☽</span>
           <span class="theme-icon-dark">☀</span>
-        </button>
-        <button id="btn-calc-nav" class="btn-expert" aria-pressed="false">
-          <span class="expert-icon">🧮</span>
-          <span data-i18n="nav.calculator">Calculator</span>
-        </button>
-        <button id="btn-process-nav" class="btn-expert" aria-pressed="false">
-          <span class="expert-icon">📋</span>
-          <span data-i18n="nav.process">Process</span>
-        </button>
-        <button id="btn-expert" class="btn-expert" aria-pressed="false">
-          <span class="expert-icon">⚗</span>
-          <span data-i18n="nav.expert">Expert</span>
         </button>
       </div>
     </div>
@@ -47,373 +62,386 @@
   <main class="main-layout">
 
     <!-- ═══════════════════════════════════════════
-         L1: THE NAVIGATOR — "When is it best to eat?"
+         PROCESS FLOW STRIP (full width)
          ═══════════════════════════════════════════ -->
-    <section class="layer layer-nav" id="layer-1">
-
-      <!-- Ferment type selector -->
-      <div class="ferment-selector" id="ferment-selector">
-        <button class="ferment-chip active" type="button" data-ferment="kimchi">
-          <span class="ferment-icon">🥬</span>
-          <span data-i18n="ferment.kimchi">Kimchi</span>
-        </button>
-        <button class="ferment-chip" type="button" data-ferment="sichuan">
-          <span class="ferment-icon">🫙</span>
-          <span data-i18n="ferment.sichuan">Sichuan Paocai</span>
-        </button>
-        <button class="ferment-chip" type="button" data-ferment="sauerkraut">
-          <span class="ferment-icon">🥒</span>
-          <span data-i18n="ferment.sauerkraut">Sauerkraut</span>
-        </button>
+    <div class="glass-card pflow-card">
+      <div class="pflow-inline">
+        <div class="pf-step"><span class="pf-icon">🥬</span><span class="pf-num">1</span><span class="pf-name" data-i18n="process.s1">Select</span><span class="pf-desc" data-i18n="process.s1d">Fresh napa cabbage</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step"><span class="pf-icon">🧂</span><span class="pf-num">2</span><span class="pf-name" data-i18n="process.s2">Salt</span><span class="pf-desc" data-i18n="process.s2d">6-8h, 8% salt</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step"><span class="pf-icon">🌶</span><span class="pf-num">3</span><span class="pf-name" data-i18n="process.s3">Season</span><span class="pf-desc" data-i18n="process.s3d">Mix paste into leaves</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step"><span class="pf-icon">🥫</span><span class="pf-num">4</span><span class="pf-name" data-i18n="process.s4">Pack</span><span class="pf-desc" data-i18n="process.s4d">Press tight, no air</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step"><span class="pf-icon">☀️</span><span class="pf-num">5</span><span class="pf-name" data-i18n="process.s5">Ferment</span><span class="pf-desc" data-i18n="process.s5d">Room temp 1-2 days</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step"><span class="pf-icon">❄️</span><span class="pf-num">6</span><span class="pf-name" data-i18n="process.s6">Chill</span><span class="pf-desc" data-i18n="process.s6d">Fridge 4°C, slow ripen</span></div>
+        <span class="pf-arrow">➜</span>
+        <div class="pf-step pf-step-final"><span class="pf-icon">🍴</span><span class="pf-num">7</span><span class="pf-name" data-i18n="process.s7">Enjoy!</span><span class="pf-desc" data-i18n="process.s7d">Best at peak flavor</span></div>
       </div>
+    </div>
 
-      <!-- Dashboard gauge -->
-      <div class="dash" id="dash">
-        <div class="dash-main">
-          <div class="dash-ring" id="dash-ring">
-            <svg viewBox="0 0 120 120" class="dash-svg">
-              <circle cx="60" cy="60" r="52" class="dash-track"/>
-              <circle cx="60" cy="60" r="52" class="dash-fill" id="dash-arc"/>
-            </svg>
-            <div class="dash-center">
-              <div class="dash-day" id="dash-day">--</div>
-              <div class="dash-unit" data-i18n="nav.days">days</div>
+    <!-- ═══════════════════════════════════════════
+         TWO-COLUMN: Recipe Calculator + Fermentation Calculator
+         ═══════════════════════════════════════════ -->
+    <div class="two-col two-col-equal">
+
+      <!-- ═══ LEFT: 配方计算器 ═══ -->
+      <section class="col-card glass-card" id="col-recipe">
+        <h3 class="col-title" data-i18n="col.recipe">Recipe Calculator</h3>
+        <div class="recipe-type-switch" id="recipe-type-switch">
+          <button class="recipe-type-btn active" data-recipe="kimchi" data-i18n="recipe.type.kimchi">Kimchi</button>
+          <button class="recipe-type-btn" data-recipe="sauerkraut" data-i18n="recipe.type.sauerkraut">Sauerkraut</button>
+          <button class="recipe-type-btn" data-recipe="paocai" data-i18n="recipe.type.paocai">Sichuan Paocai</button>
+        </div>
+
+        <div class="field-list">
+          <!-- 1. Cabbage weight -->
+          <div class="field-item">
+            <span class="field-marker">1</span>
+            <div class="field-body">
+              <label class="field-label" for="calc-weight" data-i18n="calc.input">Cabbage Weight</label>
+              <div class="field-input-row">
+                <input type="number" id="calc-weight" value="2.5" min="0.5" max="50" step="0.5" class="input-num">
+                <span class="field-unit">kg</span>
+              </div>
             </div>
           </div>
-          <div class="dash-status" id="dash-status" data-i18n="nav.calculating">Calculating…</div>
-        </div>
-        <div class="dash-meta">
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="nav.best">Best</span>
-            <span class="dash-value" id="dash-best">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="stat.flavor">Flavor</span>
-            <span class="dash-value dash-accent" id="dash-flavor">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label">pH</span>
-            <span class="dash-value" id="dash-ph">--</span>
-          </div>
-          <div class="dash-kv">
-            <span class="dash-label" data-i18n="nav.safety">Safety</span>
-            <span class="dash-value" id="dash-safety">--</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Flavor curve (hero chart — simplified spline) -->
-      <div class="nav-chart-card">
-        <div class="nav-chart-canvas" id="nav-chart-canvas">
-          <canvas id="flavor-chart"></canvas>
-        </div>
-      </div>
+          <!-- 2. Starter culture (酵种/backslopping) -->
+          <div class="field-item">
+            <span class="field-marker">2</span>
+            <div class="field-body">
+              <span class="field-label" data-i18n="starter.label">Starter Culture (Old Brine)</span>
+              <span class="field-hint" data-i18n="starter.hint">Brine from a previous fermented batch — natural LAB inoculant</span>
+              <div class="field-input-row starter-input-row">
+                <input type="number" id="input-starter-weight" value="0" min="0" max="5000" step="10" class="input-num input-num-sm" placeholder="0">
+                <span class="field-unit">g</span>
+                <span class="field-sep">=</span>
+                <input type="number" id="input-starter-pct" value="0" min="0" max="15" step="0.5" class="input-num input-num-xs" placeholder="0">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+          </div>
+          <!-- Hidden compat: old slider still read by simulation -->
+          <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" style="display:none">
 
-      <!-- Phase timeline strip -->
-      <div class="phase-strip">
-        <div class="phase-seg phase-blue" id="phase-seg-1">
-          <span class="phase-label" data-i18n="phase.initial">Initial</span>
-        </div>
-        <div class="phase-seg phase-green" id="phase-seg-2">
-          <span class="phase-label" data-i18n="phase.optimal">Optimal</span>
-        </div>
-        <div class="phase-seg phase-amber" id="phase-seg-3">
-          <span class="phase-label" data-i18n="phase.over">Over</span>
-        </div>
-        <div class="phase-marker" id="phase-marker"></div>
-      </div>
-
-      <!-- Status sentences (judgment-based) -->
-      <div class="status-panel" id="status-panel">
-        <div class="status-line" id="status-flavor">
-          <span class="status-dot dot-green"></span>
-          <span class="status-text" data-i18n="nav.calculating">--</span>
-        </div>
-        <div class="status-line" id="status-acidity">
-          <span class="status-dot dot-blue"></span>
-          <span class="status-text">--</span>
-        </div>
-        <div class="status-line" id="status-safety">
-          <span class="status-dot dot-amber"></span>
-          <span class="status-text">--</span>
-        </div>
-      </div>
-
-      <!-- Fermentation stages (hero input) -->
-      <div class="controls-card glass-card">
-        <div class="controls-header">
-          <h3 class="explain-title">
-            <span>🌡️</span>
-            <span data-i18n="controls.stages">Stages</span>
-          </h3>
-          <div class="batch-inline">
-            <label class="batch-label" data-i18n="batch.startLabel">Start date</label>
-            <input type="date" id="batch-start-date" class="input-date">
-            <span class="batch-elapsed" id="batch-elapsed">--</span>
+          <!-- 3. Recipe output (auto-calculated) -->
+          <div class="field-item field-item-output">
+            <span class="field-marker">3</span>
+            <div class="field-body">
+              <span class="field-label" data-i18n="calc.title">Seasoning Recipe</span>
+              <div class="calc-results" id="calc-results"></div>
+            </div>
           </div>
         </div>
-        <!-- Hidden salt input for JS -->
+
+        <a href="#section-recipe" class="rc-recipe-link" id="link-recipe" data-i18n="ferment.nav.recipe">Standard Recipe & Process</a>
+      </section>
+
+      <!-- ═══ RIGHT: 发酵计算器 ═══ -->
+      <section class="col-card glass-card" id="col-ferment">
+        <h3 class="col-title" data-i18n="col.ferment">Fermentation Calculator</h3>
+
+        <div class="field-list" id="timeline">
+          <!-- 1. Packing date/time -->
+          <div class="field-item">
+            <span class="field-marker">1</span>
+            <div class="field-body">
+              <span class="field-label" data-i18n="ferment.pickle">Packing Complete Time</span>
+              <div class="field-input-row tl-date-row">
+                <div class="tl-date-field">
+                  <span class="tl-date-hint" data-i18n="date.year">Year</span>
+                  <input type="number" id="input-pickle-y" class="input-num input-num-sm" placeholder="2026" min="2020" max="2099" step="1">
+                </div>
+                <span class="tl-date-sep">/</span>
+                <div class="tl-date-field">
+                  <span class="tl-date-hint" data-i18n="date.month">Mon</span>
+                  <input type="number" id="input-pickle-m" class="input-num input-num-xs" placeholder="4" min="1" max="12" step="1">
+                </div>
+                <span class="tl-date-sep">/</span>
+                <div class="tl-date-field">
+                  <span class="tl-date-hint" data-i18n="date.day">Day</span>
+                  <input type="number" id="input-pickle-d" class="input-num input-num-xs" placeholder="3" min="1" max="31" step="1">
+                </div>
+                <div class="tl-date-field">
+                  <span class="tl-date-hint" data-i18n="date.hour">Hour</span>
+                  <input type="number" id="input-pickle-hh" class="input-num input-num-xs" placeholder="14" min="0" max="23" step="1">
+                </div>
+              </div>
+              <div class="tl-elapsed" id="tl-elapsed"></div>
+            </div>
+          </div>
+
+          <!-- 2. Fermentation method -->
+          <div class="field-item">
+            <span class="field-marker">2</span>
+            <div class="field-body">
+              <span class="field-label" data-i18n="ferment.method">Fermentation Method</span>
+              <div class="quick-presets tl-presets" id="preset-row">
+                <button class="preset-chip preset-manual" type="button" data-preset="manual" data-i18n="preset.manual">Manual</button>
+                <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
+                <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
+                <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
+              </div>
+              <!-- Info slot (anti-shift: always present, fixed height) -->
+              <div class="info-slot" id="ripen-info-slot">
+                <div class="info-slot-inner"></div>
+              </div>
+
+              <!-- Manual sub-fields (room temp + fridge) -->
+              <div class="manual-fields" id="manual-fields">
+                <div class="manual-sub">
+                  <span class="field-label" data-i18n="ferment.room">Room Temp Rest</span>
+                  <div class="field-input-row">
+                    <input type="number" id="input-room-temp" value="22" min="15" max="40" step="0.5" class="input-num input-num-sm">
+                    <span class="field-unit" id="unit-room">°C</span>
+                    <input type="number" id="input-room-hours" value="10" min="0" max="72" step="1" class="input-num input-num-sm">
+                    <span class="field-unit" data-i18n="unit.hours">hours</span>
+                  </div>
+                  <div class="tl-note" id="tl-room-end"></div>
+                </div>
+                <div class="manual-sub">
+                  <span class="field-label" data-i18n="ferment.fridge">Refrigerate</span>
+                  <div class="field-input-row">
+                    <input type="number" id="input-fridge-temp" value="4" min="-2" max="10" step="0.5" class="input-num input-num-sm">
+                    <span class="field-unit" id="unit-fridge">°C</span>
+                  </div>
+                </div>
+                <!-- Extra acceleration stages -->
+                <div id="accel-container"></div>
+                <button class="tl-btn-add" id="btn-add-accel" type="button">
+                  <span>+</span> <span data-i18n="ferment.addAccel">Room temp boost</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="input-pickle-time">
+
+        <!-- Start Calculation button -->
+        <button class="btn-calc-start" id="btn-calc-start" type="button" data-i18n="ferment.calcBtn">Start Calculation</button>
+
+        <!-- Hidden compat inputs -->
         <input type="hidden" id="slider-salt" value="2.5">
-        <!-- Hidden temp slider for single-stage mode -->
-        <div id="temp-single-wrap" style="display:none">
-          <input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10">
-        </div>
-        <div id="stages-container">
-          <div class="stages-grid">
-            <span class="sg-head" data-i18n="controls.stageTemp">Temp</span>
-            <span class="sg-head" data-i18n="controls.stageDur">Duration</span>
-            <span class="sg-head"></span>
-          </div>
-          <div id="stages-list"></div>
-          <button class="btn-add-stage-mini" id="btn-add-stage" title="Add stage">+</button>
-        </div>
-      </div>
+        <div style="display:none"><input type="range" id="slider-temp" min="0" max="35" step="0.5" value="10"></div>
+      </section>
 
-      <!-- Quick controls (presets + starter inline) -->
-      <div class="quick-bar">
-        <div class="quick-presets" id="preset-row">
-          <button class="preset-chip" type="button" data-preset="classic" data-i18n="preset.classic">Classic</button>
-          <button class="preset-chip" type="button" data-preset="weekend" data-i18n="preset.weekend">Weekend</button>
-          <button class="preset-chip" type="button" data-preset="slow" data-i18n="preset.slow">Cold Slow</button>
-        </div>
-        <div class="quick-starter">
-          <span class="quick-label" data-i18n="mixer.starter">Starter</span>
-          <input type="range" id="slider-starter" min="0" max="15" step="0.5" value="0" class="slider-flat">
-          <span class="quick-val" id="val-starter">0%</span>
-        </div>
-      </div>
-
-      <!-- Expand: "Why?" -->
-      <button class="btn-why" id="btn-why">
-        <span data-i18n="nav.why">Why this result?</span>
-        <span class="why-arrow">↓</span>
-      </button>
-    </section>
+    </div><!-- /two-col -->
 
     <!-- ═══════════════════════════════════════════
-         L2: EXPLAIN — "Why this result?"
+         FULL-WIDTH SECTIONS BELOW THE TWO COLUMNS
          ═══════════════════════════════════════════ -->
-    <section class="layer layer-explain" id="layer-2" style="display:none">
 
-      <!-- Fermentation status text -->
-      <div class="explain-card glass-card">
-        <h3 class="explain-title">
-          <span>🧬</span>
-          <span data-i18n="explain.status">Fermentation Status</span>
-        </h3>
-        <div class="explain-lines" id="explain-lines">
-          <div class="explain-line">
-            <span class="explain-cause" id="explain-microbe">--</span>
-            <span class="explain-arrow">→</span>
-            <span class="explain-effect" id="explain-microbe-effect">--</span>
-          </div>
-          <div class="explain-line">
-            <span class="explain-cause" id="explain-acid-cause">--</span>
-            <span class="explain-arrow">→</span>
-            <span class="explain-effect" id="explain-acid-effect">--</span>
-          </div>
-          <div class="explain-line">
-            <span class="explain-cause" id="explain-safety-cause">--</span>
-            <span class="explain-arrow">→</span>
-            <span class="explain-effect" id="explain-safety-effect">--</span>
-          </div>
+    <!-- ─── Main Chart + Scientific Details (single container) ─── -->
+    <div class="main-chart-card glass-card" id="decision-zone">
+      <div class="dz-header">
+        <div class="dz-state-group">
+          <span class="dz-state" id="dz-state" data-i18n="dz.developing">Developing</span>
+          <span class="dz-elapsed" id="dz-elapsed"></span>
         </div>
+        <div class="dz-next" id="dz-next"></div>
+      </div>
+      <div class="sub-chart sub-chart-hero" id="sub-chart-flavor">
+        <div class="flavor-score-label" data-i18n="chart.flavor.yaxis"></div>
+        <div class="sub-chart-canvas dz-chart"><canvas id="chart-flavor"></canvas></div>
       </div>
 
-      <!-- Scoring breakdown -->
-      <div class="explain-card glass-card">
-        <h3 class="explain-title">
-          <span>📊</span>
-          <span data-i18n="score.title">How the score is calculated</span>
-        </h3>
-        <div class="score-breakdown" id="score-breakdown">
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.ph.label">pH proximity to 4.35</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-blue" id="score-bar-ph" style="width:0%"></div>
+      <!-- Collapsible scientific details inside same card -->
+      <details class="collapse-inline" id="explain-zone">
+        <summary class="collapse-toggle">
+          <span class="collapse-label" data-i18n="ez.toggle">Scientific Details</span>
+          <span class="collapse-arrow">▾</span>
+        </summary>
+        <div class="collapse-body">
+            <div class="sub-chart" id="sub-chart-ph">
+              <div class="sub-chart-label"><span class="label-ph">pH</span> + <span class="label-acid" data-i18n="chart.acid">Lactic Acid (%)</span></div>
+              <div class="sub-chart-canvas"><canvas id="chart-ph-lab"></canvas></div>
             </div>
-            <span class="score-bar-val" id="score-val-ph">--</span>
-            <span class="score-bar-weight">50%</span>
-          </div>
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.acid.label">Lactic acid near 0.6%</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-orange" id="score-bar-acid" style="width:0%"></div>
+            <div class="sub-chart" id="sub-chart-microbes">
+              <div class="sub-chart-label" data-i18n="chart.microbe.title">Microbial Succession</div>
+              <div class="sub-chart-canvas"><canvas id="chart-microbes"></canvas></div>
+              <div class="microbe-legend" id="microbe-legend">
+                <div class="ml-item ml-sakei" id="microbe-card-sakei">
+                  <span class="ml-dot" style="background:var(--blue)"></span>
+                  <div class="ml-info">
+                    <span class="ml-name" data-i18n="microbe.sakei.name">L. sakei</span>
+                    <span class="ml-role" data-i18n="microbe.sakei.role">Early stabilizer</span>
+                  </div>
+                  <span class="ml-time" id="dominance-time-1">--</span>
+                  <span class="ml-note" data-i18n="dominance.initial.note">Builds a clean, fresh start.</span>
+                  <span class="ml-pct"><span class="ml-pct-l" data-i18n="microbe.atPeak">At best</span> <span id="microbe-val-sakei">--%</span></span>
+                  <span class="ml-pct ml-pct-now"><span class="ml-pct-l" data-i18n="microbe.atNow">Now</span> <span id="microbe-now-sakei">--%</span></span>
+                </div>
+                <div class="ml-item ml-mesen" id="microbe-card-mesenteroides">
+                  <span class="ml-dot" style="background:var(--accent)"></span>
+                  <div class="ml-info">
+                    <span class="ml-name" data-i18n="microbe.mesenteroides.name">Leuc. mesenteroides</span>
+                    <span class="ml-role" data-i18n="microbe.mesenteroides.role">Peak flavor maker</span>
+                  </div>
+                  <span class="ml-time" id="dominance-time-2">--</span>
+                  <span class="ml-note" data-i18n="dominance.optimal.note">Brings sparkle, aroma, and balance.</span>
+                  <span class="ml-pct"><span class="ml-pct-l" data-i18n="microbe.atPeak">At best</span> <span id="microbe-val-mesenteroides">--%</span></span>
+                  <span class="ml-pct ml-pct-now"><span class="ml-pct-l" data-i18n="microbe.atNow">Now</span> <span id="microbe-now-mesenteroides">--%</span></span>
+                </div>
+                <div class="ml-item ml-plant" id="microbe-card-plantarum">
+                  <span class="ml-dot" style="background:var(--purple)"></span>
+                  <div class="ml-info">
+                    <span class="ml-name" data-i18n="microbe.plantarum.name">L. plantarum</span>
+                    <span class="ml-role" data-i18n="microbe.plantarum.role">Deep sour finisher</span>
+                  </div>
+                  <span class="ml-time" id="dominance-time-3">--</span>
+                  <span class="ml-note" data-i18n="dominance.over.note">Pushes the batch into deeper sourness.</span>
+                  <span class="ml-pct"><span class="ml-pct-l" data-i18n="microbe.atPeak">At best</span> <span id="microbe-val-plantarum">--%</span></span>
+                  <span class="ml-pct ml-pct-now"><span class="ml-pct-l" data-i18n="microbe.atNow">Now</span> <span id="microbe-now-plantarum">--%</span></span>
+                </div>
+              </div>
             </div>
-            <span class="score-bar-val" id="score-val-acid">--</span>
-            <span class="score-bar-weight">30%</span>
-          </div>
-          <div class="score-bar-row">
-            <span class="score-bar-label" data-i18n="score.microbe.label">Leuconostoc proportion</span>
-            <div class="score-bar-track">
-              <div class="score-bar-fill score-bar-green" id="score-bar-microbe" style="width:0%"></div>
+            <div class="sub-chart sub-chart-last" id="sub-chart-nitrite">
+              <div class="sub-chart-label" data-i18n="chart.nitrite">Nitrite</div>
+              <div class="sub-chart-canvas"><canvas id="chart-nitrite"></canvas></div>
+              <div class="nitrite-inline" id="nitrite-inline">
+                <div class="ni-bar" id="ni-bar">
+                  <span class="ni-icon">⚠️</span>
+                  <span class="ni-level" id="ni-level">--</span>
+                  <span class="ni-status" id="ni-status">--</span>
+                </div>
+                <div class="ni-metrics">
+                  <span class="ni-metric"><span class="ni-label" data-i18n="nitrite.peak">Peak</span> <span class="ni-val" id="ni-peak">--</span></span>
+                  <span class="ni-metric"><span class="ni-label" data-i18n="nitrite.window">Risk window</span> <span class="ni-val" id="ni-window">--</span></span>
+                  <span class="ni-metric"><span class="ni-label" data-i18n="nitrite.no3">NO₃⁻</span> <span class="ni-val" id="ni-nitrate">--</span></span>
+                  <span class="ni-metric"><span class="ni-label" data-i18n="nitrite.na">Na⁺</span> <span class="ni-val" id="ni-sodium">--</span></span>
+                </div>
+              </div>
             </div>
-            <span class="score-bar-val" id="score-val-microbe">--</span>
-            <span class="score-bar-weight">20%</span>
           </div>
-        </div>
-      </div>
+        </details>
+    </div><!-- /main-chart-card -->
 
-      <!-- Extend flavor advice -->
-      <div class="explain-card glass-card">
-        <h3 class="explain-title">
-          <span>💡</span>
-          <span data-i18n="extend.title">How to extend peak flavor</span>
-        </h3>
-        <div class="extend-advice" id="extend-advice">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
-      <!-- Chart toggles (for expert lines on the curve) -->
-      <div class="chart-toggles glass-card">
-        <span class="toggle-label" data-i18n="chart.toolbar">Show on chart</span>
-        <div class="chart-toggle-row">
-          <button class="chart-toggle active locked" type="button" data-series="flavor">
-            <span class="ct-dot" style="background:var(--accent)"></span>
-            <span data-i18n="chart.toggle.score">Score</span>
-          </button>
-          <button class="chart-toggle active" type="button" data-series="nitrite">
-            <span class="ct-dot" style="background:var(--orange)"></span>
-            <span data-i18n="chart.toggle.nitrite">Nitrite</span>
-          </button>
-          <button class="chart-toggle" type="button" data-series="ph">
-            <span class="ct-dot" style="background:var(--blue)"></span>
-            <span data-i18n="chart.toggle.ph">pH</span>
-          </button>
-          <button class="chart-toggle" type="button" data-series="acid">
-            <span class="ct-dot" style="background:var(--red-muted)"></span>
-            <span data-i18n="chart.toggle.acid">Acid</span>
-          </button>
-          <button class="chart-toggle" type="button" data-series="lab">
-            <span class="ct-dot" style="background:var(--green-deep)"></span>
-            <span data-i18n="chart.toggle.lab">LAB</span>
-          </button>
-          <button class="chart-toggle" type="button" data-series="microbes">
-            <span class="ct-dot" style="background:var(--purple)"></span>
-            <span data-i18n="chart.toggle.microbes">Microbes</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         L3: EXPERT — Full scientific modules
-         ═══════════════════════════════════════════ -->
-    <section class="layer layer-expert" id="layer-3" style="display:none">
-
-      <!-- Dominance strip (dynamic per ferment type) -->
-      <div class="expert-card glass-card">
-        <h3 class="expert-title" data-i18n="dominance.title">Dominant microbes across the whole story</h3>
-        <div class="dominance-track" id="dominance-track">
-          <!-- Populated dynamically by JS -->
-        </div>
-      </div>
-
-      <!-- Nitrite model -->
-      <div class="expert-card glass-card">
-        <h3 class="expert-title" data-i18n="nitrite.model.title">Nitrite kinetics for this batch</h3>
-        <div class="nitrite-bar" id="nitrite-bar">
-          <span class="nitrite-icon">⚠️</span>
-          <span class="nitrite-label" data-i18n="nitrite.label">Nitrite</span>
-          <span class="nitrite-level" id="nitrite-level">--</span>
-          <span class="nitrite-status" id="nitrite-status">--</span>
-        </div>
-        <div class="nitrite-grid">
-          <div class="n-metric">
-            <span class="n-label" data-i18n="nitrite.no3">NO₃⁻ reserve</span>
-            <span class="n-value" id="nitrite-nitrate">--</span>
+    <!-- ─── Standard Recipe & Process (collapsible) ─── -->
+    <details class="collapse-section glass-card" id="section-recipe">
+          <summary class="collapse-toggle" id="recipe-toggle">
+            <span class="collapse-label" data-i18n="recipe.title">Standard Recipe & Process</span>
+            <span class="collapse-arrow">▾</span>
+          </summary>
+          <div class="collapse-body">
+            <div class="recipe-content" id="recipe-content"></div>
+            <div class="recipe-extend" id="recipe-extend-wrap">
+              <h4 class="recipe-extend-title">
+                <span data-i18n="extend.title">How to extend peak flavor</span>
+              </h4>
+              <div class="extend-advice" id="extend-advice"></div>
+            </div>
           </div>
-          <div class="n-metric">
-            <span class="n-label" data-i18n="nitrite.na">Na⁺ strength</span>
-            <span class="n-value" id="nitrite-sodium">--</span>
-          </div>
-          <div class="n-metric">
-            <span class="n-label" data-i18n="nitrite.peak">Predicted peak</span>
-            <span class="n-value" id="nitrite-peak">--</span>
-          </div>
-          <div class="n-metric">
-            <span class="n-label" data-i18n="nitrite.window">Risk window</span>
-            <span class="n-value" id="nitrite-window">--</span>
-          </div>
-        </div>
-        <div class="n-flux">
-          <span class="n-label" data-i18n="nitrite.flux">Dynamic balance</span>
-          <span class="n-value" id="nitrite-flux">--</span>
-        </div>
-      </div>
+        </details>
 
-      <!-- Microbe cards (dynamic per ferment type) -->
-      <div class="expert-card glass-card">
-        <h3 class="expert-title" data-i18n="microbe.board.title">Who is leading the batch?</h3>
-        <div class="microbe-cards" id="microbe-cards">
-          <!-- Populated dynamically by JS -->
-        </div>
+    <!-- hidden compat elements -->
+    <div style="display:none">
+      <span id="dash-current-day"></span><span id="dash-best-day"></span><span id="dash-hero-status"></span>
+      <span id="dash-best"></span><span id="dash-day"></span><span id="dash-flavor"></span>
+      <span id="dash-ph"></span><span id="dash-safety"></span><span id="dash-status"></span><span id="dash-arc"></span>
+      <span id="insight-1"><span class="insight-icon"></span><span class="insight-text"></span></span>
+      <span id="insight-2"><span class="insight-icon"></span><span class="insight-text"></span></span>
+      <span id="insight-3"><span class="insight-icon"></span><span class="insight-text"></span></span>
+      <span id="explain-microbe"></span><span id="explain-microbe-effect"></span>
+      <span id="explain-acid-cause"></span><span id="explain-acid-effect"></span>
+      <span id="explain-safety-cause"></span><span id="explain-safety-effect"></span>
+      <span id="tl-safe-when"></span><span id="tl-safe-desc"></span>
+      <span id="tl-best-when"></span><span id="tl-best-desc"></span>
+      <span id="tl-sour-when"></span><span id="tl-sour-desc"></span>
+      <span id="tl-starter-when"></span><span id="tl-starter-desc"></span>
+      <span id="tl-best-val"></span><span id="tl-best-date"></span>
+      <span id="tl-ph435-val"></span><span id="tl-ph435-date"></span>
+      <span id="tl-sour-val"></span><span id="tl-sour-date"></span>
+      <span id="tl-end-val"></span><span id="tl-end-date"></span>
+      <span id="tz-safe-time"></span><span id="tz-best-time"></span>
+      <span id="tz-sour-time"></span><span id="tz-starter-time"></span>
+      <span id="phase-seg-1"></span><span id="phase-seg-2"></span><span id="phase-seg-3"></span>
+      <span id="phase-marker"></span>
+      <div id="layer-2"></div><div id="layer-3"></div>
+      <span id="dominance-seg-1"></span><span id="dominance-seg-2"></span><span id="dominance-seg-3"></span>
+      <button id="btn-why"></button><button id="btn-expert" aria-pressed="true"></button>
+      <span id="nitrite-bar"></span><span id="nitrite-level"></span><span id="nitrite-status"></span>
+      <span id="nitrite-nitrate"></span><span id="nitrite-sodium"></span>
+      <span id="nitrite-peak"></span><span id="nitrite-window"></span><span id="nitrite-flux"></span>
+      <span id="stat-optimal-time"></span><span id="stat-ph"></span><span id="stat-acid"></span>
+      <span id="stat-bacteria"></span><span id="stat-flavor"></span>
+      <span id="info-opt-time"></span><span id="info-ph"></span><span id="info-acid"></span><span id="info-flavor"></span>
+      <div id="status-panel">
+        <div id="status-flavor"><span class="status-dot"></span><span class="status-text"></span></div>
+        <div id="status-acidity"><span class="status-dot"></span><span class="status-text"></span></div>
+        <div id="status-safety"><span class="status-dot"></span><span class="status-text"></span></div>
       </div>
-
-      <!-- Recipe Calculator -->
-      <div class="expert-card glass-card">
-        <h3 class="expert-title">
-          <span>🧮</span>
-          <span data-i18n="calc.title">Recipe Calculator</span>
-        </h3>
-        <div class="calc-row">
-          <label data-i18n="calc.input">Cabbage Weight</label>
-          <div class="calc-input-wrap">
-            <input type="number" id="calc-weight" value="2.5" min="0.5" max="50" step="0.5" class="input-num">
-            <span class="calc-unit">kg</span>
-          </div>
-        </div>
-        <div class="calc-results" id="calc-results"></div>
-      </div>
-
-      <!-- Recipe details (collapsible) -->
-      <div class="expert-card glass-card">
-        <button class="recipe-toggle" id="recipe-toggle">
-          <span data-i18n="recipe.title">Standard Recipe & Process</span>
-          <span class="toggle-chevron">▾</span>
-        </button>
-        <div class="recipe-content" id="recipe-content"></div>
-      </div>
-    </section>
+      <span id="fg-weight-display"></span>
+    </div>
 
   </main>
 
   <footer class="footer">
+    <p class="footer-scope" data-i18n="footer.scope">Applicable to Sauerkraut, Chinese paocai, and Korean Kimchi — same fermentation kinetics</p>
     <p class="footer-models" data-i18n="footer.models">Gompertz · Arrhenius · Sigmoid succession</p>
     <p class="footer-refs">
       <a href="https://www.fao.org/fao-who-codexalimentarius/sh-proxy/en/?lnk=1&url=https://workspace.fao.org/sites/codex/Standards/CXS+223-2001/CXS_223e.pdf" target="_blank" rel="noopener">Codex CXS 223</a> ·
       <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9728259/" target="_blank" rel="noopener">LAB Kinetics</a> ·
       <a href="https://www.sciencedirect.com/science/article/pii/S0023643824007424" target="_blank" rel="noopener">Gompertz</a>
     </p>
+    <p class="footer-links">
+      <a href="https://github.com/djzoom/kimchi-fermentation-simulator" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://x.com/djwz" target="_blank" rel="noopener">@djwz</a>
+    </p>
   </footer>
 
   <!-- Tooltip container -->
   <div class="tooltip-box" id="tooltip-box"></div>
 
-  <!-- Hidden elements for backward compat with existing JS -->
-  <div style="display:none">
-    <span id="stat-optimal-time"></span>
-    <span id="stat-ph"></span>
-    <span id="stat-acid"></span>
-    <span id="stat-bacteria"></span>
-    <span id="stat-flavor"></span>
-    <span id="info-opt-time"></span>
-    <span id="info-ph"></span>
-    <span id="info-acid"></span>
-    <span id="info-flavor"></span>
-    <span id="batch-status"></span>
-    <span id="val-temp"></span>
-  </div>
+  <!-- Fermentation bubbles -->
+  <div class="bubbles-container" aria-hidden="true" id="bubbles"></div>
+  <!-- Frosted geometry decor -->
+  <div class="geo-layer" aria-hidden="true" id="geo-layer"></div>
+  <script>
+  (function(){
+    // Bubbles
+    var c=document.getElementById('bubbles');
+    if(c){for(var i=0;i<50;i++){
+      var b=document.createElement('div');b.className='bubble';
+      var s=5+Math.random()*10;
+      b.style.width=s+'px';b.style.height=s+'px';
+      b.style.left=Math.random()*100+'%';
+      b.style.animationDuration=(8+Math.random()*14)+'s';
+      b.style.animationDelay=(Math.random()*12)+'s';
+      c.appendChild(b);
+    }}
+    // Geometry
+    var g=document.getElementById('geo-layer');
+    if(g){
+      var seed=42;function rng(){seed=(seed*16807+0)%2147483647;return(seed-1)/2147483646;}
+      for(var i=0;i<32;i++){
+        var el=document.createElement('div');
+        var isCircle=rng()>0.45;
+        var isRO=rng()>0.5;
+        el.className='geo '+(isCircle?'geo--circle':'geo--square')+' '+(isRO?'geo--ro':'geo--yg');
+        var sz=150+rng()*450;
+        el.style.width=sz+'px';el.style.height=sz+'px';
+        el.style.left=(rng()*98)+'%';
+        el.style.top=(rng()*98)+'%';
+        el.style.transform='rotate('+(rng()*360)+'deg)';
+        el.style.opacity=0.4+rng()*0.6;
+        g.appendChild(el);
+      }
+    }
+  })();
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=12"></script>
-  <script src="js/models.js?v=12"></script>
-  <script src="js/simulation.js?v=12"></script>
-  <script src="js/charts.js?v=12"></script>
-  <script src="js/ui.js?v=12"></script>
-  <script src="js/recipe.js?v=12"></script>
-  <script src="js/app.js?v=12"></script>
+  <script src="js/i18n.js?v=29"></script>
+  <script src="js/models.js?v=29"></script>
+  <script src="js/simulation.js?v=29"></script>
+  <script src="js/charts.js?v=29"></script>
+  <script src="js/ui.js?v=29"></script>
+  <script src="js/recipe.js?v=29"></script>
+  <script src="js/app.js?v=29"></script>
 </body>
 </html>
