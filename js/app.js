@@ -1,5 +1,6 @@
 /**
- * Kimchi Fermentation Navigator — App Entry
+ * Fermentation Simulator — App Entry
+ * Supports Kimchi, Sichuan Paocai, German Sauerkraut
  * L1/L2/L3 progressive disclosure, layer management
  */
 window.KimchiSim = window.KimchiSim || {};
@@ -9,6 +10,7 @@ window.KimchiSim = window.KimchiSim || {};
 
   var sim = window.KimchiSim;
   var lastSimData = null;
+  var currentFermentType = 'kimchi';
 
   function runAndUpdate(params, stages) {
     var data = sim.simulation.run(params, stages);
@@ -18,6 +20,82 @@ window.KimchiSim = window.KimchiSim || {};
     sim.ui.updateStats(data);
     sim.ui.updateEducation(data);
     updateBatchTracker();
+  }
+
+  // ─── Ferment Type Selector ───
+  function initFermentSelector() {
+    var selector = document.getElementById('ferment-selector');
+    if (!selector) return;
+
+    // Restore saved type
+    try {
+      var saved = localStorage.getItem('kimchi-ferment-type');
+      if (saved && sim.models.getProfile(saved)) {
+        currentFermentType = saved;
+      }
+    } catch (e) {}
+
+    if (currentFermentType !== 'kimchi') {
+      switchFermentType(currentFermentType, true);
+    }
+
+    selector.addEventListener('click', function (e) {
+      var chip = e.target.closest('.ferment-chip');
+      if (!chip) return;
+      var type = chip.getAttribute('data-ferment');
+      if (type === currentFermentType) return;
+      switchFermentType(type, false);
+    });
+  }
+
+  function switchFermentType(type, isInit) {
+    if (!sim.models.getProfile(type)) return;
+    currentFermentType = type;
+
+    // Update model
+    sim.models.setFermentType(type);
+
+    // Update UI buttons
+    document.querySelectorAll('.ferment-chip').forEach(function (chip) {
+      chip.classList.toggle('active', chip.getAttribute('data-ferment') === type);
+    });
+
+    // Reset species UI so it re-renders
+    sim.ui.resetSpeciesUI();
+
+    // Update recipe content
+    if (sim.recipe.setFermentType) sim.recipe.setFermentType(type);
+
+    // Update calculator
+    updateCalcResults();
+
+    // Update starter label
+    var t = sim.i18n.t;
+    var starterLabel = document.querySelector('.quick-label[data-i18n^="mixer.starter"]');
+    if (starterLabel) {
+      var starterKey = 'mixer.starter.' + type;
+      var starterText = t(starterKey);
+      if (starterText === starterKey) starterText = t('mixer.starter');
+      starterLabel.textContent = starterText;
+      starterLabel.setAttribute('data-i18n', starterKey);
+    }
+
+    // Update page title emoji
+    var logoMark = document.querySelector('.logo-mark');
+    if (logoMark) {
+      var icons = { kimchi: '🥬', sichuan: '🫙', sauerkraut: '🥒' };
+      logoMark.textContent = icons[type] || '🥬';
+    }
+
+    // Save preference
+    try { localStorage.setItem('kimchi-ferment-type', type); } catch (e) {}
+
+    // Re-run simulation
+    if (!isInit) {
+      var params = sim.ui.getParams();
+      var stg = sim.ui.getStages();
+      runAndUpdate(params, stg);
+    }
   }
 
   // ─── Theme ───
@@ -55,6 +133,7 @@ window.KimchiSim = window.KimchiSim || {};
         sim.i18n.setLang(newLang);
         sim.charts.updateLabels();
         sim.ui.renderStages();
+        sim.ui.resetSpeciesUI(); // re-render species names in new language
         sim.recipe.updateLang();
         updateCalcResults();
         updateLangButtons(newLang);
@@ -76,7 +155,6 @@ window.KimchiSim = window.KimchiSim || {};
     var layer2 = document.getElementById('layer-2');
     var layer3 = document.getElementById('layer-3');
 
-    // L2 toggle
     if (btnWhy && layer2) {
       btnWhy.addEventListener('click', function () {
         var visible = layer2.style.display !== 'none';
@@ -85,7 +163,6 @@ window.KimchiSim = window.KimchiSim || {};
       });
     }
 
-    // L3 toggle
     if (btnExpert && layer3) {
       btnExpert.addEventListener('click', function () {
         var pressed = btnExpert.getAttribute('aria-pressed') === 'true';
@@ -94,7 +171,6 @@ window.KimchiSim = window.KimchiSim || {};
       });
     }
 
-    // Nav shortcuts: Calculator & Process
     var btnCalcNav = document.getElementById('btn-calc-nav');
     var btnProcessNav = document.getElementById('btn-process-nav');
 
@@ -118,7 +194,6 @@ window.KimchiSim = window.KimchiSim || {};
         ensureExpertVisible();
         var el = document.getElementById('recipe-content');
         if (el) {
-          // Expand the recipe section if collapsed
           var content = document.getElementById('recipe-content');
           if (content && !content.classList.contains('expanded')) {
             var toggle = document.getElementById('recipe-toggle');
@@ -130,37 +205,31 @@ window.KimchiSim = window.KimchiSim || {};
     }
   }
 
-  // ─── Recipe Calculator ───
-  var RECIPE_PER_2_5KG = {
-    coarseSalt: 200,
-    chili: 80,
-    fish: 45,
-    shrimp: 30,
-    garlic: 36,
-    ginger: 8,
-    ricePaste: 40,
-    scallion: 50
-  };
+  // ─── Recipe Calculator (dynamic per ferment type) ───
 
   function updateCalcResults() {
     var input = document.getElementById('calc-weight');
     var container = document.getElementById('calc-results');
     if (!input || !container) return;
 
-    var weight = parseFloat(input.value) || 2.5;
-    var ratio = weight / 2.5;
+    var profile = sim.models.getProfile(currentFermentType);
+    var recipeItems = profile.recipe_items;
+    var baseWeight = profile.recipe_base_weight;
+    var weight = parseFloat(input.value) || baseWeight;
+    var ratio = weight / baseWeight;
     var t = sim.i18n.t;
 
-    var items = [
-      { name: t('calc.coarse.salt'), amount: (RECIPE_PER_2_5KG.coarseSalt * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.chili'), amount: (RECIPE_PER_2_5KG.chili * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.fish'), amount: (RECIPE_PER_2_5KG.fish * ratio).toFixed(0), unit: 'ml' },
-      { name: t('calc.shrimp'), amount: (RECIPE_PER_2_5KG.shrimp * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.garlic'), amount: (RECIPE_PER_2_5KG.garlic * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.ginger'), amount: (RECIPE_PER_2_5KG.ginger * ratio).toFixed(0), unit: 'g' },
-      { name: t('calc.rice'), amount: (RECIPE_PER_2_5KG.ricePaste * ratio).toFixed(0), unit: 'ml' },
-      { name: t('calc.scallion'), amount: (RECIPE_PER_2_5KG.scallion * ratio).toFixed(0), unit: 'g' }
-    ];
+    // Build items from profile recipe
+    var items = [];
+    for (var key in recipeItems) {
+      if (!recipeItems.hasOwnProperty(key)) continue;
+      var calcKey = 'calc.' + key;
+      var name = t(calcKey);
+      if (name === calcKey) name = t('calc.coarse.salt'); // fallback
+      var amount = recipeItems[key] * ratio;
+      var unit = (key === 'fish' || key === 'ricePaste' || key === 'baijiu') ? 'ml' : 'g';
+      items.push({ name: name, amount: amount.toFixed(0), unit: unit });
+    }
 
     var html = '';
     for (var i = 0; i < items.length; i++) {
@@ -169,8 +238,21 @@ window.KimchiSim = window.KimchiSim || {};
         '<div class="calc-item-amount">' + items[i].amount + '<span class="calc-item-unit"> ' + items[i].unit + '</span></div>' +
         '</div>';
     }
-    html += '<div class="calc-note">' + t('calc.note') + '</div>';
+
+    // Note per type
+    var noteKey = 'calc.note' + (currentFermentType === 'kimchi' ? '' : '.' + currentFermentType);
+    html += '<div class="calc-note">' + t(noteKey) + '</div>';
     container.innerHTML = html;
+
+    // Update input label
+    var inputLabel = container.closest('.expert-card').querySelector('label[data-i18n^="calc.input"]');
+    if (inputLabel) {
+      var labelKey = 'calc.input' + (currentFermentType === 'kimchi' ? '' : '.' + currentFermentType);
+      var labelText = t(labelKey);
+      if (labelText === labelKey) labelText = t('calc.input');
+      inputLabel.textContent = labelText;
+      inputLabel.setAttribute('data-i18n', labelKey);
+    }
   }
 
   function initCalc() {
@@ -291,6 +373,7 @@ window.KimchiSim = window.KimchiSim || {};
   function init() {
     initTheme();
     initLang();
+    initFermentSelector();
     initLayers();
     initTooltips();
     sim.charts.init();

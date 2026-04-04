@@ -468,9 +468,15 @@ window.KimchiSim.charts = (function () {
     ds[DS.PH].data = toXY(data.timePoints, data.pH);
     ds[DS.ACID].data = toXY(data.timePoints, data.lacticAcid);
     ds[DS.LAB].data = toXY(data.timePoints, data.labCounts);
-    ds[DS.SAKEI].data = toXY(data.timePoints, data.microbial.sakei);
-    ds[DS.MESEN].data = toXY(data.timePoints, data.microbial.mesenteroides);
-    ds[DS.PLANT].data = toXY(data.timePoints, data.microbial.plantarum);
+    // Species data — uses backward-compat aliases from simulation
+    var speciesKeys = data.speciesKeys || ['sakei', 'mesenteroides', 'plantarum'];
+    ds[DS.SAKEI].data = toXY(data.timePoints, data.microbial[speciesKeys[0]] || []);
+    ds[DS.MESEN].data = toXY(data.timePoints, data.microbial[speciesKeys[1]] || []);
+    ds[DS.PLANT].data = toXY(data.timePoints, data.microbial[speciesKeys[2]] || []);
+    // Update species labels
+    ds[DS.SAKEI].label = t('microbe.' + speciesKeys[0] + '.name');
+    ds[DS.MESEN].label = t('microbe.' + speciesKeys[1] + '.name');
+    ds[DS.PLANT].label = t('microbe.' + speciesKeys[2] + '.name');
 
     chart.options.scales.x.max = data.tMax;
     var nitriteMeta = data.nitriteMeta || {};
@@ -487,13 +493,14 @@ window.KimchiSim.charts = (function () {
     var p2End = data.phases.phase2End;
     ann.phaseInitial.xMin = 0;
     ann.phaseInitial.xMax = p1End;
-    ann.phaseInitial.label.content = phaseLabelText('sakei', 0, p1End);
+    var speciesKeys = data.speciesKeys || ['sakei', 'mesenteroides', 'plantarum'];
+    ann.phaseInitial.label.content = phaseLabelText(speciesKeys[0], 0, p1End);
     ann.phaseOptimal.xMin = p1End;
     ann.phaseOptimal.xMax = p2End;
-    ann.phaseOptimal.label.content = phaseLabelText('mesenteroides', p1End, p2End);
+    ann.phaseOptimal.label.content = phaseLabelText(speciesKeys[1], p1End, p2End);
     ann.phaseOver.xMin = p2End;
     ann.phaseOver.xMax = data.tMax;
-    ann.phaseOver.label.content = phaseLabelText('plantarum', p2End, data.tMax);
+    ann.phaseOver.label.content = phaseLabelText(speciesKeys[2], p2End, data.tMax);
 
     // Store optimal time for glow point plugin
     chart._kimchiOptimalTime = data.optimalTime;
@@ -525,9 +532,12 @@ window.KimchiSim.charts = (function () {
     chart.data.datasets[DS.PH].label = t('chart.ph');
     chart.data.datasets[DS.ACID].label = t('chart.acid');
     chart.data.datasets[DS.LAB].label = t('chart.lab');
-    chart.data.datasets[DS.SAKEI].label = t('microbe.sakei.name');
-    chart.data.datasets[DS.MESEN].label = t('microbe.mesenteroides.name');
-    chart.data.datasets[DS.PLANT].label = t('microbe.plantarum.name');
+    // Species labels updated dynamically in update() — use current profile
+    var profile = window.KimchiSim.models.PARAMS;
+    var species = profile.species || [];
+    if (species[0]) chart.data.datasets[DS.SAKEI].label = t('microbe.' + species[0].key + '.name');
+    if (species[1]) chart.data.datasets[DS.MESEN].label = t('microbe.' + species[1].key + '.name');
+    if (species[2]) chart.data.datasets[DS.PLANT].label = t('microbe.' + species[2].key + '.name');
 
     applyAnnotationLabels();
     syncControlButtons();
