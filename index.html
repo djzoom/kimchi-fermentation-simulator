@@ -4,11 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>泡菜动力学 — Kimchi Dynamics</title>
+  <meta name="description" content="Interactive kimchi fermentation simulator based on Modified Gompertz model and Arrhenius kinetics. Predict LAB growth, pH changes, lactic acid production, microbial succession, nitrite safety, and flavor development in real time. 基于发酵动力学的泡菜过程预测与风味评估。">
+  <meta name="keywords" content="kimchi, fermentation, simulator, 泡菜, 김치, 发酵, 动力学, LAB, lactic acid bacteria, Gompertz, Arrhenius, pH, food science, 乳酸菌, 亚硝酸盐, nitrite">
+  <meta name="author" content="@djwz">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://kimchi.0xgarfield.com/">
+  <!-- Open Graph -->
+  <meta property="og:title" content="泡菜动力学 — Kimchi Dynamics">
+  <meta property="og:description" content="Interactive kimchi fermentation simulator. Predict LAB growth, pH, lactic acid, microbial succession and flavor score in real time.">
+  <meta property="og:url" content="https://kimchi.0xgarfield.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="ko_KR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="泡菜动力学 — Kimchi Dynamics">
+  <meta name="twitter:description" content="Interactive kimchi fermentation simulator based on fermentation kinetics.">
+  <meta name="twitter:creator" content="@djwz">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=28">
+  <link rel="stylesheet" href="css/styles.css?v=29">
 </head>
 <body>
   <!-- ====== HEADER ====== -->
@@ -90,7 +109,7 @@
             </div>
           </div>
 
-          <!-- 2. Starter culture (母水) -->
+          <!-- 2. Starter culture (酵种/backslopping) -->
           <div class="field-item">
             <span class="field-marker">2</span>
             <div class="field-body">
@@ -368,6 +387,10 @@
       <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9728259/" target="_blank" rel="noopener">LAB Kinetics</a> ·
       <a href="https://www.sciencedirect.com/science/article/pii/S0023643824007424" target="_blank" rel="noopener">Gompertz</a>
     </p>
+    <p class="footer-links">
+      <a href="https://github.com/djzoom/kimchi-fermentation-simulator" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://x.com/djwz" target="_blank" rel="noopener">@djwz</a>
+    </p>
   </footer>
 
   <!-- Tooltip container -->
@@ -413,12 +436,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-  <script src="js/i18n.js?v=28"></script>
-  <script src="js/models.js?v=28"></script>
-  <script src="js/simulation.js?v=28"></script>
-  <script src="js/charts.js?v=28"></script>
-  <script src="js/ui.js?v=28"></script>
-  <script src="js/recipe.js?v=28"></script>
-  <script src="js/app.js?v=28"></script>
+  <script src="js/i18n.js?v=29"></script>
+  <script src="js/models.js?v=29"></script>
+  <script src="js/simulation.js?v=29"></script>
+  <script src="js/charts.js?v=29"></script>
+  <script src="js/ui.js?v=29"></script>
+  <script src="js/recipe.js?v=29"></script>
+  <script src="js/app.js?v=29"></script>
 </body>
 </html>

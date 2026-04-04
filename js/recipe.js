@@ -61,7 +61,7 @@ window.KimchiSim.recipe = (function () {
     '<li><strong>Pack & Ferment:</strong> Pack tightly into fermentation vessel, minimizing air gaps. Ferment at 2-5°C for 2-3 weeks (slow) or 15-20°C for 2-3 days (fast).</li>' +
     '</ol>' +
 
-    '<h4>Starter Culture (종균/母水) — Old Kimchi Brine</h4>' +
+    '<h4>Starter Culture — Old Kimchi Brine (Backslopping)</h4>' +
     '<p>Traditional method (backslopping): add 5-10% (by weight) of brine from a previous batch of well-fermented kimchi (묵은지국물). This acts as a natural starter culture, similar to sourdough starter or yogurt mother.</p>' +
     '<table class="recipe-table">' +
     '<tr><th>Effect</th><th>Mechanism</th></tr>' +
@@ -225,8 +225,8 @@ window.KimchiSim.recipe = (function () {
     '<li><strong>装坛发酵：</strong>紧密装入发酵容器，尽量排除空气。2-5°C低温发酵2-3周，或15-20°C常温发酵2-3天。</li>' +
     '</ol>' +
 
-    '<h4>母水（종균）— 老泡菜发酵液</h4>' +
-    '<p>传统方法（回浆法/backslopping）：取前一坛充分发酵的泡菜液（묵은지국물），按白菜重量的5-10%添加。这相当于天然发酵剂，类似酸面团的"老面"或酸奶的"引种"。</p>' +
+    '<h4>酵种 — 老泡菜发酵液（回浆法 Backslopping）</h4>' +
+    '<p>传统方法：取前一坛充分发酵的泡菜液，按白菜重量的5-10%添加。这相当于天然发酵剂，类似酸面团的"老面"或酸奶的"引种"。</p>' +
     '<table class="recipe-table">' +
     '<tr><th>效果</th><th>机制</th></tr>' +
     '<tr><td>加速发酵</td><td>预适应的乳酸菌跳过迟滞期（含10⁶-10⁸ CFU/mL活菌）</td></tr>' +
@@ -234,7 +234,7 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>风味更稳定</td><td>引入经验证的Leuconostoc优势菌群</td></tr>' +
     '<tr><td>降低腐败风险</td><td>对有害微生物的竞争性排斥</td></tr>' +
     '</table>' +
-    '<p><strong>推荐用量：</strong>家庭制作5-10%；工业生产可使用纯乳酸菌种（종균）标准化。</p>' +
+    '<p><strong>推荐用量：</strong>家庭制作5-10%；工业生产可使用纯乳酸菌酵种标准化。</p>' +
 
     '<h4>品质指标</h4>' +
     '<table class="recipe-table">' +
@@ -276,7 +276,7 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>老姜</td><td>切厚片投入，增香暖胃，姜辣素有抑菌功能</td></tr>' +
     '<tr><td>大蒜</td><td>整瓣投入，大蒜素抑制有害菌</td></tr>' +
     '<tr><td>白酒</td><td>加入少量高度白酒（\u226552\u00b0），乙醇抑菌、酯化增香</td></tr>' +
-    '<tr><td>母水/老卤</td><td>传统泡菜坛终年不换水，老卤含丰富乳酸菌，新菜入坛即可快速发酵。建议取上一坛老卤5\u201310%（约100\u2013250 mL/2.5 kg蔬菜）加入新坛。</td></tr>' +
+    '<tr><td>酵种/老卤</td><td>传统泡菜坛终年不换水，老卤含丰富乳酸菌，新菜入坛即可快速发酵。建议取上一坛老卤5\u201310%（约100\u2013250 mL/2.5 kg蔬菜）加入新坛。</td></tr>' +
     '</table>' +
 
     '<h4>传统配方（蔬菜约2.5公斤）</h4>' +
@@ -291,7 +291,7 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>大蒜</td><td>1 整头（剥瓣）</td><td>大蒜素抑菌</td></tr>' +
     '<tr><td>白酒（\u226552\u00b0）</td><td>20\u201330 mL（约2大匙）</td><td>乙醇抑菌、酯化增香</td></tr>' +
     '<tr><td>冰糖（可选）</td><td>10\u201315 g</td><td>提供碳源促发酵、调和口味</td></tr>' +
-    '<tr><td>母水/老卤（可选）</td><td>100\u2013250 mL</td><td>取上坛老泡菜水加速发酵、稳定风味</td></tr>' +
+    '<tr><td>酵种/老卤（可选）</td><td>100\u2013250 mL</td><td>取上坛老泡菜水加速发酵、稳定风味</td></tr>' +
     '</table>' +
 
     '<h4>标准制作流程（5步）</h4>' +
