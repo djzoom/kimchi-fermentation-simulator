@@ -203,13 +203,13 @@ window.KimchiSim.i18n = (function () {
     'slider.starter': {
       en: 'Starter Culture',
       ko: '종균 (묵은지국물)',
-      zh: '母水（老泡菜发酵液）',
+      zh: '酵种（老泡菜发酵液）',
       de: 'Starterkultur'
     },
     'slider.starter.hint': {
       en: 'Old kimchi brine — natural LAB inoculant (backslopping)',
       ko: '묵은지국물 — 천연 유산균 종균',
-      zh: '旧泡菜发酵液 — 天然乳酸菌种子液',
+      zh: '旧泡菜发酵液 — 天然乳酸菌接种液（回浆法）',
       de: 'Alte Kimchi-Lake — natürliches LAB-Inokulum (Rückführung)'
     },
 
@@ -663,11 +663,11 @@ window.KimchiSim.i18n = (function () {
 
     // Mixer labels
     'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐', de: 'Salz' },
-    'mixer.starter': { en: 'Starter', ko: '종균', zh: '母水', de: 'Starterkultur' },
+    'mixer.starter': { en: 'Starter', ko: '종균', zh: '酵种', de: 'Starterkultur' },
     'starter.label': {
       en: 'Starter Culture (Old Brine)',
       ko: '종균 (묵은지국물)',
-      zh: '母水（老泡菜发酵液）',
+      zh: '酵种（老泡菜发酵液）',
       de: 'Starterkultur (Altlake)'
     },
     'starter.hint': {
@@ -777,7 +777,7 @@ window.KimchiSim.i18n = (function () {
     'tip.starter': {
       en: 'Starter = old kimchi brine. It contains millions of live bacteria that jumpstart fermentation.\n\n0%: Natural fermentation (slower)\n5%: Moderate boost\n10-15%: Fast start, consistent results\n\nLike sourdough starter for bread!',
       ko: '종균 = 묵은지국물. 수백만 유산균이 발효를 빠르게 시작합니다.\n\n0%: 자연 발효 (느림)\n5%: 적당한 촉진\n10-15%: 빠른 시작, 일정한 결과\n\n빵의 천연 효모와 같은 원리!',
-      zh: '母水=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！',
+      zh: '酵种=老泡菜汤汁，含有数百万活菌，能快速启动发酵。\n\n0%：自然发酵（较慢）\n5%：适度加速\n10-15%：快速启动，效果稳定\n\n就像面包的老面种一样！',
       de: 'Starterkultur = alte Kimchi-Lake. Sie enthält Millionen lebender Bakterien, die die Fermentation beschleunigen.\n\n0 %: Natürliche Fermentation (langsamer)\n5 %: Moderater Schub\n10–15 %: Schneller Start, gleichmäßige Ergebnisse\n\nWie Sauerteig beim Brotbacken!'
     },
     'tip.stages': {
@@ -789,7 +789,7 @@ window.KimchiSim.i18n = (function () {
     'tip.nitrite': {
       en: 'Nitrite (NO\u2082) is not assigned to a fixed day count here.\n\nThis simulator estimates a nitrate reservoir from the kimchi mix, converts salt into an equivalent Na\u207A brine strength, speeds or slows nitrate reduction with your temperature stages, and then lets LAB acidity and biomass clear nitrite back down.\n\nWarm starts usually compress the risk window into an earlier, sharper peak. Cold plans often spread it over more time. More starter usually shortens the window because LAB take control sooner.\n\nRead the predicted peak and risk window for your actual settings instead of assuming every batch peaks on the same day.',
       ko: '여기서는 아질산염(NO\u2082)을 고정된 날짜 규칙으로 처리하지 않습니다.\n\n이 시뮬레이터는 김치 혼합물의 질산염 저장량을 추정하고, 소금을 등가 Na\u207A 염수 강도로 바꾸며, 온도 단계에 따라 질산염 환원 속도를 조절한 뒤, 유산균의 산성화와 균수 증가로 아질산염이 다시 낮아지도록 계산합니다.\n\n따뜻한 시작은 위험 구간을 더 이르고 날카로운 최고치로 압축하는 경향이 있고, 차가운 계획은 그 구간을 더 길게 펼치는 경향이 있습니다. 종균이 많을수록 유산균이 더 빨리 주도권을 잡아 위험 구간이 짧아지는 경우가 많습니다.\n\n따라서 모든 배치가 같은 날 최고치를 찍는다고 가정하지 말고, 현재 설정에서 계산된 최고치와 위험 구간을 읽어야 합니다.',
-      zh: '这里不会把亚硝酸盐(NO\u2082)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na\u207A 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。母水越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。',
+      zh: '这里不会把亚硝酸盐(NO\u2082)硬套成固定的第几天。\n\n这个模拟器会先根据配方估算 Kimchi 中的硝酸根储量，把盐换算成等效的 Na\u207A 盐水强度，再根据你的温度阶段加快或放慢硝酸根向亚硝酸盐的转化，最后让乳酸菌的产酸和菌量增长把亚硝酸盐继续压低。\n\n温暖起步通常会把风险窗口压缩成更早、更尖锐的峰值；低温计划往往会把它摊得更长。酵种越多，乳酸菌越早接管，风险窗口通常也会更短。\n\n所以不要假设每一坛都会在同一天达到峰值，而要看当前参数下实时推演出的峰值和风险窗口。',
       de: 'Nitrit (NO₂) wird hier nicht an eine feste Tageszahl gebunden.\n\nDieser Simulator schätzt eine Nitratreserve aus der Kimchi-Mischung, rechnet Salz in eine äquivalente Na⁺-Lakestärke um, beschleunigt oder verlangsamt die Nitratreduktion mit Ihren Temperaturstufen und lässt dann LAB-Säure und Biomasse das Nitrit wieder abbauen.\n\nWarme Starts komprimieren das Risikofenster meist zu einem früheren, schärferen Höchstwert. Kalte Pläne verteilen es oft über mehr Zeit. Mehr Starterkultur verkürzt das Fenster meist, weil LAB schneller die Kontrolle übernehmen.\n\nLesen Sie den vorhergesagten Höchstwert und das Risikofenster für Ihre tatsächlichen Einstellungen, anstatt anzunehmen, dass jede Charge am selben Tag ihren Höchstwert erreicht.'
     },
     'tip.phase': {
@@ -819,7 +819,7 @@ window.KimchiSim.i18n = (function () {
     'tip.microbeBoard': {
       en: 'Kimchi flavor is a team effort.\n\nThese cards answer a simple question: who is doing the most work around the best-tasting moment? The highlighted card updates automatically as you change time, starter, and temperature stages.',
       ko: '김치 풍미는 팀플레이입니다.\n\n이 카드는 “가장 맛있는 시점 주변에서 누가 가장 큰 역할을 하고 있는가?”를 쉽게 보여줍니다. 시간, 종균, 온도 단계를 바꾸면 자동으로 강조 카드가 바뀝니다.',
-      zh: 'Kimchi 的风味来自菌群协作。\n\n这组卡片回答的是一个简单问题：在最佳风味附近，究竟是谁出了最多力？当你调整时间、母水和温度阶段时，高亮卡片会自动变化。',
+      zh: 'Kimchi 的风味来自菌群协作。\n\n这组卡片回答的是一个简单问题：在最佳风味附近，究竟是谁出了最多力？当你调整时间、酵种和温度阶段时，高亮卡片会自动变化。',
       de: 'Kimchi-Geschmack ist Teamarbeit.\n\nDiese Karten beantworten eine einfache Frage: Wer leistet rund um den besten Geschmacksmoment die meiste Arbeit? Die hervorgehobene Karte aktualisiert sich automatisch, wenn Sie Zeit, Starterkultur und Temperaturstufen ändern.'
     },
     'tip.presets': {
@@ -1066,7 +1066,7 @@ window.KimchiSim.i18n = (function () {
     'dash.nitriteClear': { en: 'Nitrite clears — safe to eat', ko: '아질산염 소멸 — 안전 섭취 가능', zh: '亚硝酸盐消退 · 可以开始吃', de: 'Nitrit abgebaut — sicher zum Essen' },
     'dash.bestFlavor': { en: 'Best flavor window', ko: '최적 풍미 구간', zh: '最佳风味', de: 'Bestes Geschmacksfenster' },
     'dash.lastEdible': { en: 'Over-sour — last good window', ko: '과숙 — 마지막 섭취 구간', zh: '过酸 · 最后宜食窗口', de: 'Übersäuert — letztes gutes Fenster' },
-    'dash.starterReady': { en: 'Ready as starter brine for next batch', ko: '종균으로 사용 가능 (묵은지국물)', zh: '可作母水（老泡菜液）', de: 'Bereit als Starterlake für die nächste Charge' },
+    'dash.starterReady': { en: 'Ready as starter brine for next batch', ko: '종균으로 사용 가능 (묵은지국물)', zh: '可作酵种（老泡菜液）', de: 'Bereit als Starterlake für die nächste Charge' },
     'dash.nextBatch': { en: 'Add 5-10% of this brine to your next batch for faster, more consistent fermentation.', ko: '다음 배치에 이 국물의 5-10%를 넣으면 더 빠르고 안정적인 발효가 가능합니다.', zh: '下次做泡菜时加入 5-10% 这坛老汤，发酵更快更稳定。', de: 'Fügen Sie 5–10 % dieser Lake Ihrer nächsten Charge hinzu für schnellere, gleichmäßigere Fermentation.' },
     'dash.title': { en: 'Batch Timeline', ko: '배치 타임라인', zh: '这坛时间线', de: 'Chargen-Zeitachse' },
     'dash.batchTitle': { en: 'This Batch', ko: '이 배치', zh: '这坛泡菜', de: 'Diese Charge' },
@@ -1158,7 +1158,7 @@ window.KimchiSim.i18n = (function () {
     'extend.starter': {
       en: 'Less starter = slower start = longer window before over-souring',
       ko: '종균을 줄이면 = 시작이 느려져 = 과숙까지 시간이 길어집니다',
-      zh: '少用母水 = 起步更慢 = 到过酸之前的窗口更长',
+      zh: '少用酵种 = 起步更慢 = 到过酸之前的窗口更长',
       de: 'Weniger Starterkultur = langsamerer Start = längeres Fenster vor Übersäuerung'
     },
     'extend.stage': {
@@ -1176,7 +1176,7 @@ window.KimchiSim.i18n = (function () {
     'extend.reduce.starter': {
       en: 'Try reducing starter to {n}% for a wider peak window',
       ko: '종균을 {n}%로 줄이면 최적 구간이 넓어집니다',
-      zh: '试试把母水减到 {n}% 以拓宽最佳窗口',
+      zh: '试试把酵种减到 {n}% 以拓宽最佳窗口',
       de: 'Versuchen Sie, die Starterkultur auf {n} % zu reduzieren für ein breiteres Spitzenfenster'
     },
     'extend.add.cold.stage': {
