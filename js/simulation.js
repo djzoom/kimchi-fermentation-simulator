@@ -1,6 +1,6 @@
 /**
- * Kimchi Fermentation Simulation Engine
- * Multi-stage support with calibrated incremental model
+ * Fermentation Simulation Engine
+ * Multi-stage, multi-ferment-type support
  */
 window.KimchiSim = window.KimchiSim || {};
 
@@ -25,7 +25,8 @@ window.KimchiSim.simulation = (function () {
    */
   function run(params, stages) {
     var m = getModels();
-    var salt = readNumber(params.salt, 2.5);
+    var P = m.PARAMS;
+    var salt = readNumber(params.salt, P.salt_optimal);
     var starter = readNumber(params.starter, 0);
 
     // Build stage list
@@ -42,26 +43,31 @@ window.KimchiSim.simulation = (function () {
       var autoOpt = m.optimalTime(T, salt, starter);
       stageList.push({
         temperature: T,
-        duration: Math.max(72, autoOpt * 3 * 24) // at least 3 days
+        duration: Math.max(72, autoOpt * 3 * 24)
       });
     }
 
-    // Total stage time in days (used for stage boundaries, not X-axis limit)
     var totalHours = 0;
     for (var i = 0; i < stageList.length; i++) totalHours += stageList[i].duration;
     var totalStageDays = totalHours / 24;
 
-    // Simulate up to 90 days max — we'll trim after finding the over-sour point
     var tMaxDays = Math.min(90, Math.max(totalStageDays, 60));
-
-    // Fine resolution: 0.02 days = ~29 minutes
     var dt = 0.02;
     var n = Math.ceil(tMaxDays / dt) + 1;
     if (n > 5000) { dt = tMaxDays / 5000; n = 5001; }
 
+    // Species keys from profile
+    var speciesKeys = [];
+    for (var si = 0; si < P.species.length; si++) {
+      speciesKeys.push(P.species[si].key);
+    }
+
     // Result arrays
     var timePoints = [], labCounts = [], phValues = [], acidValues = [];
-    var sakei = [], mesenteroides = [], plantarum = [];
+    var speciesArrays = {};
+    for (var sk = 0; sk < speciesKeys.length; sk++) {
+      speciesArrays[speciesKeys[sk]] = [];
+    }
     var flavorScores = [], tempProfile = [], nitriteValues = [];
     var nitrateValues = [], nitriteFormation = [], nitriteClearance = [];
 
@@ -83,11 +89,14 @@ window.KimchiSim.simulation = (function () {
     var nitritePeak = nitriteState.nitrite, nitritePeakTime = 0;
     var riskStart = null, riskEnd = null;
 
+    // Phase thresholds adapt to ferment type
+    var phase1Threshold = P.pH_initial - 0.8; // ~5.0 for kimchi, ~5.4 for sauerkraut
+    var phase2Threshold = P.pH_min + 0.2;     // ~4.0 for kimchi, ~3.7 for sauerkraut
+
     for (var i = 0; i < n; i++) {
       var t = i * dt;
       if (t > tMaxDays) break;
 
-      // Advance stage if needed
       while (currentStageIdx < stageList.length - 1 && t >= stageEndTime) {
         currentStageIdx++;
         stageEndTime += stageList[currentStageIdx].duration / 24;
@@ -97,94 +106,79 @@ window.KimchiSim.simulation = (function () {
       var T = stageList[currentStageIdx].temperature;
       tempProfile.push(T);
 
-      // Growth rate at current conditions
       var mu = m.growthRate(T, salt);
       var lambda = m.lagPhase(T, starter);
 
-      // pH decay — incremental exponential toward pH_min
-      // Derived from dPH/dt = -k * (pH - pH_min), solution: pH(t) = pH_min + (pH0-pH_min)*e^(-kt)
+      // pH decay
       var k_pH = m.kPH(T, salt);
-      var pHDrop = k_pH * (currentPH - m.PARAMS.pH_min) * dt;
-      currentPH = Math.max(m.PARAMS.pH_min, currentPH - pHDrop);
+      var pHDrop = k_pH * (currentPH - P.pH_min) * dt;
+      currentPH = Math.max(P.pH_min, currentPH - pHDrop);
 
-      // LAB growth — logistic with lag
-      var growthCapacity = (m.PARAMS.N_max - currentN) / m.PARAMS.A_max;
+      // LAB growth
+      var growthCapacity = (P.N_max - currentN) / P.A_max;
       var lagFactor = 1.0;
       if (t < lambda && currentStageIdx === 0 && starter < 1) {
-        lagFactor = Math.pow(t / lambda, 2); // smooth lag entry
+        lagFactor = Math.pow(t / lambda, 2);
       }
       var labIncrement = mu * growthCapacity * lagFactor * dt;
-      currentN = Math.min(m.PARAMS.N_max, currentN + Math.max(0, labIncrement));
+      currentN = Math.min(P.N_max, currentN + Math.max(0, labIncrement));
 
-      // Lactic acid
       var currentAcid = m.lacticAcid(currentPH, pH_init);
-
-      // Microbial composition
       var comp = m.microbialComposition(currentPH, starter);
 
       // Nitrite kinetics
       var nitriteSnapshot = m.nitriteStep(nitriteState, {
-        temperature: T,
-        pH: currentPH,
-        labCount: currentN,
-        starter: starter,
-        composition: comp
+        temperature: T, pH: currentPH, labCount: currentN,
+        starter: starter, composition: comp
       }, dt);
       var nitrite = nitriteSnapshot.nitrite;
 
       // Flavor score
-      var score = m.flavorScore(currentPH, currentAcid, comp.mesenteroides);
+      var score = m.flavorScore(currentPH, currentAcid, comp);
 
       // Store results
       timePoints.push(t);
       labCounts.push(currentN);
       phValues.push(currentPH);
       acidValues.push(currentAcid);
-      sakei.push(comp.sakei * 100);
-      mesenteroides.push(comp.mesenteroides * 100);
-      plantarum.push(comp.plantarum * 100);
+      for (var sk = 0; sk < speciesKeys.length; sk++) {
+        speciesArrays[speciesKeys[sk]].push((comp[speciesKeys[sk]] || 0) * 100);
+      }
       flavorScores.push(score);
       nitriteValues.push(nitrite);
       nitrateValues.push(nitriteSnapshot.nitrate);
       nitriteFormation.push(nitriteSnapshot.formationRate);
       nitriteClearance.push(nitriteSnapshot.clearanceRate);
 
-      // Track peaks and phases
-      if (score > peakFlavor) {
-        peakFlavor = score;
-        peakFlavorTime = t;
-      }
-      if (nitrite > nitritePeak) {
-        nitritePeak = nitrite;
-        nitritePeakTime = t;
-      }
-      if (riskStart === null && nitrite > m.PARAMS.nitrite_safe) riskStart = t;
-      if (riskStart !== null && riskEnd === null && nitrite <= m.PARAMS.nitrite_safe && t > riskStart) riskEnd = t;
-      if (phase1End < 0 && currentPH < 5.0) phase1End = t;
-      if (phase2End < 0 && currentPH < 4.0) phase2End = t;
+      if (score > peakFlavor) { peakFlavor = score; peakFlavorTime = t; }
+      if (nitrite > nitritePeak) { nitritePeak = nitrite; nitritePeakTime = t; }
+      if (riskStart === null && nitrite > P.nitrite_safe) riskStart = t;
+      if (riskStart !== null && riskEnd === null && nitrite <= P.nitrite_safe && t > riskStart) riskEnd = t;
+      if (phase1End < 0 && currentPH < phase1Threshold) phase1End = t;
+      if (phase2End < 0 && currentPH < phase2Threshold) phase2End = t;
     }
 
     if (phase1End < 0) phase1End = tMaxDays;
     if (phase2End < 0) phase2End = tMaxDays;
     if (riskStart !== null && riskEnd === null) riskEnd = timePoints.length ? timePoints[timePoints.length - 1] : tMaxDays;
 
-    // X-axis = 7 days after over-sour point (pH < 4.0), experience-based
     var displayMax = Math.ceil(phase2End + 7);
     if (riskEnd !== null) displayMax = Math.max(displayMax, Math.ceil(riskEnd + 1));
     displayMax = Math.max(displayMax, Math.ceil(nitritePeakTime + 2));
-    displayMax = Math.max(displayMax, 3); // at least 3 days
-    // Trim arrays to displayMax
+    displayMax = Math.max(displayMax, 3);
+
     var trimIdx = timePoints.length;
     for (var i = 0; i < timePoints.length; i++) {
       if (timePoints[i] > displayMax) { trimIdx = i; break; }
     }
+
     timePoints = timePoints.slice(0, trimIdx);
     labCounts = labCounts.slice(0, trimIdx);
     phValues = phValues.slice(0, trimIdx);
     acidValues = acidValues.slice(0, trimIdx);
-    sakei = sakei.slice(0, trimIdx);
-    mesenteroides = mesenteroides.slice(0, trimIdx);
-    plantarum = plantarum.slice(0, trimIdx);
+    for (var sk = 0; sk < speciesKeys.length; sk++) {
+      speciesArrays[speciesKeys[sk]] = speciesArrays[speciesKeys[sk]].slice(0, trimIdx);
+    }
     flavorScores = flavorScores.slice(0, trimIdx);
     nitriteValues = nitriteValues.slice(0, trimIdx);
     nitrateValues = nitrateValues.slice(0, trimIdx);
@@ -201,33 +195,48 @@ window.KimchiSim.simulation = (function () {
     if (optIdx >= timePoints.length) optIdx = timePoints.length - 1;
 
     var optComp = m.microbialComposition(phValues[optIdx], starter);
-    var dominant = 'Leuc. mesenteroides';
-    var dominantKey = 'mesenteroides';
-    if (optComp.sakei > optComp.mesenteroides && optComp.sakei > optComp.plantarum) {
-      dominant = 'L. sakei';
-      dominantKey = 'sakei';
-    } else if (optComp.plantarum > optComp.mesenteroides) {
-      dominant = 'L. plantarum';
-      dominantKey = 'plantarum';
+
+    // Find dominant species
+    var dominantKey = speciesKeys[0];
+    var dominantVal = 0;
+    for (var sk = 0; sk < speciesKeys.length; sk++) {
+      var v = optComp[speciesKeys[sk]] || 0;
+      if (v > dominantVal) { dominantVal = v; dominantKey = speciesKeys[sk]; }
     }
 
-    // Trend calculation at optimal point (derivative over ~0.5 day window)
+    // Trends
     var trendWindow = Math.max(1, Math.round(0.5 / dt));
     var idxBefore = Math.max(0, optIdx - trendWindow);
     var idxAfter = Math.min(timePoints.length - 1, optIdx + trendWindow);
     function trend(arr) {
       var delta = arr[idxAfter] - arr[idxBefore];
       var span = timePoints[idxAfter] - timePoints[idxBefore];
-      if (span === 0) return 0;
-      return delta / span; // per day
+      return span === 0 ? 0 : delta / span;
     }
 
+    var speciesTrends = {};
+    for (var sk = 0; sk < speciesKeys.length; sk++) {
+      speciesTrends[speciesKeys[sk]] = trend(speciesArrays[speciesKeys[sk]]);
+    }
+
+    // Build backward-compatible microbial object + generic species data
+    var microbialData = {};
+    for (var sk = 0; sk < speciesKeys.length; sk++) {
+      microbialData[speciesKeys[sk]] = speciesArrays[speciesKeys[sk]];
+    }
+    // Backward compat aliases for kimchi
+    if (!microbialData.sakei) microbialData.sakei = speciesArrays[speciesKeys[0]];
+    if (!microbialData.mesenteroides) microbialData.mesenteroides = speciesArrays[speciesKeys[1]];
+    if (!microbialData.plantarum) microbialData.plantarum = speciesArrays[speciesKeys[2]];
+
     return {
+      fermentType: m.getFermentType(),
+      speciesKeys: speciesKeys,
       timePoints: timePoints,
       labCounts: labCounts,
       pH: phValues,
       lacticAcid: acidValues,
-      microbial: { sakei: sakei, mesenteroides: mesenteroides, plantarum: plantarum },
+      microbial: microbialData,
       flavorScore: flavorScores,
       nitrite: nitriteValues,
       tempProfile: tempProfile,
@@ -236,48 +245,33 @@ window.KimchiSim.simulation = (function () {
       tMax: tMaxDays,
       phases: { phase1End: phase1End, phase2End: phase2End },
       atOptimal: {
-        pH: phValues[optIdx] || 5.8,
+        pH: phValues[optIdx] || P.pH_initial,
         acid: acidValues[optIdx] || 0,
-        lab: labCounts[optIdx] || 5,
+        lab: labCounts[optIdx] || P.N0,
         flavor: flavorScores[optIdx] || 0,
-        dominant: dominant,
         dominantKey: dominantKey,
-        composition: {
-          sakei: optComp.sakei,
-          mesenteroides: optComp.mesenteroides,
-          plantarum: optComp.plantarum
-        },
+        composition: optComp,
         nitrite: nitriteValues[optIdx] || 0,
         nitrate: nitrateValues[optIdx] || 0,
-        trends: {
+        trends: Object.assign({
           pH: trend(phValues),
           acid: trend(acidValues),
           flavor: trend(flavorScores),
-          nitrite: trend(nitriteValues),
-          sakei: trend(sakei),
-          mesenteroides: trend(mesenteroides),
-          plantarum: trend(plantarum)
-        }
+          nitrite: trend(nitriteValues)
+        }, speciesTrends)
       },
       peakFlavor: peakFlavor,
       peakFlavorTime: peakFlavorTime,
       nitriteMeta: {
-        safeThreshold: m.PARAMS.nitrite_safe,
-        cautionThreshold: m.PARAMS.nitrite_caution,
+        safeThreshold: P.nitrite_safe,
+        cautionThreshold: P.nitrite_caution,
         initialNitrate: initialNitrate,
-        peak: {
-          value: nitritePeak,
-          time: nitritePeakTime
-        },
+        peak: { value: nitritePeak, time: nitritePeakTime },
         riskWindow: {
-          start: riskStart,
-          end: riskEnd,
+          start: riskStart, end: riskEnd,
           duration: (riskStart !== null && riskEnd !== null) ? Math.max(0, riskEnd - riskStart) : 0
         },
-        sodium: {
-          mgKg: nitriteState.sodiumMgKg,
-          molar: nitriteState.sodiumMolar
-        },
+        sodium: { mgKg: nitriteState.sodiumMgKg, molar: nitriteState.sodiumMolar },
         atOptimal: {
           nitrite: nitriteValues[optIdx] || 0,
           nitrate: nitrateValues[optIdx] || 0,
