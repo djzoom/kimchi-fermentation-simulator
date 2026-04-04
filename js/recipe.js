@@ -77,10 +77,40 @@ window.KimchiSim.recipe = (function () {
     '<tr><th>Stage</th><th>pH</th><th>Acidity</th><th>Characteristics</th></tr>' +
     '<tr><td>Under-fermented</td><td>&gt; 5.0</td><td>&lt; 0.2%</td><td>Salty, raw vegetable taste</td></tr>' +
     '<tr><td>Developing</td><td>4.5 – 5.0</td><td>0.2 – 0.4%</td><td>Mild sourness emerging</td></tr>' +
-    '<tr><td>Optimal (최적)</td><td>4.0 – 4.5</td><td>0.4 – 0.8%</td><td>Balanced sour-umami, crisp texture, complex aroma</td></tr>' +
-    '<tr><td>Over-fermented</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>Strongly sour, soft texture (good for cooking: 김치찌개)</td></tr>' +
+    '<tr><td>Optimal</td><td>4.0 – 4.5</td><td>0.4 – 0.8%</td><td>Balanced sour-umami, crisp texture, complex aroma</td></tr>' +
+    '<tr><td>Over-fermented</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>Strongly sour, soft texture (good for cooking)</td></tr>' +
     '</table>' +
 
+    '</div>' +
+
+    // Sichuan Paocai
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>Sichuan Paocai (\u56DB\u5DDD\u6CE1\u83DC)</h3>' +
+    '<h4>Overview</h4>' +
+    '<p>Brine-submerged vegetable fermentation using a water-sealed clay jar. Mixed vegetables (radish, long beans, cabbage, ginger) ferment in 5\u20137% salt brine at room temperature. Key spices: Sichuan pepper, dried chili, baijiu (Chinese liquor).</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Sichuan Paocai</th><th>Korean Kimchi</th></tr>' +
+    '<tr><td>Method</td><td>Brine submersion</td><td>Dry salting + paste</td></tr>' +
+    '<tr><td>Salt</td><td>5\u20137% (brine)</td><td>2\u20134% (finished)</td></tr>' +
+    '<tr><td>Temperature</td><td>18\u201325\u00b0C (room temp)</td><td>2\u20135\u00b0C (cold) or 15\u201320\u00b0C (fast)</td></tr>' +
+    '<tr><td>Key spices</td><td>Sichuan pepper, dried chili, ginger, baijiu</td><td>Chili powder, fish sauce, shrimp paste, garlic</td></tr>' +
+    '<tr><td>Dominant LAB</td><td>W. confusa \u2192 L. plantarum \u2192 P. pentosaceus</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td></tr>' +
+    '</table>' +
+    '</div>' +
+
+    // German Sauerkraut
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>German Sauerkraut</h3>' +
+    '<h4>Overview</h4>' +
+    '<p>Finely shredded white cabbage fermented with 2% salt. The classic three-phase succession: Leu. mesenteroides (CO\u2082 + ethanol) \u2192 L. brevis (acetic acid complexity) \u2192 L. plantarum (final acid). Fermentation takes 2\u20136 weeks at 15\u201322\u00b0C.</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Sauerkraut</th><th>Korean Kimchi</th></tr>' +
+    '<tr><td>Salt</td><td>1.5\u20132.5%</td><td>2.0\u20134.0%</td></tr>' +
+    '<tr><td>Temperature</td><td>15\u201322\u00b0C \u2192 4\u201315\u00b0C</td><td>20\u201325\u00b0C \u2192 4\u00b0C</td></tr>' +
+    '<tr><td>Time to ready</td><td>2\u20136 weeks</td><td>3\u201314 days</td></tr>' +
+    '<tr><td>Spices</td><td>Caraway, juniper, bay leaf</td><td>Chili, garlic, fish sauce</td></tr>' +
+    '<tr><td>Dominant LAB</td><td>Leuc. mesenteroides \u2192 L. brevis \u2192 L. plantarum</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td></tr>' +
+    '</table>' +
     '</div>';
   }
 
@@ -151,6 +181,36 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>과숙</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>강한 신맛, 무른 식감 (김치찌개용)</td></tr>' +
     '</table>' +
 
+    '</div>' +
+
+    // 사천 파오차이
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>사천 파오차이 (四川泡菜)</h3>' +
+    '<h4>개요</h4>' +
+    '<p>물봉인 도자기 항아리에서 소금물에 채소를 담가 발효시키는 방식. 무, 강낭콩, 배추, 생강 등을 5-7% 소금물에 실온 발효. 핵심 향신료: 화자오(사천 후추), 건고추, 바이주(중국 백주).</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>항목</th><th>사천 파오차이</th><th>한국 김치</th></tr>' +
+    '<tr><td>방법</td><td>소금물 침지</td><td>건절임 + 양념 도포</td></tr>' +
+    '<tr><td>염도</td><td>5-7% (소금물)</td><td>2-4% (완성품)</td></tr>' +
+    '<tr><td>온도</td><td>18-25°C (실온)</td><td>2-5°C (저온) 또는 15-20°C (고속)</td></tr>' +
+    '<tr><td>핵심 양념</td><td>화자오, 건고추, 생강, 바이주</td><td>고춧가루, 멸치액젓, 새우젓, 마늘</td></tr>' +
+    '<tr><td>우세 유산균</td><td>W. confusa \u2192 L. plantarum \u2192 P. pentosaceus</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td></tr>' +
+    '</table>' +
+    '</div>' +
+
+    // 독일 사우어크라우트
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>독일 사우어크라우트 (Sauerkraut)</h3>' +
+    '<h4>개요</h4>' +
+    '<p>양배추를 곱게 채 썰어 2% 소금으로 절여 발효. 3단계 미생물 천이: Leu. mesenteroides (CO₂ + 에탄올) \u2192 L. brevis (초산 복합풍미) \u2192 L. plantarum (최종 산화). 15-22°C에서 2-6주 발효.</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>항목</th><th>사우어크라우트</th><th>한국 김치</th></tr>' +
+    '<tr><td>염도</td><td>1.5-2.5%</td><td>2.0-4.0%</td></tr>' +
+    '<tr><td>온도</td><td>15-22°C \u2192 4-15°C</td><td>20-25°C \u2192 4°C</td></tr>' +
+    '<tr><td>발효 기간</td><td>2-6주</td><td>3-14일</td></tr>' +
+    '<tr><td>향신료</td><td>캐러웨이, 주니퍼, 월계수</td><td>고추, 마늘, 액젓</td></tr>' +
+    '<tr><td>우세 유산균</td><td>Leuc. mesenteroides \u2192 L. brevis \u2192 L. plantarum</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td></tr>' +
+    '</table>' +
     '</div>';
   }
 
@@ -194,23 +254,23 @@ window.KimchiSim.recipe = (function () {
     '<h4>韩国标准：KS H 2169</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>辣度等级</th><th>辣椒素含量</th></tr>' +
-    '<tr><td>微辣（순한맛）</td><td>&lt; 2.9 ppm</td></tr>' +
-    '<tr><td>中辣（보통）</td><td>2.9 – 14.9 ppm</td></tr>' +
-    '<tr><td>辣（매운맛）</td><td>&ge; 14.9 ppm</td></tr>' +
+    '<tr><td>微辣</td><td>&lt; 2.9 ppm</td></tr>' +
+    '<tr><td>中辣</td><td>2.9 – 14.9 ppm</td></tr>' +
+    '<tr><td>辣</td><td>&ge; 14.9 ppm</td></tr>' +
     '</table>' +
 
-    '<h4>传统配方（每1棵大白菜 / 1포기）</h4>' +
+    '<h4>传统配方（每1棵大白菜）</h4>' +
     '<table class="recipe-table">' +
     '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
-    '<tr><td>大白菜（배추）</td><td>1棵（约2.5公斤）</td><td>主料基质</td></tr>' +
-    '<tr><td>粗盐（굵은소금）</td><td>1杯（腌制用）</td><td>渗透脱水，筛选乳酸菌</td></tr>' +
-    '<tr><td>辣椒粉（고춧가루）</td><td>1杯</td><td>色泽、辣椒素抑菌、风味</td></tr>' +
-    '<tr><td>鱼露（멸치액젓）</td><td>3大匙</td><td>鲜味，乳酸菌氮源</td></tr>' +
-    '<tr><td>虾酱（새우젓）</td><td>2大匙</td><td>鲜味，蛋白质分解酶</td></tr>' +
-    '<tr><td>大蒜（마늘）</td><td>5-6瓣，切末</td><td>风味，轻度抑菌</td></tr>' +
-    '<tr><td>生姜（생강）</td><td>1小匙，切末</td><td>风味，抑菌</td></tr>' +
-    '<tr><td>糯米糊（찹쌀풀）</td><td>3大匙</td><td>粘合调料，乳酸菌糖源</td></tr>' +
-    '<tr><td>小葱（쪽파）</td><td>5-6根</td><td>风味，口感</td></tr>' +
+    '<tr><td>大白菜</td><td>1棵（约2.5公斤）</td><td>主料基质</td></tr>' +
+    '<tr><td>粗盐</td><td>1杯（腌制用）</td><td>渗透脱水，筛选乳酸菌</td></tr>' +
+    '<tr><td>辣椒粉</td><td>1杯</td><td>色泽、辣椒素抑菌、风味</td></tr>' +
+    '<tr><td>鱼露</td><td>3大匙</td><td>鲜味，乳酸菌氮源</td></tr>' +
+    '<tr><td>虾酱</td><td>2大匙</td><td>鲜味，蛋白质分解酶</td></tr>' +
+    '<tr><td>大蒜</td><td>5-6瓣，切末</td><td>风味，轻度抑菌</td></tr>' +
+    '<tr><td>生姜</td><td>1小匙，切末</td><td>风味，抑菌</td></tr>' +
+    '<tr><td>糯米糊</td><td>3大匙</td><td>粘合调料，乳酸菌糖源</td></tr>' +
+    '<tr><td>小葱</td><td>5-6根</td><td>风味，口感</td></tr>' +
     '</table>' +
     '<p><strong>核心比例：</strong>鱼露 : 虾酱 = 3 : 2（最佳鲜味平衡）</p>' +
     '<p><strong>农村振兴厅标准：</strong>每100克腌白菜配辣椒粉4.5克 + 大蒜2.0克</p>' +
@@ -242,12 +302,13 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>未熟</td><td>&gt; 5.0</td><td>&lt; 0.2%</td><td>咸味，生菜味</td></tr>' +
     '<tr><td>发酵中</td><td>4.5 – 5.0</td><td>0.2 – 0.4%</td><td>轻微酸味出现</td></tr>' +
     '<tr><td>最佳熟成</td><td>4.0 – 4.5</td><td>0.4 – 0.8%</td><td>酸鲜平衡，脆爽口感，复合香气</td></tr>' +
-    '<tr><td>过熟</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>强酸味，质地变软（适合做泡菜锅 김치찌개）</td></tr>' +
+    '<tr><td>过熟</td><td>&lt; 4.0</td><td>&gt; 0.9%</td><td>强酸味，质地变软（适合做泡菜锅）</td></tr>' +
     '</table>' +
 
     '</div>' +
 
-    getSichuan();
+    getSichuan() +
+    getSauerkrautZh();
   }
 
   function getSichuan() {
@@ -323,7 +384,53 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>核心调料</td><td>花椒、干辣椒、老姜、白酒</td><td>辣椒粉、鱼露、虾酱、大蒜</td></tr>' +
     '<tr><td>风味特征</td><td>酸爽、麻辣、清香</td><td>酸辣、鲜香、复合发酵香</td></tr>' +
     '<tr><td>发酵容器</td><td>泡菜坛子（水封陶坛）</td><td>瓮器或密封容器</td></tr>' +
-    '<tr><td>优势乳酸菌</td><td>植物乳杆菌、短乳杆菌</td><td>肠膜明串珠菌 \u2192 植物乳杆菌</td></tr>' +
+    '<tr><td>优势乳酸菌</td><td>魏斯氏菌 \u2192 植物乳杆菌 \u2192 戊糖片球菌</td><td>明串珠菌 \u2192 清酒乳杆菌 \u2192 植物乳杆菌</td></tr>' +
+    '</table>' +
+
+    '</div>';
+  }
+
+  function getSauerkrautZh() {
+    return '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+
+    '<h3>德国酸菜 Sauerkraut</h3>' +
+
+    '<h4>德国食品法典标准</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>项目</th><th>规格</th></tr>' +
+    '<tr><td>定义</td><td>以圆白菜（卷心菜）为原料，经食盐腌渍自然乳酸发酵制成的蔬菜制品</td></tr>' +
+    '<tr><td>食盐</td><td>1.5 \u2013 2.5%（成品含盐量，典型值 2.0%）</td></tr>' +
+    '<tr><td>总酸度（以乳酸计）</td><td>1.0 \u2013 2.0%</td></tr>' +
+    '<tr><td>pH</td><td>\u2264 4.1（充分发酵后）</td></tr>' +
+    '<tr><td>最短发酵时间</td><td>\u2265 7 天（15\u201320\u00b0C）</td></tr>' +
+    '</table>' +
+
+    '<h4>传统配方（每2.5公斤圆白菜）</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
+    '<tr><td>圆白菜</td><td>2.5 kg（细丝刨切）</td><td>主料基质</td></tr>' +
+    '<tr><td>非碘盐</td><td>50 g（菜重的2%）</td><td>渗透脱水，筛选乳酸菌</td></tr>' +
+    '<tr><td>杜松子</td><td>约10粒</td><td>增香，轻度抑菌</td></tr>' +
+    '<tr><td>葛缕子</td><td>3 g（约1小匙）</td><td>增香，助消化</td></tr>' +
+    '<tr><td>月桂叶</td><td>2\u20133片</td><td>增香</td></tr>' +
+    '</table>' +
+    '<p><strong>注意：</strong>必须使用非碘盐——碘会抑制乳酸菌。</p>' +
+
+    '<h4>制作流程（5步）</h4>' +
+    '<ol>' +
+    '<li><strong>刨丝与拌盐：</strong>将圆白菜刨成3\u20135毫米细丝，拌入2%盐，静置30分钟至出水。</li>' +
+    '<li><strong>揉搓与装坛：</strong>用力揉搓直至充分出汁。分层装入发酵坛或玻璃罐，每层压实。</li>' +
+    '<li><strong>加压密封：</strong>菜丝必须完全浸没在自身析出的菜汁中。放上压石，确保厌氧环境。</li>' +
+    '<li><strong>初期发酵（温发酵）：</strong>18\u201322\u00b0C 放置 3\u20135 天。每天释放气体（明串珠菌产 CO\u2082）。</li>' +
+    '<li><strong>后期发酵（冷发酵）：</strong>10\u201315\u00b0C 发酵 2\u20136 周，或冰箱 4\u00b0C 发酵 4\u20138 周。植物乳杆菌逐渐主导，酸度加深。</li>' +
+    '</ol>' +
+
+    '<h4>微生物演替特征</h4>' +
+    '<table class="recipe-table">' +
+    '<tr><th>阶段</th><th>优势菌</th><th>特征</th></tr>' +
+    '<tr><td>第1阶段（0\u20133天）</td><td>Leu. mesenteroides（明串珠菌）</td><td>异型发酵，产 CO\u2082、乙醇、甘露醇，降 pH 至约 5.0</td></tr>' +
+    '<tr><td>第2阶段（3\u201310天）</td><td>L. brevis（短乳杆菌）</td><td>异型发酵，产醋酸增加风味层次</td></tr>' +
+    '<tr><td>第3阶段（10天+）</td><td>L. plantarum（植物乳杆菌）</td><td>同型发酵，终端酸化，pH 降至 3.5 以下</td></tr>' +
     '</table>' +
 
     '</div>';
@@ -388,9 +495,38 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>G\u00e4rdauer bis essreif</td><td>2\u20136 Wochen</td><td>3\u201314 Tage</td></tr>' +
     '<tr><td>Gew\u00fcrze</td><td>K\u00fcmmel, Wacholder, Lorbeer</td><td>Chili, Knoblauch, Fischsauce</td></tr>' +
     '<tr><td>pH optimal</td><td>3,8\u20134,2</td><td>4,0\u20134,5</td></tr>' +
-    '<tr><td>Dominante LAB</td><td>L. plantarum (sp\u00e4t)</td><td>Leuc. mesenteroides (Mitte)</td></tr>' +
+    '<tr><td>Dominante LAB</td><td>Leuc. mesenteroides \u2192 L. brevis \u2192 L. plantarum</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td></tr>' +
     '</table>' +
 
+    '</div>' +
+
+    // Koreanisches Kimchi
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>Koreanisches Kimchi (\uD55C\uAD6D \uAE40\uCE58)</h3>' +
+    '<h4>\u00dcberblick</h4>' +
+    '<p>Chinakohl wird trocken gesalzen, mit Chilipaste, Fischsauce, Garnelenpaste und Knoblauch gew\u00fcrzt, dann bei niedriger Temperatur fermentiert. Typische Mikrobenfolge: Leuc. mesenteroides (CO\u2082, Aroma) \u2192 L. sakei (k\u00e4ltetolerant, Kimchi-Signaturart) \u2192 L. plantarum (tiefe S\u00e4ure).</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Kimchi</th><th>Sauerkraut</th></tr>' +
+    '<tr><td>Salzgehalt</td><td>2,0\u20134,0%</td><td>1,5\u20132,5%</td></tr>' +
+    '<tr><td>Temperatur</td><td>2\u20135\u00b0C (langsam) oder 15\u201320\u00b0C (schnell)</td><td>15\u201322\u00b0C \u2192 4\u201315\u00b0C</td></tr>' +
+    '<tr><td>Fertigzeit</td><td>3\u201314 Tage</td><td>2\u20136 Wochen</td></tr>' +
+    '<tr><td>Gew\u00fcrze</td><td>Chili, Knoblauch, Fischsauce, Garnelenpaste</td><td>K\u00fcmmel, Wacholder, Lorbeer</td></tr>' +
+    '<tr><td>Dominante LAB</td><td>Leuc. mesenteroides \u2192 L. sakei \u2192 L. plantarum</td><td>Leuc. mesenteroides \u2192 L. brevis \u2192 L. plantarum</td></tr>' +
+    '</table>' +
+    '</div>' +
+
+    // Sichuan Paocai
+    '<div class="recipe-inner" style="margin-top:2em;border-top:1px solid var(--border,#ccc);padding-top:1.5em;">' +
+    '<h3>Sichuan Paocai (\u56DB\u5DDD\u6CE1\u83DC)</h3>' +
+    '<h4>\u00dcberblick</h4>' +
+    '<p>Gem\u00fcse wird in Salzlake in einem wasserversiegelten Tongef\u00e4\u00df fermentiert. Salz 5\u20137%, Raumtemperatur. Gew\u00fcrze: Sichuan-Pfeffer, getrocknete Chili, Ingwer, Baijiu (chinesischer Schnaps). Mikrobielle Sukzession: Weissella (fr\u00fch) \u2192 L. plantarum (Mitte) \u2192 Pediococcus (sp\u00e4t).</p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Parameter</th><th>Sichuan Paocai</th><th>Sauerkraut</th></tr>' +
+    '<tr><td>Salzgehalt</td><td>5\u20137% (Lake)</td><td>1,5\u20132,5%</td></tr>' +
+    '<tr><td>Temperatur</td><td>18\u201325\u00b0C</td><td>15\u201322\u00b0C \u2192 4\u201315\u00b0C</td></tr>' +
+    '<tr><td>Gew\u00fcrze</td><td>Sichuan-Pfeffer, Chili, Ingwer, Baijiu</td><td>K\u00fcmmel, Wacholder, Lorbeer</td></tr>' +
+    '<tr><td>Dominante LAB</td><td>W. confusa \u2192 L. plantarum \u2192 P. pentosaceus</td><td>Leuc. mesenteroides \u2192 L. brevis \u2192 L. plantarum</td></tr>' +
+    '</table>' +
     '</div>';
   }
 
