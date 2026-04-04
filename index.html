@@ -51,6 +51,22 @@
          ═══════════════════════════════════════════ -->
     <section class="layer layer-nav" id="layer-1">
 
+      <!-- Ferment type selector -->
+      <div class="ferment-selector" id="ferment-selector">
+        <button class="ferment-chip active" type="button" data-ferment="kimchi">
+          <span class="ferment-icon">🥬</span>
+          <span data-i18n="ferment.kimchi">Kimchi</span>
+        </button>
+        <button class="ferment-chip" type="button" data-ferment="sichuan">
+          <span class="ferment-icon">🫙</span>
+          <span data-i18n="ferment.sichuan">Sichuan Paocai</span>
+        </button>
+        <button class="ferment-chip" type="button" data-ferment="sauerkraut">
+          <span class="ferment-icon">🥒</span>
+          <span data-i18n="ferment.sauerkraut">Sauerkraut</span>
+        </button>
+      </div>
+
       <!-- Dashboard gauge -->
       <div class="dash" id="dash">
         <div class="dash-main">
@@ -286,25 +302,11 @@
          ═══════════════════════════════════════════ -->
     <section class="layer layer-expert" id="layer-3" style="display:none">
 
-      <!-- Dominance strip -->
+      <!-- Dominance strip (dynamic per ferment type) -->
       <div class="expert-card glass-card">
         <h3 class="expert-title" data-i18n="dominance.title">Dominant microbes across the whole story</h3>
-        <div class="dominance-track">
-          <div class="dominance-segment dominance-sakei" id="dominance-seg-1">
-            <span class="dominance-name" data-i18n="microbe.sakei.name">L. sakei</span>
-            <span class="dominance-time" id="dominance-time-1">--</span>
-            <span class="dominance-note" data-i18n="dominance.initial.note">Builds a clean, fresh start.</span>
-          </div>
-          <div class="dominance-segment dominance-mesenteroides" id="dominance-seg-2">
-            <span class="dominance-name" data-i18n="microbe.mesenteroides.name">Leuc. mesenteroides</span>
-            <span class="dominance-time" id="dominance-time-2">--</span>
-            <span class="dominance-note" data-i18n="dominance.optimal.note">Brings sparkle, aroma, and balance.</span>
-          </div>
-          <div class="dominance-segment dominance-plantarum" id="dominance-seg-3">
-            <span class="dominance-name" data-i18n="microbe.plantarum.name">L. plantarum</span>
-            <span class="dominance-time" id="dominance-time-3">--</span>
-            <span class="dominance-note" data-i18n="dominance.over.note">Pushes the batch into deeper sourness.</span>
-          </div>
+        <div class="dominance-track" id="dominance-track">
+          <!-- Populated dynamically by JS -->
         </div>
       </div>
 
@@ -341,40 +343,11 @@
         </div>
       </div>
 
-      <!-- Microbe cards -->
+      <!-- Microbe cards (dynamic per ferment type) -->
       <div class="expert-card glass-card">
         <h3 class="expert-title" data-i18n="microbe.board.title">Who is leading the batch?</h3>
-        <div class="microbe-cards">
-          <article class="microbe-card" id="microbe-card-sakei">
-            <div class="mc-head">
-              <div class="mc-name" data-i18n="microbe.sakei.name">L. sakei</div>
-              <div class="mc-role" data-i18n="microbe.sakei.role">Early stabilizer</div>
-            </div>
-            <div class="mc-meter">
-              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="mc-val" id="microbe-val-sakei">--%</span>
-            </div>
-          </article>
-          <article class="microbe-card" id="microbe-card-mesenteroides">
-            <div class="mc-head">
-              <div class="mc-name" data-i18n="microbe.mesenteroides.name">Leuc. mesenteroides</div>
-              <div class="mc-role" data-i18n="microbe.mesenteroides.role">Peak flavor maker</div>
-            </div>
-            <div class="mc-meter">
-              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="mc-val" id="microbe-val-mesenteroides">--%</span>
-            </div>
-          </article>
-          <article class="microbe-card" id="microbe-card-plantarum">
-            <div class="mc-head">
-              <div class="mc-name" data-i18n="microbe.plantarum.name">L. plantarum</div>
-              <div class="mc-role" data-i18n="microbe.plantarum.role">Deep sour finisher</div>
-            </div>
-            <div class="mc-meter">
-              <span class="mc-label" data-i18n="microbe.atPeak">At peak flavor</span>
-              <span class="mc-val" id="microbe-val-plantarum">--%</span>
-            </div>
-          </article>
+        <div class="microbe-cards" id="microbe-cards">
+          <!-- Populated dynamically by JS -->
         </div>
       </div>
 

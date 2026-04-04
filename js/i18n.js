@@ -390,6 +390,22 @@ window.KimchiSim.i18n = (function () {
       ko: '배치를 더 깊고 강한 신맛으로 이끕니다.',
       zh: '把这一坛推向更深、更强的酸味。'
     },
+    // Generic phase-based dominance notes (used by dynamic rendering)
+    'dominance.phase1.note': {
+      en: 'Builds a clean, fresh start.',
+      ko: '깔끔하고 신선한 출발을 만듭니다.',
+      zh: '让发酵从干净、新鲜的状态起步。'
+    },
+    'dominance.phase2.note': {
+      en: 'Brings sparkle, aroma, and balance.',
+      ko: '탄산감, 향, 균형감을 더합니다.',
+      zh: '带来轻盈气泡感、香气与平衡。'
+    },
+    'dominance.phase3.note': {
+      en: 'Pushes the batch into deeper sourness.',
+      ko: '배치를 더 깊고 강한 신맛으로 이끕니다.',
+      zh: '把这一坛推向更深、更强的酸味。'
+    },
     'guide.title': {
       en: 'How to read this simulator',
       ko: '이 시뮬레이터 읽는 법',
@@ -491,7 +507,90 @@ window.KimchiSim.i18n = (function () {
       zh: '后期逐渐占优，进一步加深酸度，让这一坛更接近适合做菜的老 Kimchi。'
     },
 
-    // Recipe
+    // Ferment type names
+    'ferment.kimchi': {
+      en: 'Kimchi',
+      ko: '김치',
+      zh: '韩式辣白菜'
+    },
+    'ferment.sichuan': {
+      en: 'Sichuan Paocai',
+      ko: '쓰촨 파오차이',
+      zh: '四川泡菜'
+    },
+    'ferment.sauerkraut': {
+      en: 'Sauerkraut',
+      ko: '자우어크라우트',
+      zh: '德国酸菜'
+    },
+
+    // Sichuan species
+    'microbe.leuconostoc.name': {
+      en: 'Leuconostoc spp.',
+      ko: 'Leuconostoc spp.',
+      zh: 'Leuconostoc spp.'
+    },
+    'microbe.leuconostoc.role': {
+      en: 'Early gas producer',
+      ko: '초기 가스 생성자',
+      zh: '早期产气菌'
+    },
+    'microbe.leuconostoc.body': {
+      en: 'Initiates fermentation with heterofermentative metabolism, producing CO₂ and mild acids that create the first tang.',
+      ko: '이종발효 대사로 발효를 시작하며, CO₂와 약산을 생성해 첫 신맛을 만듭니다.',
+      zh: '以异型发酵代谢启动发酵，产生 CO₂ 和温和酸类，带来最初的酸味。'
+    },
+    'microbe.pentosus.name': {
+      en: 'L. pentosus',
+      ko: 'L. pentosus',
+      zh: 'L. pentosus'
+    },
+    'microbe.pentosus.role': {
+      en: 'Acid-tolerant finisher',
+      ko: '내산성 마무리 담당',
+      zh: '耐酸收尾菌'
+    },
+    'microbe.pentosus.body': {
+      en: 'Thrives in low-pH environments and continues acid production when other species decline.',
+      ko: '저 pH 환경에서 번성하며 다른 종이 줄어도 산 생성을 계속합니다.',
+      zh: '在低 pH 环境中茁壮生长，其他菌种衰退后仍继续产酸。'
+    },
+
+    // Sauerkraut species
+    'microbe.brevis.name': {
+      en: 'L. brevis',
+      ko: 'L. brevis',
+      zh: 'L. brevis'
+    },
+    'microbe.brevis.role': {
+      en: 'Heterofermentative finisher',
+      ko: '이종발효 마무리 담당',
+      zh: '异型发酵收尾菌'
+    },
+    'microbe.brevis.body': {
+      en: 'Produces lactic acid plus CO₂ and acetic acid, adding complexity to the final sauerkraut flavor.',
+      ko: '젖산과 함께 CO₂, 초산을 생성하여 최종 자우어크라우트 풍미에 복잡성을 더합니다.',
+      zh: '在产乳酸的同时生成 CO₂ 和醋酸，为酸菜的最终风味增添层次。'
+    },
+
+    // Starter culture labels per type
+    'mixer.starter.kimchi': {
+      en: 'Starter (old brine)',
+      ko: '종균 (묵은지국물)',
+      zh: '母水（老泡菜汁）'
+    },
+    'mixer.starter.sichuan': {
+      en: 'Starter (old brine)',
+      ko: '종균 (묵은 소금물)',
+      zh: '母水（老盐水）'
+    },
+    'mixer.starter.sauerkraut': {
+      en: 'Starter (old brine)',
+      ko: '종균 (묵은 즙)',
+      zh: '母水（老酸菜汁）'
+    },
+
+    // Recipe per type
     'recipe.title': {
       en: 'Standard Recipe & Process',
       ko: '표준 레시피 및 공정',
@@ -538,6 +637,19 @@ window.KimchiSim.i18n = (function () {
     'calc.rice': { en: 'Rice Paste', ko: '찹쌀풀', zh: '糯米糊' },
     'calc.scallion': { en: 'Green Onion', ko: '쪽파', zh: '小葱' },
     'calc.note': { en: 'Fish:Shrimp ratio = 3:2 for optimal umami', ko: '액젓:새우젓 = 3:2 최적 감칠맛', zh: '鱼露:虾酱 = 3:2 为最佳鲜味比例' },
+    'calc.note.sichuan': { en: 'Old brine (老盐水) accelerates fermentation', ko: '묵은 소금물이 발효를 촉진합니다', zh: '老盐水可加速发酵' },
+    'calc.note.sauerkraut': { en: '2% salt by weight of cabbage', ko: '배추 무게의 2% 소금', zh: '盐量为卷心菜重量的 2%' },
+    'calc.coarse.salt': { en: 'Coarse Salt', ko: '굵은소금', zh: '粗盐' },
+    'calc.sichPepper': { en: 'Sichuan Pepper', ko: '화자오', zh: '花椒' },
+    'calc.baijiu': { en: 'Baijiu (liquor)', ko: '바이주 (백주)', zh: '白酒' },
+    'calc.sugar': { en: 'Sugar', ko: '설탕', zh: '白糖' },
+    'calc.driedChili': { en: 'Dried Chili', ko: '마른 고추', zh: '干辣椒' },
+    'calc.starAnise': { en: 'Star Anise', ko: '팔각', zh: '八角' },
+    'calc.bayLeaf': { en: 'Bay Leaf', ko: '월계수잎', zh: '香叶' },
+    'calc.caraway': { en: 'Caraway Seeds', ko: '캐러웨이 씨앗', zh: '葛缕子' },
+    'calc.juniper': { en: 'Juniper Berries', ko: '주니퍼 베리', zh: '杜松子' },
+    'calc.input.sichuan': { en: 'Vegetable Weight', ko: '채소 무게', zh: '蔬菜重量' },
+    'calc.input.sauerkraut': { en: 'Cabbage Weight', ko: '양배추 무게', zh: '卷心菜重量' },
 
     // Mixer labels
     'mixer.salt': { en: 'Salt', ko: '소금', zh: '盐' },

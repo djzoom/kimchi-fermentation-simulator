@@ -211,6 +211,37 @@ a:hover { text-decoration: underline; }
   gap: 16px;
 }
 
+/* — Ferment Type Selector — */
+.ferment-selector {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.ferment-chip {
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.ferment-chip:hover { border-color: var(--text-muted); color: var(--text); }
+.ferment-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+.ferment-icon { font-size: 1rem; }
+
 /* — Dashboard Gauge — */
 .dash {
   background: var(--bg-card);
