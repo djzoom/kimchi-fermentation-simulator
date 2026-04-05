@@ -107,14 +107,69 @@ body {
   transition: background var(--transition), color var(--transition);
 }
 
-/* No decorative gradients — clean canvas per DESIGN.md */
-body::before { display: none; }
+/* Subtle gradient ambiance */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(34, 197, 94, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(34, 197, 94, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(59, 130, 246, 0.04) 0%, transparent 70%);
+}
 
-/* Bubbles hidden — clean UI */
-.bubbles-container, .bubble { display: none; }
+/* ═══ FERMENTATION BUBBLES ═══ */
+.bubbles-container {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bubble {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.25));
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  animation: bubble-rise linear infinite;
+  will-change: transform, opacity;
+}
+[data-theme="dark"] .bubble {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.15);
+}
+@keyframes bubble-rise {
+  0% { transform: translateY(0) translateX(0) scale(0.3); opacity: 0; }
+  5% { transform: translateY(0) translateX(0) scale(0.3); opacity: 0.5; }
+  15% { transform: translateY(-5vh) translateX(3px) scale(1); opacity: 0.7; }
+  25% { transform: translateY(-15vh) translateX(8px) scale(1.15); opacity: 0.65; }
+  60% { transform: translateY(-55vh) translateX(18px) scale(1.1); opacity: 0.5; }
+  100% { transform: translateY(-110vh) translateX(-10px) scale(0.9); opacity: 0; }
+}
 
-/* Geometry decor hidden — clean UI */
-.geo-layer, .geo { display: none; }
+/* ═══ FROSTED GEOMETRY DECOR ═══ */
+.geo-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.geo {
+  position: absolute;
+  filter: blur(12px);
+}
+.geo--circle { border-radius: 50%; }
+.geo--square { border-radius: 12px; }
+.geo--ro { background: rgba(235, 120, 60, 0.10); border: none; }
+.geo--yg { background: rgba(140, 190, 50, 0.10); border: none; }
+[data-theme="dark"] .geo--ro { background: rgba(235, 120, 60, 0.07); }
+[data-theme="dark"] .geo--yg { background: rgba(140, 190, 50, 0.07); }
 
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -122,9 +177,14 @@ a:hover { text-decoration: underline; }
 /* ═══ HEADER ═══ */
 .header {
   position: sticky; top: 0; z-index: 100;
-  background: var(--bg);
+  background: rgba(250, 251, 252, 0.85);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
   border-bottom: 1px solid var(--border);
   height: 52px;
+}
+[data-theme="dark"] .header {
+  background: rgba(12, 15, 23, 0.85);
 }
 .header-inner {
   max-width: 960px; margin: 0 auto;
@@ -1380,12 +1440,17 @@ a:hover { text-decoration: underline; }
 .glass-card {
   position: relative;
   z-index: 1;
-  background: var(--bg-surface);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(40px) saturate(1.6);
+  -webkit-backdrop-filter: blur(40px) saturate(1.6);
   border: none;
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow-ring), var(--shadow-sm);
   transition: box-shadow var(--transition);
+}
+[data-theme="dark"] .glass-card {
+  background: rgba(21, 25, 34, 0.72);
 }
 
 /* ═══════════════════════════
