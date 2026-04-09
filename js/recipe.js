@@ -35,30 +35,43 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>Spicy (매운)</td><td>&ge; 14.9 ppm</td></tr>' +
     '</table>' +
 
-    '<h4>Traditional Recipe (per 1 napa cabbage head / 1포기)</h4>' +
+    '<h4>Home Recipe (per 2 kg napa cabbage)</h4>' +
+
+    '<p><strong>Base ingredients (required)</strong></p>' +
     '<table class="recipe-table">' +
     '<tr><th>Ingredient</th><th>Amount</th><th>Function</th></tr>' +
-    '<tr><td>Napa Cabbage (배추)</td><td>1 head (~2.5 kg)</td><td>Primary substrate</td></tr>' +
-    '<tr><td>Coarse Salt (굵은소금)</td><td>1 cup (for curing)</td><td>Osmotic dehydration, LAB selection</td></tr>' +
-    '<tr><td>Red Chili Powder (고춧가루)</td><td>1 cup</td><td>Color, capsaicin antimicrobial, flavor</td></tr>' +
-    '<tr><td>Fish Sauce (멸치액젓)</td><td>3 tbsp</td><td>Umami, nitrogen source for LAB</td></tr>' +
-    '<tr><td>Salted Shrimp (새우젓)</td><td>2 tbsp</td><td>Umami, enzymes for protein breakdown</td></tr>' +
-    '<tr><td>Garlic (마늘)</td><td>5-6 cloves, minced</td><td>Flavor, mild antimicrobial</td></tr>' +
-    '<tr><td>Ginger (생강)</td><td>1 tsp, minced</td><td>Flavor, antimicrobial</td></tr>' +
-    '<tr><td>Sweet Rice Paste (찹쌀풀)</td><td>3 tbsp</td><td>Binding, sugar source for LAB</td></tr>' +
-    '<tr><td>Green Onion (쪽파)</td><td>5-6 stalks</td><td>Flavor, texture</td></tr>' +
+    '<tr><td>Napa cabbage (배추)</td><td>2 kg</td><td>Primary substrate</td></tr>' +
+    '<tr><td>Salt (curing)</td><td>240–300 g</td><td>12–15% brine, osmotic dehydration</td></tr>' +
+    '<tr><td>Water (curing brine)</td><td>~2 L (to cover cabbage)</td><td>Brine medium</td></tr>' +
+    '<tr><td>Coarse chili flakes (굵은 고춧가루)</td><td>60 g</td><td>Color, texture</td></tr>' +
+    '<tr><td>Fine chili powder (고운 고춧가루)</td><td>60 g</td><td>Heat penetration</td></tr>' +
+    '<tr><td>Sweet rice flour (찹쌀가루)</td><td>50 g</td><td>Binder, sugar source for LAB</td></tr>' +
+    '<tr><td>Water (for paste)</td><td>300 g</td><td>Paste medium</td></tr>' +
+    '<tr><td>Garlic (마늘)</td><td>100 g</td><td>Flavor, mild antimicrobial</td></tr>' +
+    '<tr><td>Ginger (생강)</td><td>60 g</td><td>Flavor, antimicrobial</td></tr>' +
     '</table>' +
-    '<p><strong>Key ratio:</strong> Fish sauce : Shrimp paste = 3 : 2 (optimal umami balance)</p>' +
-    '<p><strong>Government standard (농촌진흥청):</strong> 4.5g chili powder + 2.0g garlic per 100g salted cabbage</p>' +
 
-    '<h4>Standard Process (6 Steps)</h4>' +
+    '<p><strong>Optional / flavor enhancers (add to taste)</strong></p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>Ingredient</th><th>Amount</th><th>Function</th></tr>' +
+    '<tr><td>Apple (사과)</td><td>1/2</td><td>Natural sweetness, fructose for LAB</td></tr>' +
+    '<tr><td>Pear (배)</td><td>1/2</td><td>Natural sweetness, enzymatic tenderizing</td></tr>' +
+    '<tr><td>Sugar</td><td>90 g</td><td>Seasoning, additional carbon source</td></tr>' +
+    '<tr><td>MSG</td><td>8 g</td><td>Umami booster</td></tr>' +
+    '<tr><td>Fish sauce (멸치액젓)</td><td>30–45 mL</td><td>Umami, nitrogen source for LAB</td></tr>' +
+    '<tr><td>Salted shrimp (새우젓)</td><td>30 g</td><td>Umami, proteolytic enzymes</td></tr>' +
+    '<tr><td>Green onion (쪽파)</td><td>5–6 stalks</td><td>Flavor, texture</td></tr>' +
+    '</table>' +
+
+    '<h4>Process</h4>' +
     '<ol>' +
-    '<li><strong>Cut & Salt:</strong> Split cabbage, sprinkle coarse salt between leaves. Soak in 12-15% brine for 6-8 hours.</li>' +
-    '<li><strong>Test Readiness:</strong> Stem should bend without breaking (줄기가 꺾이지 않아야 함). Target leaf salt: 1.5-2.0%.</li>' +
-    '<li><strong>Rinse & Drain:</strong> Rinse 3 times in cold water. Drain cut-side down for 1-2 hours.</li>' +
-    '<li><strong>Prepare Seasoning:</strong> Make sweet rice paste base. Mix with fish sauce, shrimp paste, chili powder, garlic, ginger.</li>' +
-    '<li><strong>Apply Seasoning:</strong> Spread paste between each leaf, working from outer to inner leaves.</li>' +
-    '<li><strong>Pack & Ferment:</strong> Pack tightly into fermentation vessel, minimizing air gaps. Ferment at 2-5°C for 2-3 weeks (slow) or 15-20°C for 2-3 days (fast).</li>' +
+    '<li><strong>Cure:</strong> Quarter the cabbage. Dissolve 240–300 g salt in ~2 L water (12–15% brine), pour over the cabbage to submerge it. Press and leave overnight (8–12 h).</li>' +
+    '<li><strong>Rinse:</strong> Wash in cold water 3 times and squeeze out excess water.</li>' +
+    '<li><strong>Chili base:</strong> Mix 60 g coarse + 60 g fine chili flakes with a little hot water; let bloom.</li>' +
+    '<li><strong>Sweet rice paste:</strong> Cook 50 g sweet rice flour in 300 g water over low heat, stirring until translucent. Cool, then stir into the chili base.</li>' +
+    '<li><strong>Aromatics:</strong> Blend 100 g garlic + 60 g ginger (with apple/pear if used) into a paste. Mix in sugar, MSG, fish sauce, salted shrimp as desired.</li>' +
+    '<li><strong>Apply:</strong> Spread paste between each leaf, packing tightly into a fermentation jar.</li>' +
+    '<li><strong>Ferment:</strong> Rest at room temperature for several hours, then refrigerate (~4°C) for about 1 week.</li>' +
     '</ol>' +
 
     '<h4>Starter Culture — Old Kimchi Brine (Backslopping)</h4>' +
@@ -135,30 +148,43 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>매운맛</td><td>&ge; 14.9 ppm</td></tr>' +
     '</table>' +
 
-    '<h4>전통 레시피 (배추 1포기 기준)</h4>' +
+    '<h4>가정 레시피 (배추 2 kg 기준)</h4>' +
+
+    '<p><strong>기본 재료 (필수)</strong></p>' +
     '<table class="recipe-table">' +
     '<tr><th>재료</th><th>분량</th><th>기능</th></tr>' +
-    '<tr><td>배추</td><td>1포기 (~2.5 kg)</td><td>주재료</td></tr>' +
-    '<tr><td>굵은소금</td><td>1컵 (절임용)</td><td>삼투압 탈수, 유산균 선택</td></tr>' +
-    '<tr><td>고춧가루</td><td>1컵</td><td>색, 캡사이신 항균, 풍미</td></tr>' +
-    '<tr><td>멸치액젓</td><td>3큰술</td><td>감칠맛, 유산균 질소원</td></tr>' +
-    '<tr><td>새우젓</td><td>2큰술</td><td>감칠맛, 단백질 분해 효소</td></tr>' +
-    '<tr><td>마늘</td><td>5-6쪽, 다진 것</td><td>풍미, 약한 항균</td></tr>' +
-    '<tr><td>생강</td><td>1작은술, 다진 것</td><td>풍미, 항균</td></tr>' +
-    '<tr><td>찹쌀풀</td><td>3큰술</td><td>결착, 유산균 당원</td></tr>' +
-    '<tr><td>쪽파</td><td>5-6줄기</td><td>풍미, 식감</td></tr>' +
+    '<tr><td>배추</td><td>2 kg</td><td>주재료</td></tr>' +
+    '<tr><td>소금 (절임용)</td><td>240–300 g</td><td>12–15% 소금물, 삼투압 탈수</td></tr>' +
+    '<tr><td>물 (절임용)</td><td>약 2 L (배추가 잠길 정도)</td><td>소금물 매개</td></tr>' +
+    '<tr><td>굵은 고춧가루</td><td>60 g</td><td>색감, 식감</td></tr>' +
+    '<tr><td>고운 고춧가루</td><td>60 g</td><td>매운맛 침투</td></tr>' +
+    '<tr><td>찹쌀가루</td><td>50 g</td><td>결착, 유산균 당원</td></tr>' +
+    '<tr><td>물 (찹쌀풀용)</td><td>300 g</td><td>풀 매개</td></tr>' +
+    '<tr><td>마늘</td><td>100 g</td><td>풍미, 약한 항균</td></tr>' +
+    '<tr><td>생강</td><td>60 g</td><td>풍미, 항균</td></tr>' +
     '</table>' +
-    '<p><strong>핵심 비율:</strong> 멸치액젓 : 새우젓 = 3 : 2 (최적 감칠맛 균형)</p>' +
-    '<p><strong>농촌진흥청 표준:</strong> 절인 배추 100g당 고춧가루 4.5g + 마늘 2.0g</p>' +
 
-    '<h4>표준 공정 (6단계)</h4>' +
+    '<p><strong>선택 / 풍미 강화 (취향껏 추가)</strong></p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>재료</th><th>분량</th><th>기능</th></tr>' +
+    '<tr><td>사과</td><td>1/2개</td><td>천연 단맛, 과당 (유산균 당원)</td></tr>' +
+    '<tr><td>배</td><td>1/2개</td><td>천연 단맛, 효소로 조직 연화</td></tr>' +
+    '<tr><td>설탕</td><td>90 g</td><td>조미, 탄소원 보충</td></tr>' +
+    '<tr><td>MSG (조미료)</td><td>8 g</td><td>감칠맛 강화</td></tr>' +
+    '<tr><td>멸치액젓</td><td>30–45 mL</td><td>감칠맛, 유산균 질소원</td></tr>' +
+    '<tr><td>새우젓</td><td>30 g</td><td>감칠맛, 단백질 분해 효소</td></tr>' +
+    '<tr><td>쪽파</td><td>5–6 줄기</td><td>풍미, 식감</td></tr>' +
+    '</table>' +
+
+    '<h4>제조 공정</h4>' +
     '<ol>' +
-    '<li><strong>절단 및 절임:</strong> 배추를 반으로 가르고 잎 사이에 굵은소금을 뿌린다. 12-15% 소금물에 6-8시간 절인다.</li>' +
-    '<li><strong>절임 확인:</strong> 줄기부분을 구부렸을 때 꺾이지 않아야 함. 목표 엽내 염도: 1.5-2.0%.</li>' +
-    '<li><strong>세척 및 탈수:</strong> 찬물에 3회 헹군다. 절단면이 아래로 가도록 1-2시간 물기를 뺀다.</li>' +
-    '<li><strong>양념 준비:</strong> 찹쌀풀을 만들고 액젓, 새우젓, 고춧가루, 마늘, 생강을 혼합한다.</li>' +
-    '<li><strong>양념 바르기:</strong> 바깥잎부터 안쪽잎까지 양념을 고루 바른다.</li>' +
-    '<li><strong>담기 및 발효:</strong> 발효 용기에 꼭꼭 눌러 담아 공기 접촉을 최소화한다. 2-5°C에서 2-3주(저온) 또는 15-20°C에서 2-3일(고온) 발효.</li>' +
+    '<li><strong>절임:</strong> 배추를 4등분. 소금 240–300 g을 약 2 L 물에 녹여 (12–15% 소금물) 배추가 잠기도록 부은 뒤, 누름돌로 눌러 하룻밤 (8–12시간) 절인다.</li>' +
+    '<li><strong>세척:</strong> 찬물에 3회 헹구고 물기를 짠다.</li>' +
+    '<li><strong>고추 베이스:</strong> 굵은 + 고운 고춧가루 (각 60 g)를 따뜻한 물 약간으로 불려 색을 낸다.</li>' +
+    '<li><strong>찹쌀풀:</strong> 찹쌀가루 50 g + 물 300 g을 약불에 저으며 투명한 풀이 될 때까지 끓인다. 식힌 후 고추 베이스에 섞는다.</li>' +
+    '<li><strong>양념 베이스:</strong> 마늘 100 g + 생강 60 g (사과/배 사용 시 함께)을 갈아 페이스트로 만든다. 설탕, MSG, 액젓, 새우젓을 취향껏 추가한다.</li>' +
+    '<li><strong>버무리기:</strong> 양념을 잎 사이에 고루 발라 발효 용기에 꼭꼭 눌러 담는다.</li>' +
+    '<li><strong>발효:</strong> 상온에서 몇 시간 두어 발효를 시작한 뒤 냉장 (~4°C) 약 1주일 숙성.</li>' +
     '</ol>' +
 
     '<h4>종균 — 묵은지국물</h4>' +
@@ -259,30 +285,43 @@ window.KimchiSim.recipe = (function () {
     '<tr><td>辣</td><td>&ge; 14.9 ppm</td></tr>' +
     '</table>' +
 
-    '<h4>传统配方（每1棵大白菜）</h4>' +
+    '<h4>家庭配方（白菜 2 kg）</h4>' +
+
+    '<p><strong>主料（必需）</strong></p>' +
     '<table class="recipe-table">' +
     '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
-    '<tr><td>大白菜</td><td>1棵（约2.5公斤）</td><td>主料基质</td></tr>' +
-    '<tr><td>粗盐</td><td>1杯（腌制用）</td><td>渗透脱水，筛选乳酸菌</td></tr>' +
-    '<tr><td>辣椒粉</td><td>1杯</td><td>色泽、辣椒素抑菌、风味</td></tr>' +
-    '<tr><td>鱼露</td><td>3大匙</td><td>鲜味，乳酸菌氮源</td></tr>' +
-    '<tr><td>虾酱</td><td>2大匙</td><td>鲜味，蛋白质分解酶</td></tr>' +
-    '<tr><td>大蒜</td><td>5-6瓣，切末</td><td>风味，轻度抑菌</td></tr>' +
-    '<tr><td>生姜</td><td>1小匙，切末</td><td>风味，抑菌</td></tr>' +
-    '<tr><td>糯米糊</td><td>3大匙</td><td>粘合调料，乳酸菌糖源</td></tr>' +
-    '<tr><td>小葱</td><td>5-6根</td><td>风味，口感</td></tr>' +
+    '<tr><td>大白菜</td><td>2 kg</td><td>主料基质</td></tr>' +
+    '<tr><td>盐（腌制）</td><td>240–300 g</td><td>12–15% 盐水浓度，渗透脱水</td></tr>' +
+    '<tr><td>水（腌制）</td><td>约 2 L（没过白菜）</td><td>溶盐介质</td></tr>' +
+    '<tr><td>粗辣椒面</td><td>60 g</td><td>色泽与口感</td></tr>' +
+    '<tr><td>细辣椒面</td><td>60 g</td><td>辣味渗透</td></tr>' +
+    '<tr><td>糯米粉</td><td>50 g</td><td>结合调料、乳酸菌糖源</td></tr>' +
+    '<tr><td>水（糯米糊）</td><td>300 g</td><td>调糊</td></tr>' +
+    '<tr><td>大蒜</td><td>100 g</td><td>风味、轻度抑菌</td></tr>' +
+    '<tr><td>生姜</td><td>60 g</td><td>风味、抑菌</td></tr>' +
     '</table>' +
-    '<p><strong>核心比例：</strong>鱼露 : 虾酱 = 3 : 2（最佳鲜味平衡）</p>' +
-    '<p><strong>农村振兴厅标准：</strong>每100克腌白菜配辣椒粉4.5克 + 大蒜2.0克</p>' +
 
-    '<h4>标准制作流程（6步）</h4>' +
+    '<p><strong>备选 / 提升风味（可酌情添加）</strong></p>' +
+    '<table class="recipe-table">' +
+    '<tr><th>原料</th><th>用量</th><th>作用</th></tr>' +
+    '<tr><td>苹果</td><td>1/2 个</td><td>天然甜味、果糖促发酵</td></tr>' +
+    '<tr><td>梨</td><td>1/2 个</td><td>天然甜味、酶解嫩化</td></tr>' +
+    '<tr><td>白糖</td><td>90 g</td><td>调味、补充碳源</td></tr>' +
+    '<tr><td>味精</td><td>8 g</td><td>补充鲜味</td></tr>' +
+    '<tr><td>鱼露</td><td>30–45 mL</td><td>咸鲜、乳酸菌氮源</td></tr>' +
+    '<tr><td>虾酱</td><td>30 g</td><td>咸鲜、蛋白质分解酶</td></tr>' +
+    '<tr><td>小葱</td><td>5–6 根</td><td>风味、口感</td></tr>' +
+    '</table>' +
+
+    '<h4>制作流程</h4>' +
     '<ol>' +
-    '<li><strong>切分与腌制：</strong>大白菜对半切开，叶间撒粗盐。浸入12-15%盐水中6-8小时。</li>' +
-    '<li><strong>检验腌制程度：</strong>茎部弯曲而不折断即可。目标叶片含盐量：1.5-2.0%。</li>' +
-    '<li><strong>冲洗与沥干：</strong>冷水冲洗3次，切面朝下沥水1-2小时。</li>' +
-    '<li><strong>调制酱料：</strong>制作糯米糊底料，混入鱼露、虾酱、辣椒粉、蒜末、姜末。</li>' +
-    '<li><strong>涂抹酱料：</strong>从外叶到内叶逐层均匀涂抹。</li>' +
-    '<li><strong>装坛发酵：</strong>紧密装入发酵容器，尽量排除空气。2-5°C低温发酵2-3周，或15-20°C常温发酵2-3天。</li>' +
+    '<li><strong>腌制：</strong>白菜切 4 块。将盐 240–300 g 溶于约 2 L 水（12–15% 盐水），倒入容器没过白菜，压一夜（约 8–12 小时）。</li>' +
+    '<li><strong>清洗：</strong>清水冲洗 3 次，挤干水分。</li>' +
+    '<li><strong>辣基：</strong>粗辣椒面 60 g + 细辣椒面 60 g，加少量开水拌匀，静置使其吸水出色。</li>' +
+    '<li><strong>糯米糊：</strong>糯米粉 50 g + 水 300 g，小火搅拌煮至透明糊状，放凉后倒入辣基。</li>' +
+    '<li><strong>增味：</strong>大蒜 100 g + 生姜 60 g（如用，加苹果/梨）打成泥；按需加入糖、味精、鱼露、虾酱。</li>' +
+    '<li><strong>抹酱：</strong>酱料逐层均匀涂抹白菜，压紧装入发酵罐。</li>' +
+    '<li><strong>发酵：</strong>室温静置数小时启动发酵 → 转入冷藏（约 4°C）约 1 周成熟。</li>' +
     '</ol>' +
 
     '<h4>酵种 — 老泡菜发酵液（回浆法 Backslopping）</h4>' +
