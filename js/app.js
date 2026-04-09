@@ -217,16 +217,25 @@ window.KimchiSim = window.KimchiSim || {};
   // ─── Recipe Types ───
   var RECIPES = {
     kimchi: {
-      base: 2.5,  // per 2.5 kg cabbage
+      base: 2,  // per 2 kg cabbage
       items: [
-        { key: 'calc.coarse.salt', amount: 200, unit: 'g' },
-        { key: 'calc.chili', amount: 80, unit: 'g' },
-        { key: 'calc.fish', amount: 45, unit: 'ml' },
-        { key: 'calc.shrimp', amount: 30, unit: 'g' },
-        { key: 'calc.garlic', amount: 36, unit: 'g' },
-        { key: 'calc.ginger', amount: 8, unit: 'g' },
-        { key: 'calc.rice', amount: 40, unit: 'ml' },
-        { key: 'calc.scallion', amount: 50, unit: 'g' }
+        // Base (required)
+        { key: 'calc.salt', amount: 270, unit: 'g' },
+        { key: 'calc.brine.water', amount: 2000, unit: 'ml' },
+        { key: 'calc.chili.coarse', amount: 60, unit: 'g' },
+        { key: 'calc.chili.fine', amount: 60, unit: 'g' },
+        { key: 'calc.rice.flour', amount: 50, unit: 'g' },
+        { key: 'calc.rice.water', amount: 300, unit: 'ml' },
+        { key: 'calc.garlic', amount: 100, unit: 'g' },
+        { key: 'calc.ginger', amount: 60, unit: 'g' },
+        // Optional / flavor enhancers
+        { key: 'calc.apple', amount: 0.5, unit: 'pcs', optional: true },
+        { key: 'calc.pear', amount: 0.5, unit: 'pcs', optional: true },
+        { key: 'calc.sugar', amount: 90, unit: 'g', optional: true },
+        { key: 'calc.msg', amount: 8, unit: 'g', optional: true },
+        { key: 'calc.fish', amount: 38, unit: 'ml', optional: true },
+        { key: 'calc.shrimp', amount: 30, unit: 'g', optional: true },
+        { key: 'calc.scallion', amount: 5, unit: 'pcs', optional: true }
       ],
       noteKey: 'calc.note'
     },
@@ -320,10 +329,20 @@ window.KimchiSim = window.KimchiSim || {};
     if (weightDisp) weightDisp.textContent = weight;
 
     var html = '';
+    var optionalStarted = false;
     for (var i = 0; i < recipe.items.length; i++) {
       var item = recipe.items[i];
-      var amount = (item.amount * ratio).toFixed(0);
-      html += '<div class="calc-item"><div class="calc-item-name">' + t(item.key) +
+      if (item.optional && !optionalStarted) {
+        optionalStarted = true;
+        html += '<div class="calc-section-label">' + t('calc.optional.label') + '</div>';
+      }
+      var scaled = item.amount * ratio;
+      // Whole-piece units stay decimal (e.g. 0.5 apple); weights/volumes round to nearest int.
+      var amount = (item.unit === 'pcs')
+        ? (Math.round(scaled * 10) / 10).toString()
+        : scaled.toFixed(0);
+      var cls = 'calc-item' + (item.optional ? ' calc-item-optional' : '');
+      html += '<div class="' + cls + '"><div class="calc-item-name">' + t(item.key) +
         '</div><div class="calc-item-amount">' + amount +
         '<span class="calc-item-unit"> ' + item.unit + '</span></div></div>';
     }
