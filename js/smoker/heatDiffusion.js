@@ -88,7 +88,10 @@ window.SmokerSim.heatDiffusion = (function () {
   function evapFluxKgPerM2S(tSurfC, tAmbC, w, wrapReduction, humidityFactor) {
     if (tSurfC < C.STALL_TEMP_LOW_C) return 0;
     if (w <= 0) return 0;
-    var maxFlux = 4.0e-4;                           // peak rate at reference conditions
+    // Calibrated 2026-04 against the user's real "wrap saves 1–2 h" feedback.
+    // 6e-4 deepens the stall plateau enough that wrap interventions shave
+    // ~60–90 min vs ~15 min at the previous 4e-4.
+    var maxFlux = 5.0e-4;                           // peak rate at reference conditions
     var driving = Math.max(0, tSurfC - tAmbC) / 60; // 1.0 at 60 °C delta
     return maxFlux * (1 - wrapReduction) * w * driving * humidityFactor;
   }

@@ -10,9 +10,11 @@ window.SmokerSim.pitModel = (function () {
   var C = window.SmokerSim.constants;
 
   // Default pit thermal mass and loss — tuned for offset-style smoker behaviour.
-  // UA chosen so 12 briquettes @ 80 W peak with damper=80 converge near 250°F.
+  // Calibrated 2026-04: with COAL_P_PEAK=90 W and damper 70 %, eight active
+  // coals (~600 W effective) land pit at 250 °F. Twelve fresh coals overshoot
+  // to ~340 °F, matching the operator's real "12 coal" event.
   var C_PIT_DEFAULT  = 8000;     // J/K  (steel shell + air)
-  var UA_PIT_DEFAULT = 4.5;      // W/K  (heat loss coefficient)
+  var UA_PIT_DEFAULT = 5.5;      // W/K  (heat loss coefficient)
 
   /**
    * Advance T_pit one step.

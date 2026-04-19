@@ -65,9 +65,11 @@ window.SmokerSim.constants = (function () {
   var GAS_CONSTANT       = 8.314;        // J/(mol·K)
 
   // §7.1 — Default fuel power per coal.
-  // A standard briquette (~20 g at 29 kJ/g) releases ~580 kJ over ~90 min, mean 107 W.
-  // The normalised bell curve in fireModel.js peaks at ~1.5× the mean, so P_PEAK ~160 W.
-  var COAL_P_PEAK   = 150;               // W per briquette at curve peak
+  // A standard briquette (~20 g at 29 kJ/g) releases ~580 kJ over ~90 min.
+  // Calibrated 2026-04 against five-experiment study so 8 active coals at
+  // damper 70 % land at ~250 °F (with UA_PIT = 5.5 W/K), and 12 fresh coals
+  // at peak overshoot to ~340 °F — matching the user's real overshoot event.
+  var COAL_P_PEAK   = 130;               // W per briquette at curve peak
   var COAL_TAU_BURN_MIN = 90;            // min
 
   // §3 — Rest-phase juice rebound
