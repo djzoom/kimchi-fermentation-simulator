@@ -10,6 +10,8 @@
   var Dec    = window.SmokerSim.decisions;
   var Pre    = window.SmokerSim.presets;
   var MC     = window.SmokerSim.monteCarlo;
+  var Notify = window.SmokerSim.notify;
+  var CM     = window.SmokerSim.collagenModel;
 
   // ---------- app state ----------
   var view = {
@@ -24,21 +26,37 @@
     history:      { samples: [] },     // for slope calc
     eta:          null,       // { p10, p50, p90, wallClockStr }
     dismissed:    {},         // card verdicts dismissed this session
-    nowStarted:   null        // Date when cook started, for ETA wall-clock
+    nowStarted:   null,       // Date when cook started, for ETA wall-clock
+    lastVerdicts: [],         // previous render's card verdicts (for notify diff)
+    // A/B compare
+    compare:      null        // { a: {preset, result}, b: {preset, result} }
   };
 
   // ---------- Utility ----------
   function $(id) { return document.getElementById(id); }
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
+  // ---------- Persistence (localStorage) ----------
+  var STORE_KEY = 'smoker.prefs.v1';
+  function loadPrefs() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function savePrefs(patch) {
+    try {
+      var cur = loadPrefs();
+      Object.keys(patch).forEach(function (k) { cur[k] = patch[k]; });
+      localStorage.setItem(STORE_KEY, JSON.stringify(cur));
+    } catch (e) { /* quota / private mode */ }
+  }
+
   var PHASE_META = {
-    pregame:    { label: 'Getting ready',  tone: 'neutral', color: '--text-muted' },
-    bark_build: { label: 'Smoking',        tone: 'active',  color: '--accent'     },
-    stall:      { label: 'Stall',          tone: 'warn',    color: '--amber'      },
-    wrap:       { label: 'Wrapped push',   tone: 'active',  color: '--blue'       },
-    push:       { label: 'Finishing',      tone: 'active',  color: '--blue'       },
-    rest:       { label: 'Resting',        tone: 'neutral', color: '--purple'     },
-    slice:      { label: 'Sliced',         tone: 'done',    color: '--green-deep' }
+    pregame:    { label: 'Getting ready', zh: '准备中', tone: 'neutral', color: '--text-muted' },
+    bark_build: { label: 'Smoking',       zh: '烟熏',   tone: 'active',  color: '--accent'     },
+    stall:      { label: 'Stall',         zh: '停滞期', tone: 'warn',    color: '--amber'      },
+    wrap:       { label: 'Wrapped push',  zh: '包裹推进', tone: 'active',color: '--blue'       },
+    push:       { label: 'Finishing',     zh: '收尾',   tone: 'active',  color: '--blue'       },
+    rest:       { label: 'Resting',       zh: '静置',   tone: 'neutral', color: '--purple'     },
+    slice:      { label: 'Sliced',        zh: '切片',   tone: 'done',    color: '--green-deep' }
   };
 
   function phaseMeta(state) {
@@ -58,17 +76,27 @@
   }
 
   // ---------- Pregame: preset picker ----------
+  var PRESET_ZH = {
+    texas:       { name: '德州牛胸肉',   tagline: '慢火 · 屠夫纸包裹 · 盐+黑胡椒' },
+    competition: { name: '比赛级',       tagline: '注射 + 铝箔船 + 长静置（KCBS 评分规则）' },
+    backyard:    { name: '家常快烤',     tagline: '猛火 + 铝箔 · 晚饭前搞定' },
+    custom:      { name: '自定义',       tagline: '每个参数都能调' }
+  };
+
   function renderPregame() {
     var grid = $('preset-grid');
     grid.innerHTML = '';
     Pre.list().forEach(function (p) {
+      var zh = PRESET_ZH[p.id] || {};
       var card = document.createElement('button');
       card.className = 'preset-card';
       card.dataset.preset = p.id;
       card.innerHTML =
         '<div class="preset-icon">' + p.icon + '</div>' +
-        '<div class="preset-name">' + p.name + '</div>' +
-        '<div class="preset-tagline">' + p.tagline + '</div>';
+        '<div class="preset-name">' + p.name
+          + (zh.name ? '<span class="zh">' + zh.name + '</span>' : '') + '</div>' +
+        '<div class="preset-tagline">' + p.tagline
+          + (zh.tagline ? '<span class="zh">' + zh.tagline + '</span>' : '') + '</div>';
       card.addEventListener('click', function () { pickPreset(p.id); });
       grid.appendChild(card);
     });
@@ -76,6 +104,7 @@
 
   function pickPreset(id) {
     view.preset = Pre.get(id);
+    savePrefs({ lastPreset: id });
     show('cook');
     setupCook();
   }
@@ -170,6 +199,8 @@
     stopLoop();
     show('pregame');
     view.state = null;
+    view.lastVerdicts = [];
+    Notify.reset();
   }
 
   // ---------- History buffer (for slope calc) ----------
@@ -201,7 +232,7 @@
     var meta = phaseMeta(s);
     var dot  = $('phase-dot');
     dot.style.background = meta.color ? css(meta.color) : css('--text-muted');
-    $('phase-name').textContent = meta.label;
+    $('phase-name').innerHTML = meta.label + '<em class="zh">' + (meta.zh || '') + '</em>';
 
     // Flow strip
     renderFlow(meta.actual || s.phase);
@@ -218,11 +249,11 @@
   }
 
   function pitSubtitle(state, pitF) {
-    if (state.coals.length === 0) return 'unlit — light your fire';
-    if (pitF > 320) return 'overshoot — close damper';
-    if (pitF > 280) return 'hot';
-    if (pitF < 190) return 'cold — add fuel';
-    return 'stable';
+    if (state.coals.length === 0) return 'unlit · 未点火 — light your fire';
+    if (pitF > 320) return 'overshoot · 过热 — close damper';
+    if (pitF > 280) return 'hot · 偏热';
+    if (pitF < 190) return 'cold · 偏冷 — add fuel';
+    return 'stable · 稳定';
   }
 
   function coreSubtitle(slope) {
@@ -247,6 +278,14 @@
     var cards = Dec.build(view.state, view.history).filter(function (c) {
       return !view.dismissed[c.verdict];
     });
+
+    // Notify on new verdicts (diff against previous render)
+    var prev = view.lastVerdicts || [];
+    cards.forEach(function (c) {
+      if (prev.indexOf(c.verdict) === -1) Notify.fireCard(c);
+    });
+    view.lastVerdicts = cards.map(function (c) { return c.verdict; });
+
     var stack = $('cards-stack');
     if (cards.length === 0) {
       stack.innerHTML = '<div class="card-empty">All quiet — keep pit steady and wait.</div>';
@@ -273,17 +312,26 @@
       return '<span class="impact-chip"><em>' + k + '</em>' + c.impact[k] + '</span>';
     }).join('') : '';
     var actions = (c.actions || []).map(function (a) {
+      var labelHtml = esc(a.label) + (a.label_zh ? '<span class="zh">' + esc(a.label_zh) + '</span>' : '');
+      var hintHtml = '';
+      if (a.hint || a.hint_zh) {
+        hintHtml = '<em>' + esc(a.hint || '') + (a.hint_zh ? ' · ' + esc(a.hint_zh) : '') + '</em>';
+      }
       return '<button class="card-action" data-action="' + a.event + '" data-verdict="' + esc(c.verdict) + '">'
-        + '<span>' + a.label + '</span>'
-        + (a.hint ? '<em>' + a.hint + '</em>' : '')
+        + '<span>' + labelHtml + '</span>'
+        + hintHtml
         + '</button>';
     }).join('');
+    var verdictHtml = esc(c.verdict)
+      + (c.verdict_zh ? '<span class="zh">' + esc(c.verdict_zh) + '</span>' : '');
+    var whyHtml = esc(c.why)
+      + (c.why_zh ? '<span class="zh">' + esc(c.why_zh) + '</span>' : '');
     return '<article class="dc dc-' + c.tier + '">'
       + '<header class="dc-header">'
       +   '<span class="dc-tier">' + tierGlyph(c.tier) + '</span>'
-      +   '<h3 class="dc-verdict">' + esc(c.verdict) + '</h3>'
+      +   '<h3 class="dc-verdict">' + verdictHtml + '</h3>'
       + '</header>'
-      + '<p class="dc-why">' + esc(c.why) + '</p>'
+      + '<p class="dc-why">' + whyHtml + '</p>'
       + (impact ? '<div class="dc-impact">' + impact + '</div>' : '')
       + (actions ? '<div class="dc-actions">' + actions + '</div>' : '')
       + '</article>';
@@ -513,6 +561,252 @@
     show('score');
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  A/B Compare mode — headless simulation of two presets + diff
+  // ═══════════════════════════════════════════════════════════════
+
+  function openCompare() {
+    show('compare');
+    populateCompareSelectors();
+  }
+
+  function populateCompareSelectors() {
+    var prefs = loadPrefs();
+    var defaults = [prefs.cmpA || 'texas', prefs.cmpB || 'competition'];
+    ['cmp-a-preset', 'cmp-b-preset'].forEach(function (id, idx) {
+      var sel = $(id);
+      sel.innerHTML = '';
+      Pre.list().forEach(function (p) {
+        if (p.id === 'custom') return;
+        var o = document.createElement('option');
+        o.value = p.id;
+        o.textContent = p.icon + ' ' + p.name;
+        sel.appendChild(o);
+      });
+      sel.value = defaults[idx] || sel.options[0].value;
+      sel.addEventListener('change', function () {
+        var patch = {};
+        patch[idx === 0 ? 'cmpA' : 'cmpB'] = sel.value;
+        savePrefs(patch);
+      });
+    });
+  }
+
+  function runCompare() {
+    var idA = $('cmp-a-preset').value;
+    var idB = $('cmp-b-preset').value;
+    $('cmp-status').textContent = 'Running both cooks…';
+    $('cmp-run').disabled = true;
+
+    // Defer to next frame so the status message paints first
+    setTimeout(function () {
+      var resultA = simulateToEnd(Pre.get(idA));
+      var resultB = simulateToEnd(Pre.get(idB));
+      view.compare = {
+        a: { preset: Pre.get(idA), result: resultA },
+        b: { preset: Pre.get(idB), result: resultB }
+      };
+      renderCompareChart();
+      renderCompareDiff();
+      $('cmp-status').textContent = '';
+      $('cmp-run').disabled = false;
+    }, 50);
+  }
+
+  function simulateToEnd(preset) {
+    var state = Sim.create(preset.inputs);
+    state.damperPct = preset.policy.damperPct;
+    Sim.ignite(state, preset.policy.igniteN);
+    // Seed wood chunks
+    (preset.policy.woodChunks || []).forEach(function (w) {
+      if (w.tMin === 0) Sim.addWood(state, 0.15, w.species || 'hickory');
+    });
+    var woodIdx = 0;
+    var refuelEvery = 45;
+    var nextRefuel = refuelEvery;
+    var pullAt = null, sliceAt = null;
+    var samples = [];
+    var targetRest = preset.policy.targetRestMin || 45;
+    var wrapType = preset.policy.wrapType || 'butcher_paper';
+    var autoWrap = preset.policy.wrapAt === 'auto';
+
+    for (var t = 0; t < C.MAX_MINUTES * 60; t += 60) {
+      // Timed wood chunks
+      while (woodIdx < (preset.policy.woodChunks || []).length) {
+        var w = preset.policy.woodChunks[woodIdx];
+        if (w.tMin === 0) { woodIdx++; continue; }
+        if (state.tSimMin >= w.tMin) {
+          Sim.addWood(state, 0.15, w.species || 'hickory');
+          woodIdx++;
+        } else { break; }
+      }
+      // Refuel cadence
+      if (state.tSimMin >= nextRefuel) {
+        Sim.refuel(state, 4);
+        nextRefuel += refuelEvery;
+      }
+      // Auto-wrap at 160°F
+      if (autoWrap && state.wrapState === 'none') {
+        var coreF = C.cToF(state.T[state.T.length - 1]);
+        if (coreF >= 160) Sim.wrap(state, wrapType);
+      }
+      Sim.step(state, 60);
+      samples.push({
+        t: state.tSimMin,
+        pitF:  C.cToF(state.tPitC),
+        coreF: C.cToF(state.T[state.T.length - 1]),
+        w:     state.w,
+        C:     state.C
+      });
+      if (!pullAt && CM.isDone(state.C)) {
+        pullAt = state.tSimMin;
+        Sim.pull(state);
+      }
+      if (pullAt && state.tSimMin - pullAt >= targetRest) {
+        Sim.slice(state, preset.policy.restMethod || 'cooler');
+        sliceAt = state.tSimMin;
+        break;
+      }
+    }
+
+    // Score
+    var done   = Math.min(1, state.C / C.COLLAGEN_DONE);
+    var juicyW = state.wRetained != null ? state.wRetained : state.w;
+    var juicy  = Math.max(0, Math.min(1, juicyW / 0.75));
+    var bark   = Math.max(0, Math.min(1, 1 - (state.wSurface || 0)));
+    var totalS = (state.smoke ? state.smoke.good + state.smoke.bad : 0) + 1e-9;
+    var smoke  = state.smoke ? state.smoke.good / totalS : 0;
+    var overall = Math.pow(Math.max(1e-3, done * juicy * bark * smoke), 0.25);
+
+    return {
+      samples: samples,
+      pullMin: pullAt,
+      sliceMin: sliceAt,
+      scores: { done: done, juicy: juicy, bark: bark, smoke: smoke, overall: overall }
+    };
+  }
+
+  function renderCompareChart() {
+    var canvas = $('cmp-chart');
+    if (!canvas || !window.Chart) return;
+    if (renderCompareChart._chart) renderCompareChart._chart.destroy();
+    var A = view.compare.a, B = view.compare.b;
+
+    var colA = css('--red') || '#EF4444';
+    var colB = css('--blue') || '#3B82F6';
+    var text = css('--text-muted') || '#94A3B8';
+    var grid = 'rgba(148, 163, 184, 0.12)';
+
+    renderCompareChart._chart = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [
+          ds('A · T_core', colA, A.result.samples, 'coreF'),
+          ds('B · T_core', colB, B.result.samples, 'coreF'),
+          ds('A · w',      colA, A.result.samples, 'w',   'yFrac', [4, 3]),
+          ds('B · w',      colB, B.result.samples, 'w',   'yFrac', [4, 3])
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false, parsing: false,
+        plugins: { legend: { display: true, labels: { font: { size: 11 }, color: text } } },
+        scales: {
+          x:     { type: 'linear', min: 0, title: { display: true, text: 'min' }, grid: { color: grid }, ticks: { color: text, font: { size: 11 } } },
+          yF:    { position: 'left',  min: 30, max: 220, title: { display: true, text: '°F' },       grid: { color: grid }, ticks: { color: text, font: { size: 11 } } },
+          yFrac: { position: 'right', min: 0,  max: 1,   title: { display: true, text: 'fraction' }, grid: { drawOnChartArea: false }, ticks: { color: text, font: { size: 11 } } }
+        }
+      }
+    });
+
+    function ds(label, color, samples, key, axis, dash) {
+      return {
+        label: label,
+        data: samples.map(function (s) { return { x: s.t, y: s[key] }; }),
+        borderColor: color,
+        backgroundColor: color + '20',
+        borderWidth: 2, borderDash: dash || [],
+        pointRadius: 0, tension: 0.25,
+        yAxisID: axis || 'yF'
+      };
+    }
+  }
+
+  function renderCompareDiff() {
+    var A = view.compare.a, B = view.compare.b;
+    var rA = A.result.scores, rB = B.result.scores;
+    var eA = A.result.pullMin || 0, eB = B.result.pullMin || 0;
+
+    function row(label, vA, vB, fmt, winBig) {
+      var dA = fmt(vA), dB = fmt(vB);
+      var delta = vB - vA;
+      var winnerClass = (delta > 0 && winBig) || (delta < 0 && !winBig) ? 'B' : 'A';
+      if (Math.abs(delta) < 1e-3) winnerClass = 'tie';
+      var sign = delta > 0 ? '+' : '';
+      var dDisp = fmt === fmtPct
+        ? (sign + (delta * 100).toFixed(1) + ' pp')
+        : (sign + fmt(Math.abs(delta)).replace(/^[^\d-]*/, (delta < 0 ? '−' : '')));
+      return '<tr class="win-' + winnerClass + '">'
+        + '<th>' + label + '</th>'
+        + '<td class="a">' + dA + '</td>'
+        + '<td class="b">' + dB + '</td>'
+        + '<td class="d">' + dDisp + '</td>'
+        + '</tr>';
+    }
+    function fmtTime(m) { return Math.floor(m/60) + 'h ' + String(Math.round(m%60)).padStart(2,'0') + 'm'; }
+    function fmtPct(v) { return (v * 100).toFixed(0) + '%'; }
+
+    var html =
+      '<table class="cmp-table">'
+      + '<thead><tr><th></th><th>A · ' + A.preset.name + '</th><th>B · ' + B.preset.name + '</th><th>Δ</th></tr></thead>'
+      + '<tbody>'
+      + row('Time to pull', eA, eB, fmtTime, false)  // shorter wins
+      + row('Doneness',   rA.done,    rB.done,    fmtPct, true)
+      + row('Juicy',      rA.juicy,   rB.juicy,   fmtPct, true)
+      + row('Bark',       rA.bark,    rB.bark,    fmtPct, true)
+      + row('Smoke',      rA.smoke,   rB.smoke,   fmtPct, true)
+      + row('Overall',    rA.overall, rB.overall, fmtPct, true)
+      + '</tbody></table>';
+    $('cmp-diff').innerHTML = html;
+
+    // Verdict sentence
+    var verdict = summarise(A, B);
+    $('cmp-verdict').textContent = verdict;
+  }
+
+  function summarise(A, B) {
+    var rA = A.result.scores, rB = B.result.scores;
+    var eA = A.result.pullMin || 0, eB = B.result.pullMin || 0;
+    var dTime = Math.round(eB - eA);
+    var dOverall = Math.round((rB.overall - rA.overall) * 100);
+    var dJuicy   = Math.round((rB.juicy - rA.juicy) * 100);
+
+    var parts = [];
+    if (Math.abs(dOverall) < 2) parts.push('Near tie overall.');
+    else if (dOverall > 0) parts.push('B (' + B.preset.name + ') wins by ' + dOverall + ' pp overall.');
+    else parts.push('A (' + A.preset.name + ') wins by ' + (-dOverall) + ' pp overall.');
+    if (dTime !== 0) {
+      var faster = dTime > 0 ? A.preset.name : B.preset.name;
+      parts.push(faster + ' is ' + Math.abs(dTime) + ' min faster.');
+    }
+    if (Math.abs(dJuicy) >= 3) {
+      var juicier = dJuicy > 0 ? B.preset.name : A.preset.name;
+      parts.push(juicier + ' is ' + Math.abs(dJuicy) + ' pp juicier.');
+    }
+    return parts.join(' ');
+  }
+
+  // ---------- Notify toggle ----------
+  function updateNotifyToggle() {
+    var btn = $('btn-notify');
+    if (!btn) return;
+    btn.textContent = Notify.isEnabled() ? '🔔 Alerts on' : '🔕 Alerts off';
+    btn.classList.toggle('is-off', !Notify.isEnabled());
+  }
+  function toggleNotify() {
+    Notify.toggle();
+    updateNotifyToggle();
+  }
+
   // ---------- Bootstrap ----------
   document.addEventListener('DOMContentLoaded', function () {
     renderPregame();
@@ -521,9 +815,39 @@
     $('btn-pause').addEventListener('click', pause);
     $('btn-reset').addEventListener('click', reset);
     $('btn-again').addEventListener('click', reset);
+    // Restore persisted prefs
+    var prefs = loadPrefs();
+    if (prefs.speed) {
+      var sel = $('in-speed');
+      if (sel) {
+        // pick closest option
+        var want = String(prefs.speed);
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value === want) { sel.selectedIndex = i; break; }
+        }
+        view.simPerWallS = parseFloat(sel.value) || 3600;
+      }
+    }
+    if (prefs.cmpA) {
+      // restored lazily when compare screen opens
+    }
+
     $('in-speed').addEventListener('change', function () {
       view.simPerWallS = parseFloat($('in-speed').value) || 3600;
+      savePrefs({ speed: view.simPerWallS });
     });
+    // Compare entry points
+    var bCompare = $('btn-compare');
+    if (bCompare) bCompare.addEventListener('click', openCompare);
+    var bCmpBack = $('btn-cmp-back');
+    if (bCmpBack) bCmpBack.addEventListener('click', function () { show('pregame'); });
+    var bCmpRun = $('cmp-run');
+    if (bCmpRun) bCmpRun.addEventListener('click', runCompare);
+    // Notify
+    var bNotify = $('btn-notify');
+    if (bNotify) bNotify.addEventListener('click', toggleNotify);
+    updateNotifyToggle();
+
     show('pregame');
   });
 })();
