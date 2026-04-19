@@ -28,6 +28,9 @@
     dismissed:    {},         // card verdicts dismissed this session
     nowStarted:   null,       // Date when cook started, for ETA wall-clock
     lastVerdicts: [],         // previous render's card verdicts (for notify diff)
+    demoMode:     false,      // demo/auto-run flag
+    sparkPit:     [],         // rolling sparkline samples (60 points)
+    sparkCore:    [],
     // A/B compare
     compare:      null        // { a: {preset, result}, b: {preset, result} }
   };
@@ -227,6 +230,16 @@
     $('pr-core-val').textContent = coreF.toFixed(0);
     $('pr-pit-sub').textContent  = pitSubtitle(s, pitF);
     $('pr-core-sub').textContent = coreSubtitle(slope);
+
+    // Sparklines (rolling 60-sample buffer)
+    view.sparkPit.push(pitF);   if (view.sparkPit.length > 60) view.sparkPit.shift();
+    view.sparkCore.push(coreF); if (view.sparkCore.length > 60) view.sparkCore.shift();
+    drawSparkline('spark-pit',  view.sparkPit,  css('--red') || '#EF4444');
+    drawSparkline('spark-core', view.sparkCore, css('--amber') || '#F59E0B');
+
+    // Progress bar — based on (coreF vs target 203°F) capped
+    var progress = Math.min(100, Math.max(0, ((coreF - 40) / (203 - 40)) * 100));
+    $('progress-fill').style.width = progress + '%';
 
     // Phase line
     var meta = phaseMeta(s);
@@ -462,6 +475,36 @@
     }[kind] || '•';
   }
 
+  // ---------- Sparkline ----------
+  function drawSparkline(id, data, color) {
+    var canvas = $(id);
+    if (!canvas || data.length < 2) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.clientWidth || 120;
+    var H = canvas.clientHeight || 32;
+    if (canvas.width !== W * dpr) {
+      canvas.width  = W * dpr;
+      canvas.height = H * dpr;
+    }
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    var min = Math.min.apply(null, data) - 2;
+    var max = Math.max.apply(null, data) + 2;
+    var span = Math.max(1, max - min);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (var i = 0; i < data.length; i++) {
+      var x = (i / (data.length - 1)) * W;
+      var y = H - 2 - ((data[i] - min) / span) * (H - 4);
+      if (i === 0) ctx.moveTo(x, y);
+      else         ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
   // ---------- Chart ----------
   function initChart() {
     var canvas = $('chart-main');
@@ -602,7 +645,8 @@
   function runCompare() {
     var idA = $('cmp-a-preset').value;
     var idB = $('cmp-b-preset').value;
-    $('cmp-status').textContent = 'Running both cooks…';
+    $('cmp-spinner').hidden = false;
+    $('cmp-status-text').textContent = 'Running both cooks · 正在跑两场烤肉…';
     $('cmp-run').disabled = true;
 
     // Defer to next frame so the status message paints first
@@ -615,7 +659,8 @@
       };
       renderCompareChart();
       renderCompareDiff();
-      $('cmp-status').textContent = '';
+      $('cmp-spinner').hidden = true;
+      $('cmp-status-text').textContent = '';
       $('cmp-run').disabled = false;
     }, 50);
   }
@@ -814,6 +859,90 @@
     updateNotifyToggle();
   }
 
+  // ---------- Demo mode ----------
+  function startDemo() {
+    view.demoMode = true;
+    view.preset = Pre.get('texas');
+    savePrefs({ lastPreset: 'texas' });
+    show('cook');
+    setupCook();
+    // Speed up to 300× so demo finishes in ~2 min of wall time
+    $('in-speed').value = '18000';
+    view.simPerWallS = 18000;
+    // Auto-start after a short beat
+    setTimeout(start, 400);
+  }
+
+  // ---------- Theme toggle ----------
+  function applyTheme(mode) {
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      var icon = $('theme-icon'); if (icon) icon.textContent = '☀';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      var icon2 = $('theme-icon'); if (icon2) icon2.textContent = '🌙';
+    }
+    savePrefs({ theme: mode });
+  }
+  function toggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  function initTheme() {
+    var prefs = loadPrefs();
+    if (prefs.theme) applyTheme(prefs.theme);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      applyTheme('dark');
+    }
+  }
+
+  // ---------- Help modal ----------
+  function showHelp()  { $('modal-help').hidden = false; }
+  function hideHelp()  { $('modal-help').hidden = true;  }
+
+  // ---------- Keyboard shortcuts ----------
+  function bindKeyboard() {
+    document.addEventListener('keydown', function (e) {
+      // Skip if focus is in input/select/textarea
+      var tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+      switch (e.key) {
+        case ' ':
+        case 'Spacebar':
+          if (view.screen === 'cook') {
+            e.preventDefault();
+            view.running ? pause() : start();
+          }
+          break;
+        case 'r': case 'R':
+          if (view.screen === 'cook' || view.screen === 'score') reset();
+          break;
+        case 'w': case 'W':
+          if (view.state && view.state.wrapState === 'none') dispatchEvent('wrap-butcher_paper');
+          break;
+        case 'f': case 'F':
+          if (view.state && view.state.wrapState === 'none') dispatchEvent('wrap-aluminum_foil');
+          break;
+        case '+': case '=':
+          if (view.state) dispatchEvent('refuel-3');
+          break;
+        case 's': case 'S':
+          if (view.state) dispatchEvent('spritz');
+          break;
+        case 'd': case 'D':
+          toggleTheme();
+          break;
+        case '?':
+          showHelp();
+          break;
+        case 'Escape':
+          if (!$('modal-help').hidden) hideHelp();
+          break;
+      }
+    });
+  }
+
   // ---------- Bootstrap ----------
   document.addEventListener('DOMContentLoaded', function () {
     renderPregame();
@@ -854,6 +983,28 @@
     var bNotify = $('btn-notify');
     if (bNotify) bNotify.addEventListener('click', toggleNotify);
     updateNotifyToggle();
+
+    // Demo mode
+    var bDemo = $('btn-demo');
+    if (bDemo) bDemo.addEventListener('click', startDemo);
+
+    // Theme toggle
+    initTheme();
+    var bTheme = $('btn-theme');
+    if (bTheme) bTheme.addEventListener('click', toggleTheme);
+
+    // Help modal
+    var bHelp = $('btn-help');
+    var bModalClose = $('modal-close');
+    var mBackdrop = $('modal-help');
+    if (bHelp) bHelp.addEventListener('click', showHelp);
+    if (bModalClose) bModalClose.addEventListener('click', hideHelp);
+    if (mBackdrop) mBackdrop.addEventListener('click', function (e) {
+      if (e.target === mBackdrop) hideHelp();
+    });
+
+    // Keyboard shortcuts
+    bindKeyboard();
 
     show('pregame');
   });

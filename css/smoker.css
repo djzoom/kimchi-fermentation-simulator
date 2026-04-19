@@ -6,9 +6,20 @@
  *   Body 13px, small 12px, micro 11px.
  */
 
-body { font-family: 'Inter', 'Noto Sans SC', 'Noto Sans KR', system-ui, sans-serif; color: var(--text); }
+body {
+  font-family: 'Inter', 'Noto Sans SC', 'Noto Sans KR', system-ui, sans-serif;
+  color: var(--text);
+  /* Safe-area insets for iPhone notch etc */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
 
 .container { max-width: 860px; padding: 0 16px; }
+
+/* Prevent iOS auto-zoom on focus (font-size < 16px triggers it) */
+@supports (-webkit-touch-callout: none) {
+  input, select { font-size: 16px !important; }
+}
 
 /* ────────────────────────────────────────────────
  *  Bilingual helper — .zh renders Chinese as secondary
@@ -860,4 +871,234 @@ body { font-family: 'Inter', 'Noto Sans SC', 'Noto Sans KR', system-ui, sans-ser
   .pr-value { font-size: 34px; }
   .flow-step { padding: 6px 8px; font-size: 9px; }
   .preset-grid { gap: 8px; }
+  .pr-spark { display: none; }     /* hide sparkline to save space */
+}
+
+/* ────────────────────────────────────────────────
+ *  Header controls — theme + help buttons
+ * ──────────────────────────────────────────────── */
+
+.theme-btn, .help-btn {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background .15s, color .15s;
+}
+.theme-btn:hover, .help-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
+
+/* ────────────────────────────────────────────────
+ *  Dark mode refinements
+ *    Respect OS preference AND explicit toggle
+ * ──────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) { color-scheme: dark; }
+}
+
+[data-theme="dark"] {
+  --bg: #0C0F17;
+  --bg-surface: #151922;
+  --bg-subtle: #1E2536;
+  --bg-card: #151922;
+  --text: #E8ECF1;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-faint: #475569;
+  --border: rgba(148, 163, 184, 0.08);
+  --border-strong: rgba(148, 163, 184, 0.12);
+  --shadow-ring: 0 0 0 1px var(--border);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body { background: var(--bg); }
+[data-theme="dark"] .impact-chip { background: var(--bg-subtle); }
+[data-theme="dark"] .log-row { border-bottom-color: var(--border); }
+
+/* ────────────────────────────────────────────────
+ *  Sparklines — inline trend next to readouts
+ * ──────────────────────────────────────────────── */
+
+.pr-spark {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: 32px;
+  margin-top: 6px;
+  opacity: 0.6;
+}
+.pr-pit  .pr-spark { filter: hue-rotate(0); }
+
+/* ────────────────────────────────────────────────
+ *  Progress bar under ETA
+ * ──────────────────────────────────────────────── */
+
+.progress-bar {
+  height: 3px;
+  background: var(--bg-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 4px 14px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--amber) 80%, var(--red) 100%);
+  transition: width 0.6s ease;
+  border-radius: 2px;
+}
+
+/* ────────────────────────────────────────────────
+ *  Card entry animation
+ * ──────────────────────────────────────────────── */
+
+@keyframes slideInTop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.dc {
+  animation: slideInTop 0.3s ease-out;
+}
+
+/* ────────────────────────────────────────────────
+ *  Pregame extras — demo + compare buttons
+ * ──────────────────────────────────────────────── */
+
+.pregame-extras {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.btn-demo { padding: 10px 18px; font-size: 13px; }
+
+/* ────────────────────────────────────────────────
+ *  Compare loading spinner
+ * ──────────────────────────────────────────────── */
+
+.cmp-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ────────────────────────────────────────────────
+ *  Modal (keyboard shortcuts)
+ * ──────────────────────────────────────────────── */
+
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  animation: slideInTop 0.2s ease-out;
+  padding: 20px;
+}
+.modal-card {
+  background: var(--bg-surface);
+  border-radius: 16px;
+  padding: 24px 28px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  background: transparent; border: none;
+  font-size: 18px; cursor: pointer;
+  color: var(--text-muted);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+}
+.modal-close:hover { background: var(--bg-subtle); }
+.modal-card h2 {
+  margin: 0 0 16px; font-size: 18px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.modal-card h2 .zh { font-size: 0.75em; margin-left: 8px; font-weight: 400; color: var(--text-muted); }
+.kbd-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 16px;
+  margin: 0;
+  font-size: 13px;
+}
+.kbd-list dt { font-family: 'JetBrains Mono', monospace; }
+.kbd-list dd { margin: 0; color: var(--text-secondary); line-height: 1.3; }
+kbd {
+  background: var(--bg-subtle);
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+
+/* ────────────────────────────────────────────────
+ *  Mobile-specific refinements (beyond earlier pass)
+ * ──────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  /* Sticky sim bar so controls always reachable */
+  .sim-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    background: var(--bg-surface);
+    box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.08);
+    border-radius: 14px 14px 0 0;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  /* Bigger event buttons for fat-finger tolerance */
+  .ev-btn { min-height: 48px; font-size: 13px; }
+  .card-action { min-height: 48px; }
+  /* Modal full-screen on phone */
+  .modal-card {
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    margin-top: auto;
+    padding: 20px;
+  }
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  /* Theme buttons hide labels on tight header */
+  .header-controls { gap: 6px; }
+  /* Active touch feedback */
+  .preset-card:active,
+  .btn-primary:active,
+  .btn-ghost:active,
+  .ev-btn:active,
+  .card-action:active {
+    transform: scale(0.98);
+    transition: transform 0.05s;
+  }
+}
+
+/* Reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  .dc, .modal-backdrop { animation: none; }
+  .progress-fill { transition: none; }
 }

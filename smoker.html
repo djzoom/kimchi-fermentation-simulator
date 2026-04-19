@@ -23,6 +23,8 @@
       </div>
     </div>
     <div class="header-controls">
+      <button class="theme-btn" id="btn-theme" title="Toggle dark mode · 切换深色"><span id="theme-icon">🌙</span></button>
+      <button class="help-btn" id="btn-help" title="Keyboard shortcuts · 键盘快捷键">?</button>
       <a class="lang-btn" href="index.html">← Kimchi</a>
     </div>
   </div>
@@ -39,9 +41,14 @@
     </p>
     <div class="preset-grid" id="preset-grid"><!-- filled by app.js --></div>
     <div class="pregame-or">or · 或</div>
-    <button class="btn-ghost btn-compare" id="btn-compare">
-      🔀 &nbsp;Compare two styles side-by-side<span class="zh">对比两种风格</span>
-    </button>
+    <div class="pregame-extras">
+      <button class="btn-ghost btn-compare" id="btn-compare">
+        🔀 &nbsp;Compare two styles<span class="zh">对比两种风格</span>
+      </button>
+      <button class="btn-ghost btn-demo" id="btn-demo">
+        ▶ &nbsp;Watch a demo cook<span class="zh">看一次示例烤肉</span>
+      </button>
+    </div>
   </section>
 
   <!-- ═══ COMPARE — headless A/B ═══ -->
@@ -65,7 +72,10 @@
       </label>
       <button class="btn-primary" id="cmp-run">Run comparison<span class="zh">开始对比</span></button>
     </div>
-    <div class="compare-status" id="cmp-status"></div>
+    <div class="compare-status" id="cmp-status">
+      <span class="cmp-spinner" id="cmp-spinner" hidden></span>
+      <span id="cmp-status-text"></span>
+    </div>
     <div class="compare-chart-wrap"><canvas id="cmp-chart"></canvas></div>
     <div class="compare-verdict" id="cmp-verdict"></div>
     <div class="compare-diff" id="cmp-diff"></div>
@@ -86,6 +96,9 @@
         <span class="eta-range" id="eta-range"></span>
       </div>
     </div>
+    <div class="progress-bar" aria-label="cook progress">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
 
     <!-- Phase flow strip -->
     <nav class="flow-strip" id="flow-strip" aria-label="Cook phases">
@@ -98,16 +111,18 @@
       <span class="flow-step" data-step="slice">Slice<em>切片</em></span>
     </nav>
 
-    <!-- Primary readouts — just two big numbers -->
+    <!-- Primary readouts — just two big numbers + sparklines -->
     <section class="primary-readouts">
       <div class="pr-card pr-pit">
         <div class="pr-label">Pit · 炉温</div>
         <div class="pr-value"><span id="pr-pit-val">—</span><span class="pr-unit">°F</span></div>
+        <canvas class="pr-spark" id="spark-pit" width="120" height="32"></canvas>
         <div class="pr-sub" id="pr-pit-sub">idle</div>
       </div>
       <div class="pr-card pr-core">
         <div class="pr-label">Meat · 肉芯</div>
         <div class="pr-value"><span id="pr-core-val">—</span><span class="pr-unit">°F</span></div>
+        <canvas class="pr-spark" id="spark-core" width="120" height="32"></canvas>
         <div class="pr-sub" id="pr-core-sub">0.0 °F/min</div>
       </div>
     </section>
@@ -187,6 +202,24 @@
     </details>
 
   </section>
+
+  <!-- ═══ Keyboard-shortcuts modal ═══ -->
+  <div class="modal-backdrop" id="modal-help" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close">✕</button>
+      <h2>Keyboard shortcuts<span class="zh">键盘快捷键</span></h2>
+      <dl class="kbd-list">
+        <dt><kbd>Space</kbd></dt><dd>Start / Pause · 开始 / 暂停</dd>
+        <dt><kbd>R</kbd></dt><dd>Reset · 重来</dd>
+        <dt><kbd>W</kbd></dt><dd>Wrap (butcher paper) · 包屠夫纸</dd>
+        <dt><kbd>F</kbd></dt><dd>Wrap foil · 包铝箔</dd>
+        <dt><kbd>+</kbd></dt><dd>Add 3 coals · 加 3 块炭</dd>
+        <dt><kbd>S</kbd></dt><dd>Spritz · 喷雾</dd>
+        <dt><kbd>D</kbd></dt><dd>Dark mode · 深色切换</dd>
+        <dt><kbd>?</kbd></dt><dd>This help · 这个帮助</dd>
+      </dl>
+    </div>
+  </div>
 
   <!-- ═══ POST-COOK — scorecard ═══ -->
   <section id="screen-score" class="score" hidden>
