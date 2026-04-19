@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smoker Dynamics — BBQ brisket simulator</title>
+<title>Smoker Dynamics — your digital pitmaster</title>
+<meta name="description" content="Decision-support simulator for low-and-slow BBQ. Predicts the stall, recommends when to wrap, tells you when to pull.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css?v=33">
-<link rel="stylesheet" href="css/smoker.css?v=1">
+<link rel="stylesheet" href="css/smoker.css?v=2">
 </head>
 <body>
+
 <header class="header">
   <div class="header-inner">
     <div class="header-brand">
       <div class="brand-text">
         <span class="brand-name">Smoker Dynamics</span>
-        <span class="brand-sub">Brisket simulator — Blonder two-layer + Arrhenius collagen</span>
+        <span class="brand-sub">Your digital pitmaster — decisions, not dials</span>
       </div>
     </div>
     <div class="header-controls">
@@ -28,139 +30,131 @@
 
 <main class="container">
 
-  <!-- Readouts -->
-  <section class="smoker-readouts">
-    <div class="readout"><span class="readout-label">T_pit</span><span class="readout-value" id="r-pit">—</span><span class="readout-unit">°F</span></div>
-    <div class="readout"><span class="readout-label">T_core</span><span class="readout-value" id="r-core">—</span><span class="readout-unit">°F</span></div>
-    <div class="readout"><span class="readout-label">T_surf</span><span class="readout-value" id="r-surf">—</span><span class="readout-unit">°F</span></div>
-    <div class="readout"><span class="readout-label">w</span><span class="readout-value" id="r-w">—</span></div>
-    <div class="readout"><span class="readout-label">C</span><span class="readout-value" id="r-c">—</span></div>
-    <div class="readout"><span class="readout-label">t</span><span class="readout-value" id="r-t">0</span><span class="readout-unit">min</span></div>
-    <div class="readout phase"><span class="readout-label">phase</span><span class="readout-value" id="r-phase">bark_build</span></div>
+  <!-- ═══ PREGAME — preset picker ═══ -->
+  <section id="screen-pregame" class="pregame">
+    <h1 class="pregame-title">What are you cooking today?</h1>
+    <p class="pregame-sub">Pick a style. We'll light the fire, watch the stall, and tell you when to wrap and when to pull.</p>
+    <div class="preset-grid" id="preset-grid"><!-- filled by app.js --></div>
   </section>
 
-  <!-- Chart -->
-  <section class="card chart-card">
-    <div class="chart-title-row">
-      <h3>Temperature &amp; state</h3>
-      <div class="chart-legend">
-        <span class="lg pit">T_pit</span>
-        <span class="lg core">T_core</span>
-        <span class="lg surf">T_surf</span>
-        <span class="lg w">w</span>
-        <span class="lg c">C</span>
+  <!-- ═══ MISSION CONTROL — active cook ═══ -->
+  <section id="screen-cook" class="cook" hidden>
+
+    <!-- Status line: phase + ETA -->
+    <div class="status-line">
+      <div class="status-phase">
+        <span class="phase-dot" id="phase-dot"></span>
+        <span class="phase-name" id="phase-name">Warming up</span>
       </div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="chart-main"></canvas>
-    </div>
-  </section>
-
-  <!-- Two-column: inputs + events -->
-  <section class="smoker-grid">
-
-    <!-- Left: Inputs -->
-    <div class="card">
-      <h3>Inputs</h3>
-      <div class="input-grid">
-        <label>Grade
-          <select id="in-grade">
-            <option value="select">Select</option>
-            <option value="choice" selected>Choice</option>
-            <option value="prime">Prime</option>
-            <option value="wagyu">Wagyu</option>
-          </select>
-        </label>
-        <label>Equipment
-          <select id="in-equipment">
-            <option value="offset" selected>Offset</option>
-            <option value="pellet">Pellet</option>
-            <option value="kamado">Kamado</option>
-            <option value="wsm">WSM</option>
-            <option value="kettle">Kettle</option>
-            <option value="electric">Electric</option>
-          </select>
-        </label>
-        <label>Weight (lb)
-          <input type="number" id="in-weight" value="10" min="2" max="20" step="0.5">
-        </label>
-        <label>Thickness (in)
-          <input type="number" id="in-thickness" value="3.5" min="0.5" max="6" step="0.1">
-        </label>
-        <label>Ambient (°F)
-          <input type="number" id="in-tamb" value="70" min="20" max="110" step="1">
-        </label>
-        <label>Humidity %
-          <input type="number" id="in-humid" value="60" min="0" max="100" step="5">
-        </label>
-        <label>Wind (mph)
-          <input type="number" id="in-wind" value="3" min="0" max="40" step="1">
-        </label>
-        <label>Elevation (ft)
-          <input type="number" id="in-elev" value="0" min="0" max="15000" step="100">
-        </label>
-        <label>Damper %
-          <input type="number" id="in-damper" value="70" min="0" max="100" step="5">
-        </label>
-        <label>Speed
-          <select id="in-speed">
-            <option value="60">1× (real-time)</option>
-            <option value="1800">30×</option>
-            <option value="3600" selected>60×</option>
-            <option value="18000">300×</option>
-            <option value="36000">600×</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="sim-controls">
-        <button class="btn-primary" id="btn-start">Start</button>
-        <button class="btn-ghost" id="btn-pause" disabled>Pause</button>
-        <button class="btn-ghost" id="btn-reset">Reset</button>
+      <div class="status-eta">
+        <span class="eta-label">Ready by</span>
+        <span class="eta-value" id="eta-value">—</span>
+        <span class="eta-range" id="eta-range"></span>
       </div>
     </div>
 
-    <!-- Right: Events -->
-    <div class="card">
-      <h3>Events</h3>
-      <p class="event-hint">Your operator actions. Each click injects a timestamped event.</p>
+    <!-- Phase flow strip -->
+    <nav class="flow-strip" id="flow-strip">
+      <span class="flow-step" data-step="prep">Prep</span>
+      <span class="flow-step" data-step="bark_build">Smoke</span>
+      <span class="flow-step" data-step="stall">Stall</span>
+      <span class="flow-step" data-step="wrap">Wrap</span>
+      <span class="flow-step" data-step="push">Finish</span>
+      <span class="flow-step" data-step="rest">Rest</span>
+      <span class="flow-step" data-step="slice">Slice</span>
+    </nav>
+
+    <!-- Primary readouts — just two big numbers -->
+    <section class="primary-readouts">
+      <div class="pr-card pr-pit">
+        <div class="pr-label">Pit</div>
+        <div class="pr-value"><span id="pr-pit-val">—</span><span class="pr-unit">°F</span></div>
+        <div class="pr-sub" id="pr-pit-sub">idle</div>
+      </div>
+      <div class="pr-card pr-core">
+        <div class="pr-label">Meat</div>
+        <div class="pr-value"><span id="pr-core-val">—</span><span class="pr-unit">°F</span></div>
+        <div class="pr-sub" id="pr-core-sub">0.0 °F/min</div>
+      </div>
+    </section>
+
+    <!-- Decision cards stack -->
+    <section class="cards-stack" id="cards-stack"><!-- filled dynamically --></section>
+
+    <!-- Simulation controls -->
+    <section class="sim-bar">
+      <button class="btn-primary" id="btn-start">Begin cook</button>
+      <button class="btn-ghost" id="btn-pause" disabled>Pause</button>
+      <button class="btn-ghost" id="btn-reset">Start over</button>
+      <span class="sim-speed">
+        <label for="in-speed">Speed</label>
+        <select id="in-speed">
+          <option value="60">1×</option>
+          <option value="1800">30×</option>
+          <option value="3600" selected>60×</option>
+          <option value="18000">300×</option>
+          <option value="36000">600×</option>
+        </select>
+      </span>
+      <span class="sim-clock"><span id="sim-clock-val">0:00</span> elapsed</span>
+    </section>
+
+    <!-- Progressive disclosure: Telemetry -->
+    <details class="disclosure">
+      <summary>Telemetry · 5-curve chart</summary>
+      <div class="chart-title-row">
+        <div class="chart-legend">
+          <span class="lg pit">T_pit</span>
+          <span class="lg core">T_core</span>
+          <span class="lg surf">T_surf</span>
+          <span class="lg w">w (water)</span>
+          <span class="lg c">C (collagen)</span>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-main"></canvas>
+      </div>
+    </details>
+
+    <!-- Progressive disclosure: Manual events -->
+    <details class="disclosure">
+      <summary>Override · manual events &amp; damper</summary>
       <div class="event-grid">
-        <button class="ev-btn" data-ev="ignite" data-n="6"><span class="ev-icon">🔥</span>Ignite 6</button>
-        <button class="ev-btn" data-ev="ignite" data-n="12"><span class="ev-icon">🔥</span>Ignite 12</button>
-        <button class="ev-btn" data-ev="refuel" data-n="3"><span class="ev-icon">＋</span>Add 3 coals</button>
-        <button class="ev-btn" data-ev="refuel" data-n="6"><span class="ev-icon">＋</span>Add 6 coals</button>
-        <button class="ev-btn" data-ev="wood" data-mass="0.15"><span class="ev-icon">🪵</span>Wood chunk</button>
-        <button class="ev-btn" data-ev="wrap" data-type="butcher_paper"><span class="ev-icon">📜</span>Wrap paper</button>
-        <button class="ev-btn" data-ev="wrap" data-type="aluminum_foil"><span class="ev-icon">🟦</span>Wrap foil</button>
-        <button class="ev-btn" data-ev="wrap" data-type="none"><span class="ev-icon">✂</span>Unwrap</button>
-        <button class="ev-btn" data-ev="lid" data-sec="30"><span class="ev-icon">↑</span>Lid 30 s</button>
-        <button class="ev-btn" data-ev="damper-up"><span class="ev-icon">▲</span>Damper +10</button>
+        <button class="ev-btn" data-ev="ignite-6"><span class="ev-icon">🔥</span>Ignite 6</button>
+        <button class="ev-btn" data-ev="ignite-12"><span class="ev-icon">🔥</span>Ignite 12</button>
+        <button class="ev-btn" data-ev="refuel-3"><span class="ev-icon">＋</span>+3 coals</button>
+        <button class="ev-btn" data-ev="refuel-6"><span class="ev-icon">＋</span>+6 coals</button>
+        <button class="ev-btn" data-ev="wood"><span class="ev-icon">🪵</span>Wood</button>
+        <button class="ev-btn" data-ev="wrap-butcher_paper"><span class="ev-icon">📜</span>Paper</button>
+        <button class="ev-btn" data-ev="wrap-aluminum_foil"><span class="ev-icon">🟦</span>Foil</button>
+        <button class="ev-btn" data-ev="wrap-none"><span class="ev-icon">✂</span>Unwrap</button>
+        <button class="ev-btn" data-ev="lid-30"><span class="ev-icon">↑</span>Lid 30s</button>
         <button class="ev-btn" data-ev="damper-down"><span class="ev-icon">▼</span>Damper −10</button>
+        <button class="ev-btn" data-ev="damper-up"><span class="ev-icon">▲</span>Damper +10</button>
         <button class="ev-btn danger" data-ev="pull"><span class="ev-icon">🧺</span>Pull</button>
         <button class="ev-btn danger" data-ev="slice"><span class="ev-icon">🔪</span>Slice</button>
       </div>
-    </div>
+      <div class="damper-row">
+        <span>Damper</span>
+        <span class="damper-val" id="damper-val">70%</span>
+      </div>
+    </details>
+
+    <!-- Progressive disclosure: Timeline of fired events -->
+    <details class="disclosure">
+      <summary>History · event timeline</summary>
+      <div class="timeline-wrap">
+        <div class="timeline-axis" id="timeline-axis"></div>
+        <div class="timeline-track" id="timeline-track"></div>
+      </div>
+      <div class="event-log" id="event-log"></div>
+    </details>
+
   </section>
 
-  <!-- Timeline -->
-  <section class="card">
-    <h3>Timeline</h3>
-    <div class="timeline-wrap">
-      <div class="timeline-axis" id="timeline-axis"></div>
-      <div class="timeline-track" id="timeline-track"></div>
-    </div>
-    <div class="event-log" id="event-log"></div>
-  </section>
-
-  <!-- Alerts -->
-  <section class="card" id="alerts-card" hidden>
-    <h3>Alerts</h3>
-    <ul class="alerts-list" id="alerts-list"></ul>
-  </section>
-
-  <!-- Scorecard -->
-  <section class="card" id="score-card" hidden>
-    <h3>Final score</h3>
+  <!-- ═══ POST-COOK — scorecard ═══ -->
+  <section id="screen-score" class="score" hidden>
+    <h1 class="score-title">Cook complete</h1>
     <div class="score-grid">
       <div class="score-item"><span>Doneness</span><strong id="sc-done">—</strong></div>
       <div class="score-item"><span>Juicy</span><strong id="sc-juicy">—</strong></div>
@@ -168,6 +162,8 @@
       <div class="score-item"><span>Smoke</span><strong id="sc-smoke">—</strong></div>
       <div class="score-item overall"><span>Overall</span><strong id="sc-overall">—</strong></div>
     </div>
+    <div class="score-narrative" id="score-narrative"></div>
+    <button class="btn-primary" id="btn-again">Cook again</button>
   </section>
 
 </main>
@@ -176,7 +172,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 
-<!-- Smoker physics modules -->
+<!-- Smoker physics + logic modules -->
 <script src="js/smoker/constants.js"></script>
 <script src="js/smoker/heatDiffusion.js"></script>
 <script src="js/smoker/stallModel.js"></script>
@@ -188,9 +184,11 @@
 <script src="js/smoker/constraints.js"></script>
 <script src="js/smoker/simulator.js"></script>
 <script src="js/smoker/monteCarlo.js"></script>
+<script src="js/smoker/decisions.js?v=2"></script>
+<script src="js/smoker/presets.js?v=2"></script>
 
 <!-- UI controller -->
-<script src="js/smoker/app.js?v=1"></script>
+<script src="js/smoker/app.js?v=2"></script>
 
 </body>
 </html>

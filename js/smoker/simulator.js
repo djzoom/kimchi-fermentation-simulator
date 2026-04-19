@@ -204,10 +204,12 @@ window.SmokerSim.simulator = (function () {
     state.phase = 'rest';
     state.tPullC = state.T[state.T.length - 1];
     state.wAtPull = state.w;
+    state.tPullMin = state.tSimMin;
     state.eventLog.push({ t: state.tSimMin, kind: 'pull' });
   }
   function slice(state, restMethod) {
-    var tRest = state.tRestMin || 0;
+    var tRest = (state.tPullMin != null) ? Math.max(0, state.tSimMin - state.tPullMin) : (state.tRestMin || 0);
+    state.tRestMin = tRest;
     state.phase = 'slice';
     state.wRetained = RM.wRetained(state.wAtPull != null ? state.wAtPull : state.w, tRest);
     state.tCoreAtSlice = RM.restTemperatureC(state.tPullC || state.T[state.T.length - 1],
