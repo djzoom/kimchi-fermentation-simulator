@@ -224,6 +224,34 @@ window.SmokerSim.decisions = (function () {
       }
     }
 
+    // ─── Food-safety info (only while surface cooked enough to matter) ──
+    if (state.kSafety != null) {
+      if (state.kSafety < 1 && coreF > 110 && state.tSimMin > 180) {
+        // Surface has been in sub-kill range for 3+ h — danger-zone warning
+        out.push({
+          priority: 85, tier: 'yellow',
+          verdict: 'Danger-zone dwell',
+          verdict_zh: '危险温区停留',
+          why: 'Surface has spent 3 + h below 140 °F — pathogens can multiply. Push pit to 250 °F+.',
+          why_zh: '表面超过 3 小时在 140°F 以下，细菌会大量繁殖。立刻把炉温拉到 250°F+。',
+          actions: [{ label: '+6 coals', label_zh: '+6 块炭', event: 'refuel-6' }]
+        });
+      } else if (state.kSafety >= 7.0 && state.phase !== 'rest') {
+        // Safety milestone: silent info the user can check if curious
+        // Only appears if core is < 180 F (still cooking for texture, not safety)
+        if (coreF < 180) {
+          out.push({
+            priority: 40, tier: 'info',
+            verdict: 'Pathogens already killed',
+            verdict_zh: '病原已完全灭活',
+            why: 'Surface has accumulated a 7-log reduction — USDA-safe. Any further cooking is for texture, not safety.',
+            why_zh: '表面已累积 7 次对数灭菌 — USDA 认证的安全水平。继续烤只是为了口感，不是安全。',
+            actions: []
+          });
+        }
+      }
+    }
+
     // ─── Refuel reminder (yellow) ────────────────────────────────────
     var activeCoals = state.coals.filter(function (c) {
       var x = (state.tSimMin - c.tIgniteMin) / c.tauBurnMin;

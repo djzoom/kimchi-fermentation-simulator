@@ -15,6 +15,7 @@ window.SmokerSim.simulator = (function () {
   var FM = window.SmokerSim.fireModel;
   var PM = window.SmokerSim.pitModel;
   var RM = window.SmokerSim.restModel;
+  var SF = window.SmokerSim.safety;
 
   /**
    * Construct a fresh simulation state from inputs.
@@ -54,6 +55,13 @@ window.SmokerSim.simulator = (function () {
       C:             0.0,
       smoke:         { good: 0, bad: 0, ringFrozen: false },
       smokeRingGoodAtCutoff: 0,
+
+      // Food safety: cumulative log-reductions at surface
+      kSafety:       0.0,
+
+      // Spritz state: tMin of last spritz, if active
+      spritzEndMin:  0,
+      spritzCount:   0,
 
       // Pit
       tPitC:         C.fToC(230),              // idle pre-meat; user raises via damper/fuel
@@ -102,8 +110,16 @@ window.SmokerSim.simulator = (function () {
         lidOpen: state.lidOpenSec > 0
       });
 
+      // Spritz boost: the mop liquid on the surface needs to boil off first.
+      // While active, surface has an extra water reservoir — evap is locally
+      // stronger (from the spritz, not the meat) but meat's own w is spared.
+      var spritzBoost = 1.0;
+      if (state.tSimMin < state.spritzEndMin) {
+        spritzBoost = 2.0;        // surface flux doubled by puddled liquid
+      }
+
       // Meat surface evap cooling + water-loss flux (kg/m²/s)
-      var flux = HD.evapFluxKgPerM2S(state.T[0], state.tAmbC, state.w, wrapRed, humidityFactor);
+      var flux = HD.evapFluxKgPerM2S(state.T[0], state.tAmbC, state.w, wrapRed, humidityFactor) * spritzBoost;
       var evapC = 0;
       if (flux > 0) {
         var fluxW = flux * C.L_V_WATER;
@@ -115,15 +131,21 @@ window.SmokerSim.simulator = (function () {
 
       // Water budget: d(w)/dt = -flux · (A/m_meat). Normalised so an unwrapped
       // brisket loses ~15–25 % over a full cook at ref conditions.
+      // During spritz (spritzBoost>1), the extra flux is from puddled mop
+      // liquid, not from the meat — don't charge it to internal w.
       if (flux > 0) {
         var meatMassKg = (state.weightLb || 10) * 0.4535924;
         var areaPerMass = state.areaM2 / meatMassKg;
-        state.w = Math.max(0, state.w - flux * areaPerMass * subDt);
-        state.wSurface = Math.max(0, state.wSurface - flux * areaPerMass * subDt * 5);
+        var metabolicFlux = flux / spritzBoost;  // meat-sourced only
+        state.w = Math.max(0, state.w - metabolicFlux * areaPerMass * subDt);
+        state.wSurface = Math.max(0, state.wSurface - metabolicFlux * areaPerMass * subDt * 5);
       }
 
       // Collagen (core temperature)
       state.C = CM.step(state.C, state.T[n], subDt);
+
+      // Food-safety D-value integration at SURFACE (cold zone for pathogens)
+      state.kSafety = SF.step(state.kSafety, state.T[0], subDt);
 
       // Smoke
       var smokeDensity = densityFromWood(state.woodAdds, state.tSimMin);
@@ -200,6 +222,21 @@ window.SmokerSim.simulator = (function () {
     state.tPitC -= C.T_PIT_LID_DROP_C * Math.min(seconds / 60, 1);
     state.eventLog.push({ t: state.tSimMin, kind: 'lid', seconds: seconds });
   }
+
+  /**
+   * Spritz: deposit mop liquid on the surface. Physics:
+   *   - wSurface rewet by +0.15 (pellicle partially restored)
+   *   - for the next ~2 min, evap flux doubled (puddled liquid boils off first)
+   *   - but that extra evap pulls heat from pit/meat, not from meat's w
+   *   - side effect: brief T_surf dip that "resets the crust"
+   */
+  function spritz(state, volumeMl) {
+    var v = volumeMl || 30;
+    state.wSurface = Math.min(1, (state.wSurface || 0) + 0.15);
+    state.spritzEndMin = state.tSimMin + 2;   // boost lasts ~2 min
+    state.spritzCount = (state.spritzCount || 0) + 1;
+    state.eventLog.push({ t: state.tSimMin, kind: 'spritz', volume: v });
+  }
   function pull(state) {
     state.phase = 'rest';
     state.tPullC = state.T[state.T.length - 1];
@@ -226,6 +263,7 @@ window.SmokerSim.simulator = (function () {
     damper: damper,
     wrap: wrap,
     openLid: openLid,
+    spritz: spritz,
     pull: pull,
     slice: slice
   };
