@@ -403,6 +403,7 @@
       case 'wrap-foil_boat':     Sim.wrap(s, 'foil_boat'); break;
       case 'wrap-none':          Sim.wrap(s, 'none'); break;
       case 'lid-30':             Sim.openLid(s, 30); break;
+      case 'spritz':             Sim.spritz(s, 30); break;
       case 'damper-up':
         s.damperPct = Math.min(100, s.damperPct + 10); break;
       case 'damper-down':
@@ -556,6 +557,12 @@
     else if (juicy > 0.85) narrative.push('Excellent moisture retention.');
     if (smoke < 0.7) narrative.push('Smoke was acrid — establish thin-blue flame before adding meat.');
     else narrative.push('Clean smoke throughout.');
+    if (s.kSafety != null) {
+      if (s.kSafety >= 7) narrative.push('Food-safety: ' + s.kSafety.toFixed(1) + '-log pathogen reduction — over the 7-log USDA target.');
+      else if (s.kSafety >= 4) narrative.push('Food-safety: ' + s.kSafety.toFixed(1) + '-log reduction (partial). Consider a hotter finish on future cooks.');
+      else narrative.push('⚠ Food-safety undercooked at surface (' + s.kSafety.toFixed(1) + '-log reduction, target ≥ 7).');
+    }
+    if (s.spritzCount > 0) narrative.push('Spritzed ' + s.spritzCount + '×.');
     $('score-narrative').textContent = narrative.join(' ');
 
     show('score');
