@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smoker — smoke test</title>
+<style>
+body { font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace; margin: 24px; max-width: 960px; }
+h2 { font-size: 14px; margin: 16px 0 4px; }
+pre { background: #F1F5F9; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+.ok { color: #16A34A; }
+.fail { color: #EF4444; }
+</style>
+</head>
+<body>
+<h1>SmokerSim — minimal smoke test</h1>
+<pre id="out">Running…</pre>
+
+<script src="constants.js"></script>
+<script src="heatDiffusion.js"></script>
+<script src="stallModel.js"></script>
+<script src="collagenModel.js"></script>
+<script src="smokeModel.js"></script>
+<script src="fireModel.js"></script>
+<script src="pitModel.js"></script>
+<script src="restModel.js"></script>
+<script src="constraints.js"></script>
+<script src="simulator.js"></script>
+<script src="monteCarlo.js"></script>
+<script>
+(function () {
+  var out = [];
+  function log(msg, ok) { out.push((ok == null ? '' : (ok ? '✔ ' : '✗ ')) + msg); }
+  function assert(cond, msg) { log(msg, !!cond); if (!cond) throw new Error('assert failed: ' + msg); }
+
+  try {
+    var C = SmokerSim.constants;
+    var S = SmokerSim.simulator;
+    var MC = SmokerSim.monteCarlo;
+    var CM = SmokerSim.collagenModel;
+    var Stall = SmokerSim.stallModel;
+    var R = SmokerSim.restModel;
+
+    // --- unit helpers ---
+    assert(Math.abs(C.fToC(225) - 107.22) < 0.1, 'fToC(225) ≈ 107.22');
+    assert(Math.abs(C.cToF(100) - 212) < 0.1,    'cToF(100) = 212');
+
+    // --- collagen kinetics ---
+    var rLow = CM.rate(60);
+    var rHi  = CM.rate(85);
+    assert(rHi > rLow * 5, 'rate(85°C) >> rate(60°C)');
+    var cAfter = CM.step(0, 75, 3600);
+    assert(cAfter > 0 && cAfter < 1, '1 h at 75°C produces partial conversion');
+
+    // --- stall probability ---
+    var p160 = Stall.stallProbability(160, 60, 2, 5, 0.3);
+    var p100 = Stall.stallProbability(100, 60, 2, 5, 0.3);
+    assert(p160 > 0.3 && p160 < 1,  'P(stall) at 160°F in the plateau');
+    assert(p100 === 0,              'P(stall) at 100°F = 0 (out of band)');
+
+    // --- rest model ---
+    var t15 = R.wRetained(0.6, 15);
+    var t60 = R.wRetained(0.6, 60);
+    assert(t60 > t15, 'rest rebound monotonic');
+    assert(R.recommendedMin() >= 120 && R.recommendedMin() <= 150,
+      'recommended rest ~3τ ≈ 135 min');
+
+    // --- full simulation run: 10 lb brisket ---
+    var inputs = {
+      protein: 'beef', grade: 'choice',
+      thicknessIn: 3.5, weightLb: 10,
+      equipment: 'offset', elevationFt: 0,
+      tAmbF: 70, humidityPct: 60, windMph: 3,
+      wrapType: 'none', tInitF: 40
+    };
+    var state = S.create(inputs);
+    S.ignite(state, 8);
+    S.damper(state, 60);
+    S.addWood(state, 0.2, 'hickory');
+
+    // Simulate 6 hours at 1 min steps; check meat warms and collagen accrues
+    for (var i = 0; i < 360; i++) S.step(state, 60);
+    assert(state.T[state.T.length - 1] > 40, 'center temperature rose after 6 h');
+    assert(state.C > 0,                       'some collagen conversion occurred');
+    assert(state.tPitC > 80,                  'pit temperature above ambient');
+
+    // --- constraints evaluate without throwing ---
+    var alerts = SmokerSim.constraints.evaluate({
+      phase: 'push', tPitC: 100, dTcoreDtCPerMin: 0.01,
+      dangerZoneMin: 100, justPulled: false, C: 0.5,
+      S_bad: 0.1, tSurfC: 80, justWrapped: false, wSurface: 0.5,
+      qFireW: 50, maxCoalProgress: 0.3, qFirePeakNominal: 200,
+      tCoreF: 150, spritzPerHour: 0, lidOpenSec: 0
+    });
+    assert(Array.isArray(alerts), 'constraints.evaluate returns array');
+
+    // --- Monte Carlo (very small batch) ---
+    var fc = MC.forecast(inputs, {
+      igniteN: 10, damperPct: 70, refuelEveryMin: 45, refuelN: 4, autoWrap: true
+    }, 12);
+    assert(fc.confidence === 'HIGH' || fc.confidence === 'MEDIUM' || fc.confidence === 'LOW',
+      'MC confidence classified');
+    assert(fc.validFraction >= 0.5, 'MC valid > 50%');
+    log('MC forecast: P10=' + Math.round(fc.P10) + ', P50=' + Math.round(fc.P50)
+      + ', P90=' + Math.round(fc.P90) + ' min, conf=' + fc.confidence, true);
+
+    log('ALL SMOKE TESTS PASSED', true);
+  } catch (e) {
+    log(String(e), false);
+    console.error(e);
+  } finally {
+    document.getElementById('out').textContent = out.join('\n');
+  }
+})();
+</script>
+</body>
+</html>
