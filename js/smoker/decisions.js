@@ -58,12 +58,20 @@ window.SmokerSim.decisions = (function () {
       if (a.tier === 'red') {
         out.push({
           priority: 100, tier: 'red',
-          verdict: a.label, why: a.fix || '', actions: []
+          verdict: a.label,
+          verdict_zh: '⚠ 红线: ' + a.label,
+          why: a.fix || '',
+          why_zh: '不可逆的质量损失——必须立即纠正。',
+          actions: []
         });
       } else if (a.tier === 'yellow') {
         out.push({
           priority: 60, tier: 'yellow',
-          verdict: a.label, why: 'Recoverable — adjust now to avoid cost.', actions: []
+          verdict: a.label,
+          verdict_zh: '黄线: ' + a.label,
+          why: 'Recoverable — adjust now to avoid cost.',
+          why_zh: '可挽回——现在调整能避免打折扣。',
+          actions: []
         });
       }
     });
@@ -73,10 +81,12 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 95, tier: 'action',
         verdict: 'Light your fire',
+        verdict_zh: '点火',
         why: 'Get the pit to 225–250°F before the meat goes on. Wait for thin-blue smoke before adding anything.',
+        why_zh: '先把炉温烧到 225–250°F 再放肉。一定要等到"薄蓝烟"——白烟是不完全燃烧，会让肉发苦。',
         actions: [
-          { label: 'Ignite 12 coals', event: 'ignite-12', hint: 'Full chimney for offset' },
-          { label: 'Ignite 8 coals',  event: 'ignite-8',  hint: 'Lighter start for kamado/WSM' }
+          { label: 'Ignite 12 coals', label_zh: '点 12 块炭', event: 'ignite-12', hint: 'Full chimney for offset', hint_zh: '适合偏置烟熏炉' },
+          { label: 'Ignite 8 coals',  label_zh: '点 8 块炭',  event: 'ignite-8',  hint: 'Lighter start for kamado/WSM', hint_zh: 'Kamado/WSM 用' }
         ]
       });
     }
@@ -86,7 +96,9 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 70, tier: 'info',
         verdict: 'Warming up',
+        verdict_zh: '预热中',
         why: 'Pit climbing toward 225–250°F. This takes 20–40 minutes with fresh coals.',
+        why_zh: '炉腔正在爬升到 225–250°F，新炭通常需要 20–40 分钟。',
         actions: []
       });
     }
@@ -97,8 +109,10 @@ window.SmokerSim.decisions = (function () {
         out.push({
           priority: 80, tier: 'action',
           verdict: 'Add wood for smoke',
+          verdict_zh: '加果木块',
           why: 'Surface is still cold — this is the 90-minute window for smoke ring and flavor deposition.',
-          actions: [{ label: 'Add hickory chunk', event: 'wood', hint: '1 chunk, thin-blue smoke' }]
+          why_zh: '肉表面还冷，前 90 分钟是形成烟环和沉积风味酚的唯一窗口，错过就锁死了。',
+          actions: [{ label: 'Add hickory chunk', label_zh: '加山核桃木', event: 'wood', hint: '1 chunk, thin-blue smoke', hint_zh: '薄蓝烟，别冒白烟' }]
         });
       }
     }
@@ -108,7 +122,9 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 72, tier: 'headsup',
         verdict: 'Stall approaching',
+        verdict_zh: '停滞期逼近',
         why: 'Temperature rise is slowing — evaporative cooling will soon balance the heat. Plateau can last 1–3h.',
+        why_zh: '升温在放缓——蒸发冷却很快会抵消炉温输入。停滞期可以持续 1–3 小时，属于正常现象。',
         actions: []
       });
     }
@@ -121,19 +137,23 @@ window.SmokerSim.decisions = (function () {
         out.push({
           priority: 88, tier: 'recommend',
           verdict: 'Wrap now to beat the stall',
+          verdict_zh: '现在包裹，打破停滞',
           why: 'Stopping evaporation lets the meat resume climbing. Butcher paper keeps bark; foil is faster but softer.',
+          why_zh: '包起来阻断蒸发，内温就能重新爬升。屠夫纸保 bark；铝箔更快但 bark 会变软。',
           impact: { time: '−1h 20min', bark: '−5%', juicy: '+8%' },
           actions: [
-            { label: 'Butcher paper', event: 'wrap-butcher_paper', hint: 'Balanced' },
-            { label: 'Aluminum foil', event: 'wrap-aluminum_foil', hint: 'Faster' },
-            { label: 'Wait',          event: 'dismiss',           hint: 'Keep chasing bark' }
+            { label: 'Butcher paper', label_zh: '屠夫纸', event: 'wrap-butcher_paper', hint: 'Balanced', hint_zh: '平衡' },
+            { label: 'Aluminum foil', label_zh: '铝箔',   event: 'wrap-aluminum_foil', hint: 'Faster',   hint_zh: '最快' },
+            { label: 'Wait',          label_zh: '再等等', event: 'dismiss',            hint: 'Keep chasing bark', hint_zh: '继续追 bark' }
           ]
         });
       } else {
         out.push({
           priority: 60, tier: 'info',
           verdict: 'In the stall',
+          verdict_zh: '停滞期中',
           why: 'Internal temp has flattened — this is normal and expected. Keep pit at 225–250°F; do not crank heat.',
+          why_zh: '内温已经"躺平"——这完全正常。保持炉温 225–250°F，千万别加大火。',
           actions: []
         });
       }
@@ -144,7 +164,9 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 55, tier: 'info',
         verdict: 'Back on track',
+        verdict_zh: '重新爬升',
         why: 'Wrapped and climbing again. Start probe-checking when core hits 195°F.',
+        why_zh: '包裹后恢复升温。到 195°F 可以开始用探针测"软硬"。',
         actions: []
       });
     }
@@ -154,9 +176,11 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 80, tier: 'headsup',
         verdict: 'Nearly done — start probing',
+        verdict_zh: '快好了——开始探针测试',
         why: 'Collagen is close to fully rendered. Probe should slide in "like butter". Pull on feel, not temperature.',
+        why_zh: '胶原快完全转化了。探针应该"像插黄油"一样滑入。看手感出炉，不看温度。',
         actions: [
-          { label: 'Pull now', event: 'pull', hint: 'Only if probe-soft' }
+          { label: 'Pull now', label_zh: '现在出炉', event: 'pull', hint: 'Only if probe-soft', hint_zh: '仅当探针软' }
         ]
       });
     }
@@ -166,9 +190,11 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 97, tier: 'action',
         verdict: 'Pull now',
+        verdict_zh: '马上出炉',
         why: 'Collagen is fully rendered. More time on heat will only dry it out.',
+        why_zh: '胶原已经完全水解。再烤下去只会变干。',
         impact: { time: '0', juicy: 'protect' },
-        actions: [{ label: 'Pull', event: 'pull' }]
+        actions: [{ label: 'Pull', label_zh: '出炉', event: 'pull' }]
       });
     }
 
@@ -181,15 +207,19 @@ window.SmokerSim.decisions = (function () {
         out.push({
           priority: 70, tier: 'info',
           verdict: 'Resting — ' + left + ' min to go',
+          verdict_zh: '静置中——还剩 ' + left + ' 分钟',
           why: 'Juices are redistributing. Slicing now costs ~' + Math.round(100 * (1 - tRest / target)) + '% of potential moisture retention.',
-          actions: [{ label: 'Slice anyway', event: 'slice', hint: 'Not recommended' }]
+          why_zh: '汁水正在重新分布。现在切会损失大约 ' + Math.round(100 * (1 - tRest / target)) + '% 的潜在保水量。',
+          actions: [{ label: 'Slice anyway', label_zh: '硬切', event: 'slice', hint: 'Not recommended', hint_zh: '不建议' }]
         });
       } else {
         out.push({
           priority: 92, tier: 'action',
           verdict: 'Ready to slice',
+          verdict_zh: '可以切了',
           why: 'Juice redistribution is complete. Cut against the grain in pencil-thick slices.',
-          actions: [{ label: 'Slice', event: 'slice' }]
+          why_zh: '汁水重分布已经完成。逆纹切，厚度像铅笔。',
+          actions: [{ label: 'Slice', label_zh: '切片', event: 'slice' }]
         });
       }
     }
@@ -207,10 +237,12 @@ window.SmokerSim.decisions = (function () {
       out.push({
         priority: 58, tier: 'headsup',
         verdict: 'Refuel soon',
+        verdict_zh: '该加炭了',
         why: 'Most of your coals are past peak. Pit temp will sag in the next 15–30 minutes.',
+        why_zh: '大部分炭都过了燃烧峰值。如果不补，炉温会在 15–30 分钟内掉下来。',
         actions: [
-          { label: '+3 coals', event: 'refuel-3' },
-          { label: '+6 coals', event: 'refuel-6' }
+          { label: '+3 coals', label_zh: '+3 块炭', event: 'refuel-3' },
+          { label: '+6 coals', label_zh: '+6 块炭', event: 'refuel-6' }
         ]
       });
     }

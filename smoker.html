@@ -18,8 +18,8 @@
   <div class="header-inner">
     <div class="header-brand">
       <div class="brand-text">
-        <span class="brand-name">Smoker Dynamics</span>
-        <span class="brand-sub">Your digital pitmaster — decisions, not dials</span>
+        <span class="brand-name">Smoker Dynamics<span class="zh">· 烟熏动力学</span></span>
+        <span class="brand-sub">Your digital pitmaster · 你的数字烤肉师傅</span>
       </div>
     </div>
     <div class="header-controls">
@@ -32,9 +32,43 @@
 
   <!-- ═══ PREGAME — preset picker ═══ -->
   <section id="screen-pregame" class="pregame">
-    <h1 class="pregame-title">What are you cooking today?</h1>
-    <p class="pregame-sub">Pick a style. We'll light the fire, watch the stall, and tell you when to wrap and when to pull.</p>
+    <h1 class="pregame-title">What are you cooking today?<span class="zh">今天烤什么？</span></h1>
+    <p class="pregame-sub">
+      Pick a style. We'll light the fire, watch the stall, and tell you when to wrap and when to pull.
+      <span class="zh">选一个风格——我们负责点火、盯停滞期、在合适的时候提醒你包裹和出炉。</span>
+    </p>
     <div class="preset-grid" id="preset-grid"><!-- filled by app.js --></div>
+    <div class="pregame-or">or · 或</div>
+    <button class="btn-ghost btn-compare" id="btn-compare">
+      🔀 &nbsp;Compare two styles side-by-side<span class="zh">对比两种风格</span>
+    </button>
+  </section>
+
+  <!-- ═══ COMPARE — headless A/B ═══ -->
+  <section id="screen-compare" class="compare" hidden>
+    <div class="compare-header">
+      <button class="btn-ghost" id="btn-cmp-back">← Back</button>
+      <h1 class="compare-title">Compare two cooks<span class="zh">对比两种烤法</span></h1>
+    </div>
+    <p class="compare-hint">
+      Simulates both presets end-to-end with the same weather, then shows the winner on each axis.
+      <span class="zh">同一天气下跑完两个预设，告诉你每个维度谁赢。</span>
+    </p>
+    <div class="compare-pickers">
+      <label>
+        <span>Cook A · A 方</span>
+        <select id="cmp-a-preset"></select>
+      </label>
+      <label>
+        <span>Cook B · B 方</span>
+        <select id="cmp-b-preset"></select>
+      </label>
+      <button class="btn-primary" id="cmp-run">Run comparison<span class="zh">开始对比</span></button>
+    </div>
+    <div class="compare-status" id="cmp-status"></div>
+    <div class="compare-chart-wrap"><canvas id="cmp-chart"></canvas></div>
+    <div class="compare-verdict" id="cmp-verdict"></div>
+    <div class="compare-diff" id="cmp-diff"></div>
   </section>
 
   <!-- ═══ MISSION CONTROL — active cook ═══ -->
@@ -47,32 +81,32 @@
         <span class="phase-name" id="phase-name">Warming up</span>
       </div>
       <div class="status-eta">
-        <span class="eta-label">Ready by</span>
+        <span class="eta-label">Ready by · 预计</span>
         <span class="eta-value" id="eta-value">—</span>
         <span class="eta-range" id="eta-range"></span>
       </div>
     </div>
 
     <!-- Phase flow strip -->
-    <nav class="flow-strip" id="flow-strip">
-      <span class="flow-step" data-step="prep">Prep</span>
-      <span class="flow-step" data-step="bark_build">Smoke</span>
-      <span class="flow-step" data-step="stall">Stall</span>
-      <span class="flow-step" data-step="wrap">Wrap</span>
-      <span class="flow-step" data-step="push">Finish</span>
-      <span class="flow-step" data-step="rest">Rest</span>
-      <span class="flow-step" data-step="slice">Slice</span>
+    <nav class="flow-strip" id="flow-strip" aria-label="Cook phases">
+      <span class="flow-step" data-step="prep">Prep<em>准备</em></span>
+      <span class="flow-step" data-step="bark_build">Smoke<em>烟熏</em></span>
+      <span class="flow-step" data-step="stall">Stall<em>停滞</em></span>
+      <span class="flow-step" data-step="wrap">Wrap<em>包裹</em></span>
+      <span class="flow-step" data-step="push">Finish<em>收尾</em></span>
+      <span class="flow-step" data-step="rest">Rest<em>静置</em></span>
+      <span class="flow-step" data-step="slice">Slice<em>切片</em></span>
     </nav>
 
     <!-- Primary readouts — just two big numbers -->
     <section class="primary-readouts">
       <div class="pr-card pr-pit">
-        <div class="pr-label">Pit</div>
+        <div class="pr-label">Pit · 炉温</div>
         <div class="pr-value"><span id="pr-pit-val">—</span><span class="pr-unit">°F</span></div>
         <div class="pr-sub" id="pr-pit-sub">idle</div>
       </div>
       <div class="pr-card pr-core">
-        <div class="pr-label">Meat</div>
+        <div class="pr-label">Meat · 肉芯</div>
         <div class="pr-value"><span id="pr-core-val">—</span><span class="pr-unit">°F</span></div>
         <div class="pr-sub" id="pr-core-sub">0.0 °F/min</div>
       </div>
@@ -83,11 +117,12 @@
 
     <!-- Simulation controls -->
     <section class="sim-bar">
-      <button class="btn-primary" id="btn-start">Begin cook</button>
-      <button class="btn-ghost" id="btn-pause" disabled>Pause</button>
-      <button class="btn-ghost" id="btn-reset">Start over</button>
+      <button class="btn-primary" id="btn-start">Begin cook<em>开始</em></button>
+      <button class="btn-ghost" id="btn-pause" disabled>Pause<em>暂停</em></button>
+      <button class="btn-ghost" id="btn-reset">Start over<em>重来</em></button>
+      <button class="btn-ghost" id="btn-notify" title="Toggle audio + desktop alerts · 声音和桌面通知">🔔 Alerts</button>
       <span class="sim-speed">
-        <label for="in-speed">Speed</label>
+        <label for="in-speed">Speed · 速度</label>
         <select id="in-speed">
           <option value="60">1×</option>
           <option value="1800">30×</option>
@@ -96,12 +131,12 @@
           <option value="36000">600×</option>
         </select>
       </span>
-      <span class="sim-clock"><span id="sim-clock-val">0:00</span> elapsed</span>
+      <span class="sim-clock"><span id="sim-clock-val">0:00</span> elapsed · 已用</span>
     </section>
 
     <!-- Progressive disclosure: Telemetry -->
     <details class="disclosure">
-      <summary>Telemetry · 5-curve chart</summary>
+      <summary>Telemetry · 遥测 · 5-curve chart</summary>
       <div class="chart-title-row">
         <div class="chart-legend">
           <span class="lg pit">T_pit</span>
@@ -118,7 +153,7 @@
 
     <!-- Progressive disclosure: Manual events -->
     <details class="disclosure">
-      <summary>Override · manual events &amp; damper</summary>
+      <summary>Override · 手动操作 · manual events &amp; damper</summary>
       <div class="event-grid">
         <button class="ev-btn" data-ev="ignite-6"><span class="ev-icon">🔥</span>Ignite 6</button>
         <button class="ev-btn" data-ev="ignite-12"><span class="ev-icon">🔥</span>Ignite 12</button>
@@ -142,7 +177,7 @@
 
     <!-- Progressive disclosure: Timeline of fired events -->
     <details class="disclosure">
-      <summary>History · event timeline</summary>
+      <summary>History · 时间轴 · event timeline</summary>
       <div class="timeline-wrap">
         <div class="timeline-axis" id="timeline-axis"></div>
         <div class="timeline-track" id="timeline-track"></div>
@@ -154,16 +189,16 @@
 
   <!-- ═══ POST-COOK — scorecard ═══ -->
   <section id="screen-score" class="score" hidden>
-    <h1 class="score-title">Cook complete</h1>
+    <h1 class="score-title">Cook complete<span class="zh">烤制完成</span></h1>
     <div class="score-grid">
-      <div class="score-item"><span>Doneness</span><strong id="sc-done">—</strong></div>
-      <div class="score-item"><span>Juicy</span><strong id="sc-juicy">—</strong></div>
-      <div class="score-item"><span>Bark</span><strong id="sc-bark">—</strong></div>
-      <div class="score-item"><span>Smoke</span><strong id="sc-smoke">—</strong></div>
-      <div class="score-item overall"><span>Overall</span><strong id="sc-overall">—</strong></div>
+      <div class="score-item"><span>Doneness<em>熟度</em></span><strong id="sc-done">—</strong></div>
+      <div class="score-item"><span>Juicy<em>多汁</em></span><strong id="sc-juicy">—</strong></div>
+      <div class="score-item"><span>Bark<em>树皮</em></span><strong id="sc-bark">—</strong></div>
+      <div class="score-item"><span>Smoke<em>烟味</em></span><strong id="sc-smoke">—</strong></div>
+      <div class="score-item overall"><span>Overall<em>总分</em></span><strong id="sc-overall">—</strong></div>
     </div>
     <div class="score-narrative" id="score-narrative"></div>
-    <button class="btn-primary" id="btn-again">Cook again</button>
+    <button class="btn-primary" id="btn-again">Cook again<em>再烤一次</em></button>
   </section>
 
 </main>
@@ -184,11 +219,12 @@
 <script src="js/smoker/constraints.js"></script>
 <script src="js/smoker/simulator.js"></script>
 <script src="js/smoker/monteCarlo.js"></script>
-<script src="js/smoker/decisions.js?v=2"></script>
-<script src="js/smoker/presets.js?v=2"></script>
+<script src="js/smoker/decisions.js?v=3"></script>
+<script src="js/smoker/presets.js?v=3"></script>
+<script src="js/smoker/notify.js?v=1"></script>
 
 <!-- UI controller -->
-<script src="js/smoker/app.js?v=2"></script>
+<script src="js/smoker/app.js?v=3"></script>
 
 </body>
 </html>
