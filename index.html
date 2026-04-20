@@ -2,19 +2,14 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smoker Dynamics — your digital pitmaster</title>
-<meta name="description" content="Decision-support simulator for low-and-slow BBQ. Predicts the stall, recommends when to wrap, tells you when to pull. 烟熏动力学——数字烤肉师傅。">
-<meta name="keywords" content="BBQ, brisket, smoker, simulator, stall, Texas crutch, digital pitmaster, 烟熏, 烤肉, 停滞期">
-<meta name="author" content="@djwz">
-<meta property="og:title" content="Smoker Dynamics — digital pitmaster">
-<meta property="og:description" content="Interactive BBQ simulator: decisions, not dials.">
-<meta property="og:type" content="website">
+<meta name="description" content="Decision-support simulator for low-and-slow BBQ. Predicts the stall, recommends when to wrap, tells you when to pull.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=2">
 </head>
 <body>
 
@@ -128,6 +123,18 @@
         <canvas class="pr-spark" id="spark-core" width="120" height="32"></canvas>
         <div class="pr-sub" id="pr-core-sub">0.0 °F/min</div>
       </div>
+    </section>
+
+    <!-- Always-visible primary chart: pit + meat curves -->
+    <section class="main-chart-card">
+      <div class="main-chart-header">
+        <h3>Temperature curves · 温度曲线</h3>
+        <div class="main-chart-legend">
+          <span class="lg pit">Pit 炉温</span>
+          <span class="lg core">Meat 肉芯</span>
+        </div>
+      </div>
+      <div class="main-chart-wrap"><canvas id="chart-primary"></canvas></div>
     </section>
 
     <!-- Decision cards stack -->
@@ -246,7 +253,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 
-<!-- Physics + logic modules (flat layout) -->
+<!-- Smoker physics + logic modules -->
 <script src="js/constants.js"></script>
 <script src="js/heatDiffusion.js"></script>
 <script src="js/stallModel.js"></script>
@@ -255,16 +262,16 @@
 <script src="js/fireModel.js"></script>
 <script src="js/pitModel.js"></script>
 <script src="js/restModel.js"></script>
-<script src="js/safety.js"></script>
+<script src="js/safety.js?v=1"></script>
 <script src="js/constraints.js"></script>
 <script src="js/simulator.js"></script>
 <script src="js/monteCarlo.js"></script>
-<script src="js/decisions.js"></script>
-<script src="js/presets.js"></script>
-<script src="js/notify.js"></script>
+<script src="js/decisions.js?v=3"></script>
+<script src="js/presets.js?v=3"></script>
+<script src="js/notify.js?v=1"></script>
 
 <!-- UI controller -->
-<script src="js/app.js"></script>
+<script src="js/app.js?v=3"></script>
 
 </body>
 </html>
