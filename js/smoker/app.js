@@ -18,7 +18,9 @@
     screen:       'pregame',  // pregame | cook | score
     preset:       null,
     state:        null,
-    chart:        null,
+    chart:        null,     // 5-curve detailed (inside disclosure)
+    chartPrimary: null,     // 2-curve always visible
+
     running:      false,
     rafHandle:    null,
     lastWallMs:   0,
@@ -132,7 +134,9 @@
     view.state = Sim.create(view.preset.inputs);
     view.state.damperPct = view.preset.policy.damperPct;
 
-    // Chart
+    // Charts — primary (always visible) + detailed 5-curve (inside disclosure)
+    if (!view.chartPrimary) view.chartPrimary = initChartPrimary();
+    else resetChartPrimary();
     if (!view.chart) view.chart = initChart();
     else resetChart();
 
@@ -505,7 +509,55 @@
     ctx.stroke();
   }
 
-  // ---------- Chart ----------
+  // ---------- Primary chart (always visible: pit + meat) ----------
+  function initChartPrimary() {
+    var canvas = $('chart-primary');
+    if (!canvas || !window.Chart) return null;
+    var colPit  = css('--red') || '#EF4444';
+    var colCore = css('--amber') || '#F59E0B';
+    var text = css('--text-muted') || '#94A3B8';
+    var grid = 'rgba(148, 163, 184, 0.12)';
+    var tickFont = { size: 10, family: 'Inter' };
+    return new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        datasets: [
+          { label: 'Pit',  data: [], borderColor: colPit,  backgroundColor: colPit+'20',  borderWidth: 2,  pointRadius: 0, tension: 0.25 },
+          { label: 'Core', data: [], borderColor: colCore, backgroundColor: colCore+'20', borderWidth: 2.5, pointRadius: 0, tension: 0.25, fill: { target: 'origin', above: colCore + '12' } }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false, parsing: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.95)', titleFont: { size: 11 }, bodyFont: { size: 11 },
+            callbacks: {
+              title: function (items) { return 't = ' + Math.round(items[0].parsed.x) + ' min'; },
+              label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(0) + '°F'; }
+            }
+          },
+          annotation: { annotations: {
+            doneLine: { type:'line', yMin:203, yMax:203, borderColor:'rgba(22,163,74,0.5)', borderWidth:1, borderDash:[3,3], label:{display:true, content:'done 203°F', position:'end', color:'#16A34A', font:{size:9}, backgroundColor:'rgba(22,163,74,0.12)', padding:2} }
+          } }
+        },
+        scales: {
+          x: { type: 'linear', min: 0, max: 60, grid: { color: grid }, ticks: { color: text, font: tickFont, maxTicksLimit: 8, callback: function(v){ return v + 'm'; } } },
+          y: { min: 30, max: 320, grid: { color: grid }, ticks: { color: text, font: tickFont, stepSize: 50, callback: function(v){ return v + '°'; } } }
+        }
+      }
+    });
+  }
+
+  function resetChartPrimary() {
+    if (!view.chartPrimary) return;
+    view.chartPrimary.data.datasets.forEach(function (d) { d.data.length = 0; });
+    view.chartPrimary.options.scales.x.max = 60;
+    view.chartPrimary.update('none');
+  }
+
+  // ---------- Detailed 5-curve chart (inside Telemetry disclosure) ----------
   function initChart() {
     var canvas = $('chart-main');
     if (!canvas || !window.Chart) return null;
@@ -550,20 +602,37 @@
   }
 
   function pushChartSample() {
-    if (!view.chart || !view.state) return;
+    if (!view.state) return;
     var s = view.state;
     var n = s.T.length - 1;
     var t = s.tSimMin;
-    view.chart.data.datasets[0].data.push({ x: t, y: C.cToF(s.tPitC) });
-    view.chart.data.datasets[1].data.push({ x: t, y: C.cToF(s.T[n]) });
-    view.chart.data.datasets[2].data.push({ x: t, y: C.cToF(s.T[0]) });
-    view.chart.data.datasets[3].data.push({ x: t, y: s.w });
-    view.chart.data.datasets[4].data.push({ x: t, y: s.C });
-    if (view.chart.options.scales.x.max < t + 20) {
-      view.chart.options.scales.x.max = Math.ceil((t + 20) / 60) * 60;
+    var pitF  = C.cToF(s.tPitC);
+    var coreF = C.cToF(s.T[n]);
+    var surfF = C.cToF(s.T[0]);
+
+    // Primary chart (always visible)
+    if (view.chartPrimary) {
+      view.chartPrimary.data.datasets[0].data.push({ x: t, y: pitF });
+      view.chartPrimary.data.datasets[1].data.push({ x: t, y: coreF });
+      if (view.chartPrimary.options.scales.x.max < t + 20) {
+        view.chartPrimary.options.scales.x.max = Math.ceil((t + 20) / 60) * 60;
+      }
     }
+    // Detailed 5-curve chart (inside disclosure)
+    if (view.chart) {
+      view.chart.data.datasets[0].data.push({ x: t, y: pitF });
+      view.chart.data.datasets[1].data.push({ x: t, y: coreF });
+      view.chart.data.datasets[2].data.push({ x: t, y: surfF });
+      view.chart.data.datasets[3].data.push({ x: t, y: s.w });
+      view.chart.data.datasets[4].data.push({ x: t, y: s.C });
+      if (view.chart.options.scales.x.max < t + 20) {
+        view.chart.options.scales.x.max = Math.ceil((t + 20) / 60) * 60;
+      }
+    }
+
     if (!pushChartSample._lastUpdate || Date.now() - pushChartSample._lastUpdate > 200) {
-      view.chart.update('none');
+      if (view.chartPrimary) view.chartPrimary.update('none');
+      if (view.chart)        view.chart.update('none');
       pushChartSample._lastUpdate = Date.now();
     }
   }
