@@ -206,7 +206,7 @@
   <!-- ═══ Keyboard-shortcuts modal ═══ -->
   <div class="modal-backdrop" id="modal-help" hidden>
     <div class="modal-card">
-      <button class="modal-close" id="modal-close">✕</button>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
       <h2>Keyboard shortcuts<span class="zh">键盘快捷键</span></h2>
       <dl class="kbd-list">
         <dt><kbd>Space</kbd></dt><dd>Start / Pause · 开始 / 暂停</dd>
@@ -216,8 +216,10 @@
         <dt><kbd>+</kbd></dt><dd>Add 3 coals · 加 3 块炭</dd>
         <dt><kbd>S</kbd></dt><dd>Spritz · 喷雾</dd>
         <dt><kbd>D</kbd></dt><dd>Dark mode · 深色切换</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Close this dialog · 关闭弹窗</dd>
         <dt><kbd>?</kbd></dt><dd>This help · 这个帮助</dd>
       </dl>
+      <button class="btn-primary modal-ok" id="modal-ok">Got it · 知道了</button>
     </div>
   </div>
 
