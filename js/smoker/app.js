@@ -996,9 +996,11 @@
     // Help modal
     var bHelp = $('btn-help');
     var bModalClose = $('modal-close');
+    var bModalOk = $('modal-ok');
     var mBackdrop = $('modal-help');
     if (bHelp) bHelp.addEventListener('click', showHelp);
     if (bModalClose) bModalClose.addEventListener('click', hideHelp);
+    if (bModalOk) bModalOk.addEventListener('click', hideHelp);
     if (mBackdrop) mBackdrop.addEventListener('click', function (e) {
       if (e.target === mBackdrop) hideHelp();
     });

@@ -14,6 +14,14 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
+/* ────────────────────────────────────────────────
+ *  Fix HTML5 [hidden] pitfall: any explicit `display`
+ *  value in later CSS rules would otherwise override
+ *  the UA stylesheet's `[hidden]{display:none}` and
+ *  make `.hidden = true` JS no-op visually. Force it.
+ * ──────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+
 .container { max-width: 860px; padding: 0 16px; }
 
 /* Prevent iOS auto-zoom on focus (font-size < 16px triggers it) */
