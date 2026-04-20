@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Smoker Dynamics — your digital pitmaster</title>
+<meta name="description" content="Decision-support simulator for low-and-slow BBQ. Predicts the stall, recommends when to wrap, tells you when to pull. 烟熏动力学——数字烤肉师傅。">
+<meta name="keywords" content="BBQ, brisket, smoker, simulator, stall, Texas crutch, digital pitmaster, 烟熏, 烤肉, 停滞期">
+<meta name="author" content="@djwz">
+<meta property="og:title" content="Smoker Dynamics — digital pitmaster">
+<meta property="og:description" content="Interactive BBQ simulator: decisions, not dials.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="brand-text">
+        <span class="brand-name">Smoker Dynamics<span class="zh">· 烟熏动力学</span></span>
+        <span class="brand-sub">Your digital pitmaster · 你的数字烤肉师傅</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="theme-btn" id="btn-theme" title="Toggle dark mode · 切换深色"><span id="theme-icon">🌙</span></button>
+      <button class="help-btn" id="btn-help" title="Keyboard shortcuts · 键盘快捷键">?</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ═══ PREGAME — preset picker ═══ -->
+  <section id="screen-pregame" class="pregame">
+    <h1 class="pregame-title">What are you cooking today?<span class="zh">今天烤什么？</span></h1>
+    <p class="pregame-sub">
+      Pick a style. We'll light the fire, watch the stall, and tell you when to wrap and when to pull.
+      <span class="zh">选一个风格——我们负责点火、盯停滞期、在合适的时候提醒你包裹和出炉。</span>
+    </p>
+    <div class="preset-grid" id="preset-grid"><!-- filled by app.js --></div>
+    <div class="pregame-or">or · 或</div>
+    <div class="pregame-extras">
+      <button class="btn-ghost btn-compare" id="btn-compare">
+        🔀 &nbsp;Compare two styles<span class="zh">对比两种风格</span>
+      </button>
+      <button class="btn-ghost btn-demo" id="btn-demo">
+        ▶ &nbsp;Watch a demo cook<span class="zh">看一次示例烤肉</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ COMPARE — headless A/B ═══ -->
+  <section id="screen-compare" class="compare" hidden>
+    <div class="compare-header">
+      <button class="btn-ghost" id="btn-cmp-back">← Back</button>
+      <h1 class="compare-title">Compare two cooks<span class="zh">对比两种烤法</span></h1>
+    </div>
+    <p class="compare-hint">
+      Simulates both presets end-to-end with the same weather, then shows the winner on each axis.
+      <span class="zh">同一天气下跑完两个预设，告诉你每个维度谁赢。</span>
+    </p>
+    <div class="compare-pickers">
+      <label>
+        <span>Cook A · A 方</span>
+        <select id="cmp-a-preset"></select>
+      </label>
+      <label>
+        <span>Cook B · B 方</span>
+        <select id="cmp-b-preset"></select>
+      </label>
+      <button class="btn-primary" id="cmp-run">Run comparison<span class="zh">开始对比</span></button>
+    </div>
+    <div class="compare-status" id="cmp-status">
+      <span class="cmp-spinner" id="cmp-spinner" hidden></span>
+      <span id="cmp-status-text"></span>
+    </div>
+    <div class="compare-chart-wrap"><canvas id="cmp-chart"></canvas></div>
+    <div class="compare-verdict" id="cmp-verdict"></div>
+    <div class="compare-diff" id="cmp-diff"></div>
+  </section>
+
+  <!-- ═══ MISSION CONTROL — active cook ═══ -->
+  <section id="screen-cook" class="cook" hidden>
+
+    <!-- Status line: phase + ETA -->
+    <div class="status-line">
+      <div class="status-phase">
+        <span class="phase-dot" id="phase-dot"></span>
+        <span class="phase-name" id="phase-name">Warming up</span>
+      </div>
+      <div class="status-eta">
+        <span class="eta-label">Ready by · 预计</span>
+        <span class="eta-value" id="eta-value">—</span>
+        <span class="eta-range" id="eta-range"></span>
+      </div>
+    </div>
+    <div class="progress-bar" aria-label="cook progress">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- Phase flow strip -->
+    <nav class="flow-strip" id="flow-strip" aria-label="Cook phases">
+      <span class="flow-step" data-step="prep">Prep<em>准备</em></span>
+      <span class="flow-step" data-step="bark_build">Smoke<em>烟熏</em></span>
+      <span class="flow-step" data-step="stall">Stall<em>停滞</em></span>
+      <span class="flow-step" data-step="wrap">Wrap<em>包裹</em></span>
+      <span class="flow-step" data-step="push">Finish<em>收尾</em></span>
+      <span class="flow-step" data-step="rest">Rest<em>静置</em></span>
+      <span class="flow-step" data-step="slice">Slice<em>切片</em></span>
+    </nav>
+
+    <!-- Primary readouts — just two big numbers + sparklines -->
+    <section class="primary-readouts">
+      <div class="pr-card pr-pit">
+        <div class="pr-label">Pit · 炉温</div>
+        <div class="pr-value"><span id="pr-pit-val">—</span><span class="pr-unit">°F</span></div>
+        <canvas class="pr-spark" id="spark-pit" width="120" height="32"></canvas>
+        <div class="pr-sub" id="pr-pit-sub">idle</div>
+      </div>
+      <div class="pr-card pr-core">
+        <div class="pr-label">Meat · 肉芯</div>
+        <div class="pr-value"><span id="pr-core-val">—</span><span class="pr-unit">°F</span></div>
+        <canvas class="pr-spark" id="spark-core" width="120" height="32"></canvas>
+        <div class="pr-sub" id="pr-core-sub">0.0 °F/min</div>
+      </div>
+    </section>
+
+    <!-- Decision cards stack -->
+    <section class="cards-stack" id="cards-stack"><!-- filled dynamically --></section>
+
+    <!-- Simulation controls -->
+    <section class="sim-bar">
+      <button class="btn-primary" id="btn-start">Begin cook<em>开始</em></button>
+      <button class="btn-ghost" id="btn-pause" disabled>Pause<em>暂停</em></button>
+      <button class="btn-ghost" id="btn-reset">Start over<em>重来</em></button>
+      <button class="btn-ghost" id="btn-notify" title="Toggle audio + desktop alerts · 声音和桌面通知">🔔 Alerts</button>
+      <span class="sim-speed">
+        <label for="in-speed">Speed · 速度</label>
+        <select id="in-speed">
+          <option value="60">1×</option>
+          <option value="1800">30×</option>
+          <option value="3600" selected>60×</option>
+          <option value="18000">300×</option>
+          <option value="36000">600×</option>
+        </select>
+      </span>
+      <span class="sim-clock"><span id="sim-clock-val">0:00</span> elapsed · 已用</span>
+    </section>
+
+    <!-- Progressive disclosure: Telemetry -->
+    <details class="disclosure">
+      <summary>Telemetry · 遥测 · 5-curve chart</summary>
+      <div class="chart-title-row">
+        <div class="chart-legend">
+          <span class="lg pit">T_pit</span>
+          <span class="lg core">T_core</span>
+          <span class="lg surf">T_surf</span>
+          <span class="lg w">w (water)</span>
+          <span class="lg c">C (collagen)</span>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-main"></canvas>
+      </div>
+    </details>
+
+    <!-- Progressive disclosure: Manual events -->
+    <details class="disclosure">
+      <summary>Override · 手动操作 · manual events &amp; damper</summary>
+      <div class="event-grid">
+        <button class="ev-btn" data-ev="ignite-6"><span class="ev-icon">🔥</span>Ignite 6</button>
+        <button class="ev-btn" data-ev="ignite-12"><span class="ev-icon">🔥</span>Ignite 12</button>
+        <button class="ev-btn" data-ev="refuel-3"><span class="ev-icon">＋</span>+3 coals</button>
+        <button class="ev-btn" data-ev="refuel-6"><span class="ev-icon">＋</span>+6 coals</button>
+        <button class="ev-btn" data-ev="wood"><span class="ev-icon">🪵</span>Wood</button>
+        <button class="ev-btn" data-ev="wrap-butcher_paper"><span class="ev-icon">📜</span>Paper</button>
+        <button class="ev-btn" data-ev="wrap-aluminum_foil"><span class="ev-icon">🟦</span>Foil</button>
+        <button class="ev-btn" data-ev="wrap-none"><span class="ev-icon">✂</span>Unwrap</button>
+        <button class="ev-btn" data-ev="lid-30"><span class="ev-icon">↑</span>Lid 30s</button>
+        <button class="ev-btn" data-ev="spritz"><span class="ev-icon">💧</span>Spritz<em>喷雾</em></button>
+        <button class="ev-btn" data-ev="damper-down"><span class="ev-icon">▼</span>Damper −10</button>
+        <button class="ev-btn" data-ev="damper-up"><span class="ev-icon">▲</span>Damper +10</button>
+        <button class="ev-btn danger" data-ev="pull"><span class="ev-icon">🧺</span>Pull</button>
+        <button class="ev-btn danger" data-ev="slice"><span class="ev-icon">🔪</span>Slice</button>
+      </div>
+      <div class="damper-row">
+        <span>Damper</span>
+        <span class="damper-val" id="damper-val">70%</span>
+      </div>
+    </details>
+
+    <!-- Progressive disclosure: Timeline of fired events -->
+    <details class="disclosure">
+      <summary>History · 时间轴 · event timeline</summary>
+      <div class="timeline-wrap">
+        <div class="timeline-axis" id="timeline-axis"></div>
+        <div class="timeline-track" id="timeline-track"></div>
+      </div>
+      <div class="event-log" id="event-log"></div>
+    </details>
+
+  </section>
+
+  <!-- ═══ Keyboard-shortcuts modal ═══ -->
+  <div class="modal-backdrop" id="modal-help" hidden>
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <h2>Keyboard shortcuts<span class="zh">键盘快捷键</span></h2>
+      <dl class="kbd-list">
+        <dt><kbd>Space</kbd></dt><dd>Start / Pause · 开始 / 暂停</dd>
+        <dt><kbd>R</kbd></dt><dd>Reset · 重来</dd>
+        <dt><kbd>W</kbd></dt><dd>Wrap (butcher paper) · 包屠夫纸</dd>
+        <dt><kbd>F</kbd></dt><dd>Wrap foil · 包铝箔</dd>
+        <dt><kbd>+</kbd></dt><dd>Add 3 coals · 加 3 块炭</dd>
+        <dt><kbd>S</kbd></dt><dd>Spritz · 喷雾</dd>
+        <dt><kbd>D</kbd></dt><dd>Dark mode · 深色切换</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Close this dialog · 关闭弹窗</dd>
+        <dt><kbd>?</kbd></dt><dd>This help · 这个帮助</dd>
+      </dl>
+      <button class="btn-primary modal-ok" id="modal-ok">Got it · 知道了</button>
+    </div>
+  </div>
+
+  <!-- ═══ POST-COOK — scorecard ═══ -->
+  <section id="screen-score" class="score" hidden>
+    <h1 class="score-title">Cook complete<span class="zh">烤制完成</span></h1>
+    <div class="score-grid">
+      <div class="score-item"><span>Doneness<em>熟度</em></span><strong id="sc-done">—</strong></div>
+      <div class="score-item"><span>Juicy<em>多汁</em></span><strong id="sc-juicy">—</strong></div>
+      <div class="score-item"><span>Bark<em>树皮</em></span><strong id="sc-bark">—</strong></div>
+      <div class="score-item"><span>Smoke<em>烟味</em></span><strong id="sc-smoke">—</strong></div>
+      <div class="score-item overall"><span>Overall<em>总分</em></span><strong id="sc-overall">—</strong></div>
+    </div>
+    <div class="score-narrative" id="score-narrative"></div>
+    <button class="btn-primary" id="btn-again">Cook again<em>再烤一次</em></button>
+  </section>
+
+</main>
+
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+<!-- Physics + logic modules (flat layout) -->
+<script src="js/constants.js"></script>
+<script src="js/heatDiffusion.js"></script>
+<script src="js/stallModel.js"></script>
+<script src="js/collagenModel.js"></script>
+<script src="js/smokeModel.js"></script>
+<script src="js/fireModel.js"></script>
+<script src="js/pitModel.js"></script>
+<script src="js/restModel.js"></script>
+<script src="js/safety.js"></script>
+<script src="js/constraints.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/monteCarlo.js"></script>
+<script src="js/decisions.js"></script>
+<script src="js/presets.js"></script>
+<script src="js/notify.js"></script>
+
+<!-- UI controller -->
+<script src="js/app.js"></script>
+
+</body>
+</html>

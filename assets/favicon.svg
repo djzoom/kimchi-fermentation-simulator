@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Glass jar body -->
+  <path d="M28 32 Q26 38 25 50 Q24 70 26 82 Q28 90 38 93 Q46 95 50 95 Q54 95 62 93 Q72 90 74 82 Q76 70 75 50 Q74 38 72 32 Z" fill="#D6E8F0" opacity="0.35" stroke="#9BB8C8" stroke-width="1.5"/>
+  <!-- Glass highlight -->
+  <path d="M33 38 Q31 52 32 75" stroke="#fff" stroke-width="2.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <!-- Jar neck/rim -->
+  <rect x="30" y="26" width="40" height="6" rx="2" fill="#C8D8E0" stroke="#9BB8C8" stroke-width="1"/>
+  <!-- Glass lid -->
+  <rect x="28" y="20" width="44" height="6" rx="3" fill="#D0DEE6" stroke="#9BB8C8" stroke-width="1"/>
+  <!-- Rubber seal -->
+  <rect x="30" y="25" width="40" height="2" rx="1" fill="#E8A838" opacity="0.6"/>
+  <!-- Metal clip - left -->
+  <path d="M28 22 L22 22 L22 34 L28 34" stroke="#8899A4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Metal clip - right -->
+  <path d="M72 22 L78 22 L78 34 L72 34" stroke="#8899A4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Clip wire hinge right -->
+  <path d="M78 34 L76 40 L72 36" stroke="#8899A4" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Subtle ferment color inside -->
+  <ellipse cx="50" cy="72" rx="18" ry="14" fill="#A8C868" opacity="0.15"/>
+</svg>
