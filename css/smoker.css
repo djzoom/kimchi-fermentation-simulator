@@ -270,6 +270,61 @@ body {
 }
 
 /* ────────────────────────────────────────────────
+ *  Main chart — always-visible pit + meat curves
+ * ──────────────────────────────────────────────── */
+
+.main-chart-card {
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-ring), var(--shadow-sm);
+  border-radius: 16px;
+  padding: 14px 16px 10px;
+  margin-bottom: 16px;
+}
+.main-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.main-chart-header h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.main-chart-legend {
+  display: flex;
+  gap: 12px;
+}
+.main-chart-legend .lg {
+  font-size: 11px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-secondary);
+}
+.main-chart-legend .lg::before {
+  content: '';
+  width: 12px; height: 2px; border-radius: 1px;
+  background: currentColor;
+}
+.main-chart-legend .lg.pit  { color: var(--red); }
+.main-chart-legend .lg.core { color: var(--amber); }
+.main-chart-wrap {
+  position: relative;
+  height: 200px;
+}
+@media (max-width: 640px) {
+  .main-chart-wrap { height: 160px; }
+  .main-chart-card { padding: 10px 12px; }
+}
+
+/* ────────────────────────────────────────────────
  *  Decision cards (the product heart)
  * ──────────────────────────────────────────────── */
 
