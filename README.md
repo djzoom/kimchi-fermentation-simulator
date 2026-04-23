@@ -97,4 +97,4 @@ MIT — see [`LICENSE`](./LICENSE).
 
 ---
 
-*Originally incubated inside `djzoom/kimchi-fermentation-simulator`. Extracted to its own repo so physics-driven food simulators can be added without cross-contamination.*
+*Originally incubated inside `djzoom/BBQ-Master`. Extracted to its own repo so physics-driven food simulators can be added without cross-contamination.*
