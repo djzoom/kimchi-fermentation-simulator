@@ -80,6 +80,7 @@ window.KimchiSim = window.KimchiSim || {};
         updateCalcResults();
         updateLangButtons(newLang);
         runAndUpdate(sim.ui.getParams(), sim.ui.getStages());
+        if (sim.ui.updateTimelineDisplay) sim.ui.updateTimelineDisplay();
       });
     }
   }

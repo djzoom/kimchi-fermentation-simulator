@@ -1291,6 +1291,7 @@ window.KimchiSim.ui = (function () {
     restoreSavedInputs: restoreSavedInputs,
     saveState: saveState,
     updateTimelineMilestones: updateTimelineMilestones,
+    updateTimelineDisplay: updateTimelineDisplay,
     resetMicrobeKeys: function() { _lastMicrobeKeys = null; },
     toggleUnit: function() { toggleUnit(); },
     getUseFahrenheit: function() { return useFahrenheit; },
